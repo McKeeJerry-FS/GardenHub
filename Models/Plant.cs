@@ -21,7 +21,10 @@ namespace GardenHub.Models
         
         [Display(Name = "Date Planted")]
         public DateTime DatePlanted { get; set; }
-        
+
+        [Display(Name = "Plant Condition")]
+        public PlantCondition? PlantCondition { get; set; }
+
         // Foreign Key to Garden
         [ForeignKey("Garden")]
         public int GardenId { get; set; }

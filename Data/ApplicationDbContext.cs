@@ -12,6 +12,10 @@ namespace GardenHub.Data
         }
 
         public DbSet<Garden> Gardens { get; set; }
-    
+        public DbSet<DailyRecord> DailyRecords { get; set; }
+        public DbSet<JournalEntry> JournalEntries { get; set; }
+        public DbSet<Equipment> Equipments { get; set; }
+
+
     }
 }

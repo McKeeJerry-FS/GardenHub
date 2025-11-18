@@ -25,10 +25,26 @@ namespace GardenHub.Models
 
         [Display(Name = "Grow Method")]
         public GrowMethod GardenGrowMethod { get; set; }
+        
+        [Required]
+        [Display(Name = "Garden Start Date")]
+        public DateTime StartDate { get; set; }
 
+        [Required]
+        [Display(Name = "Garden End Date")]
+        public DateTime EndDate { get; set; }
+
+
+        // Foreign key to AppUser
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
 
         public virtual AppUser? User { get; set; }
+
+
+        // Navigation properties
+        public virtual ICollection<DailyRecord> DailyRecords { get; set; } = new List<DailyRecord>();
+        public virtual ICollection<JournalEntry> JournalEntries { get; set; } = new List<JournalEntry>();
+        public virtual ICollection<Equipment> Equipments { get; set; } = new List<Equipment>();
     }
 }

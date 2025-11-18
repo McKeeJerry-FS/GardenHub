@@ -1,0 +1,38 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GardenHub.Models
+{
+    public class Equipment
+    {
+        [Key]
+        public int EquipmentId { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "Equipment name must be between 2 and 100 characters long.", MinimumLength = 2)]
+        public string EquipmentName { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(500, ErrorMessage = "Equipment description must be between 2 and 500 characters long.", MinimumLength = 2)]
+        public string EquipmentDescription { get; set; } = string.Empty;
+
+        [Display(Name = "Purchase Date")]
+        public DateTime PurchaseDate { get; set; }
+
+        [Display(Name = "Last Maintenance Date")]
+        public DateTime LastMaintenanceDate { get; set; }
+
+        // Foreign Key to Garden
+        [ForeignKey("Garden")]
+        public int GardenId { get; set; }
+        public virtual Garden Garden { get; set; } = null!;
+
+
+        // Foreign key to AppUser
+
+        [ForeignKey("User")]
+        public string UserId { get; set; } = string.Empty;
+
+        public virtual AppUser? User { get; set; }
+    }
+}

@@ -1,0 +1,119 @@
+﻿@model IEnumerable<GardenHub.Models.DailyRecord>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Garden)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InsideTemperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OutsideTemperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InsideHumidity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OutsideHumidity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InsideVPD)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OutsideVPD)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LightingOn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LightingOff)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LightingIntensity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WaterAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NutrientAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Garden.GardenDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InsideTemperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutsideTemperature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InsideHumidity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutsideHumidity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InsideVPD)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutsideVPD)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LightingOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LightingOff)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LightingIntensity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WaterAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NutrientAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RecordId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.RecordId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.RecordId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

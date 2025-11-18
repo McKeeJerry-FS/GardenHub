@@ -1,0 +1,101 @@
+﻿@model GardenHub.Models.DailyRecord
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>DailyRecord</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="GardenId" class="control-label"></label>
+                <select asp-for="GardenId" class ="form-control" asp-items="ViewBag.GardenId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedDate" class="control-label"></label>
+                <input asp-for="CreatedDate" class="form-control" />
+                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InsideTemperature" class="control-label"></label>
+                <input asp-for="InsideTemperature" class="form-control" />
+                <span asp-validation-for="InsideTemperature" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutsideTemperature" class="control-label"></label>
+                <input asp-for="OutsideTemperature" class="form-control" />
+                <span asp-validation-for="OutsideTemperature" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InsideHumidity" class="control-label"></label>
+                <input asp-for="InsideHumidity" class="form-control" />
+                <span asp-validation-for="InsideHumidity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutsideHumidity" class="control-label"></label>
+                <input asp-for="OutsideHumidity" class="form-control" />
+                <span asp-validation-for="OutsideHumidity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InsideVPD" class="control-label"></label>
+                <input asp-for="InsideVPD" class="form-control" />
+                <span asp-validation-for="InsideVPD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutsideVPD" class="control-label"></label>
+                <input asp-for="OutsideVPD" class="form-control" />
+                <span asp-validation-for="OutsideVPD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LightingOn" class="control-label"></label>
+                <input asp-for="LightingOn" class="form-control" />
+                <span asp-validation-for="LightingOn" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LightingOff" class="control-label"></label>
+                <input asp-for="LightingOff" class="form-control" />
+                <span asp-validation-for="LightingOff" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LightingIntensity" class="control-label"></label>
+                <input asp-for="LightingIntensity" class="form-control" />
+                <span asp-validation-for="LightingIntensity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WaterAmount" class="control-label"></label>
+                <input asp-for="WaterAmount" class="form-control" />
+                <span asp-validation-for="WaterAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NutrientAmount" class="control-label"></label>
+                <input asp-for="NutrientAmount" class="form-control" />
+                <span asp-validation-for="NutrientAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

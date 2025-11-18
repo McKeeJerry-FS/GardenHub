@@ -17,12 +17,32 @@ namespace GardenHub.Services
 
         public Task<DailyRecord> CreateDailyRecordAsync(DailyRecord dailyRecord)
         {
-            throw new NotImplementedException();
+            if (dailyRecord is not null) 
+            { 
+                _context.DailyRecords.Add(dailyRecord);
+                _context.SaveChangesAsync();
+                return Task.FromResult(dailyRecord);
+            } else {                 
+                throw new ArgumentNullException(nameof(dailyRecord), "DailyRecord cannot be null"); 
+            }
+
         }
 
-        public Task<bool> DeleteDailyRecordAsync(int recordId)
+        public async Task<bool> DeleteDailyRecordAsync(int recordId)
         {
-            throw new NotImplementedException();
+            if (recordId < 0)
+            {
+                return false;
+            }
+
+            var record = await _context.DailyRecords.FindAsync(recordId);
+            if (record != null)
+            {
+                _context.DailyRecords.Remove(record);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         public async Task<DailyRecord?> GetDailyRecordByIdAsync(int? recordId)
@@ -33,6 +53,18 @@ namespace GardenHub.Services
                 return record;
             }
             return null;
+        }
+
+        public async Task<DailyRecord?> GetDailyRecordByIdAsync(int recordId)
+        {
+            if (recordId >= 0)
+            {
+                var record = await _context.DailyRecords.FindAsync(recordId);
+                return record;
+            } else
+            {
+                return null;
+            }
         }
 
         public Task<List<DailyRecord>> GetDailyRecordsByConditionAsync(PlantCondition condition)
@@ -66,7 +98,21 @@ namespace GardenHub.Services
 
         public Task<DailyRecord?> UpdateDailyRecordAsync(int recordId, DailyRecord updatedRecord)
         {
-            throw new NotImplementedException();
+            if (recordId >= 0 && updatedRecord is not null)
+            {
+                var existingRecord = _context.DailyRecords.Find(recordId);
+                if (existingRecord != null)
+                {
+                    _context.Entry(existingRecord).CurrentValues.SetValues(updatedRecord);
+                    _context.SaveChangesAsync();
+                    return Task.FromResult<DailyRecord?>(existingRecord);
+                }
+                return Task.FromResult<DailyRecord?>(null);
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(updatedRecord), "Updated record cannot be null");
+            }
         }
     }
 }

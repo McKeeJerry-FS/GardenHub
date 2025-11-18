@@ -17,7 +17,9 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+//  DI Container registrations
 builder.Services.AddScoped<IGardenService, GardenService>();
+builder.Services.AddScoped<IDailyRecordService, IDailyRecordService>();
 
 var app = builder.Build();
 

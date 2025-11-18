@@ -10,5 +10,8 @@ namespace GardenHub.Data
             : base(options)
         {
         }
+
+        public DbSet<Garden> Gardens { get; set; }
+    
     }
 }

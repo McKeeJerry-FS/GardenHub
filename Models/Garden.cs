@@ -46,5 +46,6 @@ namespace GardenHub.Models
         public virtual ICollection<DailyRecord> DailyRecords { get; set; } = new List<DailyRecord>();
         public virtual ICollection<JournalEntry> JournalEntries { get; set; } = new List<JournalEntry>();
         public virtual ICollection<Equipment> Equipments { get; set; } = new List<Equipment>();
+        public virtual ICollection<Plant> Plants { get; set; } = new List<Plant>();
     }
 }

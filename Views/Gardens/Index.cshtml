@@ -1,0 +1,77 @@
+﻿@model IEnumerable<GardenHub.Models.Garden>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GardenName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GardenDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GardenLocation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GardenGrowMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GardenName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GardenDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GardenLocation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GardenGrowMethod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.GardenId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.GardenId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.GardenId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

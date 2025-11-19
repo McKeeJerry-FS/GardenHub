@@ -67,9 +67,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Notes)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -116,10 +113,7 @@
                 @Html.DisplayFor(modelItem => item.NutrientAmount)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
+                @(item.Notes.Length > 50 ? item.Notes.Substring(0, 50) + "..." : item.Notes)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.RecordId">Edit</a> |

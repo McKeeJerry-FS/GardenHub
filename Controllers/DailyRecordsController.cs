@@ -77,6 +77,19 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("RecordId,GardenId,CreatedDate,InsideTemperature,OutsideTemperature,InsideHumidity,OutsideHumidity,InsideVPD,OutsideVPD,LightingOn,LightingOff,LightingIntensity,WaterAmount,NutrientAmount,Notes,UserId")] DailyRecord dailyRecord)
         {
+            // Ensure DateTime is in UTC for PostgreSQL
+            if (dailyRecord.CreatedDate.Kind == DateTimeKind.Unspecified)
+            {
+                dailyRecord.CreatedDate = DateTime.SpecifyKind(dailyRecord.CreatedDate, DateTimeKind.Utc);
+            }
+            else if (dailyRecord.CreatedDate.Kind == DateTimeKind.Local)
+            {
+                dailyRecord.CreatedDate = dailyRecord.CreatedDate.ToUniversalTime();
+            }
+
+            ModelState.Remove("Garden"); // Remove the navigation property from validation
+            ModelState.Remove("User");   // Also remove User navigation property
+            
             if (ModelState.IsValid)
             {
                 await _dailyRecordService.CreateDailyRecordAsync(dailyRecord);
@@ -120,6 +133,19 @@ namespace GardenHub.Controllers
             {
                 return NotFound();
             }
+
+            // Ensure DateTime is in UTC for PostgreSQL
+            if (dailyRecord.CreatedDate.Kind == DateTimeKind.Unspecified)
+            {
+                dailyRecord.CreatedDate = DateTime.SpecifyKind(dailyRecord.CreatedDate, DateTimeKind.Utc);
+            }
+            else if (dailyRecord.CreatedDate.Kind == DateTimeKind.Local)
+            {
+                dailyRecord.CreatedDate = dailyRecord.CreatedDate.ToUniversalTime();
+            }
+
+            ModelState.Remove("Garden"); // Remove the navigation property from validation
+            ModelState.Remove("User");   // Also remove User navigation property
 
             if (ModelState.IsValid)
             {

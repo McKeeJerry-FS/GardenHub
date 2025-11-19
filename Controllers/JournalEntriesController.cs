@@ -9,6 +9,7 @@ using GardenHub.Data;
 using GardenHub.Models;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using GardenHub.Models.Enums;
 
 namespace GardenHub.Controllers
 {
@@ -16,17 +17,30 @@ namespace GardenHub.Controllers
     public class JournalEntriesController : Controller
     {
         private readonly IJournalEntriesService _journalEntriesService;
+        private readonly IImageService _imageService;
         
 
-        public JournalEntriesController(IJournalEntriesService journalEntriesService)
+        public JournalEntriesController(IJournalEntriesService journalEntriesService, IImageService imageService)
         {
             _journalEntriesService = journalEntriesService;
+            _imageService = imageService;
         }
 
         // GET: JournalEntries
         public async Task<IActionResult> Index()
         {
             var journalEntries = await _journalEntriesService.GetAllJournalEntriesAsync();
+            
+            // Convert image data for display
+            foreach (var entry in journalEntries)
+            {
+                entry.ImageFile = null;
+                ViewData[$"EntryImage_{entry.EntryId}"] = _imageService.ConvertByteArrayToFile(
+                    entry.ImageData, 
+                    entry.ImageType, 
+                    DefaultImage.GardenImage);
+            }
+            
             return View(journalEntries);
         }
 
@@ -44,11 +58,17 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
+            // Convert image data for display
+            ViewData["EntryImage"] = _imageService.ConvertByteArrayToFile(
+                journalEntry.ImageData, 
+                journalEntry.ImageType, 
+                DefaultImage.GardenImage);
+
             return View(journalEntry);
         }
 
         // GET: JournalEntries/Create
-        public async Task<IActionResult> Create()  // Remove 'Async' suffix
+        public async Task<IActionResult> Create()
         {
             ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription");
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id");
@@ -56,11 +76,9 @@ namespace GardenHub.Controllers
         }
 
         // POST: JournalEntries/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EntryId,GardenId,EntryDate,Content,UserId")] JournalEntry journalEntry)
+        public async Task<IActionResult> Create([Bind("EntryId,GardenId,EntryDate,Content,UserId,ImageFile")] JournalEntry journalEntry)
         {
             // Ensure DateTime is in UTC for PostgreSQL
             if (journalEntry.EntryDate.Kind == DateTimeKind.Unspecified)
@@ -72,8 +90,16 @@ namespace GardenHub.Controllers
                 journalEntry.EntryDate = journalEntry.EntryDate.ToUniversalTime();
             }
 
-            ModelState.Remove("Garden"); // Remove the navigation property from validation
-            ModelState.Remove("User");   // Also remove User navigation property
+            // Handle image upload
+            if (journalEntry.ImageFile != null)
+            {
+                journalEntry.ImageData = await _imageService.ConvertFileToByteArrayAsynC(journalEntry.ImageFile);
+                journalEntry.ImageType = journalEntry.ImageFile.ContentType;
+            }
+
+            ModelState.Remove("Garden");
+            ModelState.Remove("User");
+            ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)
             {
@@ -98,17 +124,22 @@ namespace GardenHub.Controllers
             {
                 return NotFound();
             }
+            
+            // Convert image data for display
+            ViewData["CurrentImage"] = _imageService.ConvertByteArrayToFile(
+                journalEntry.ImageData, 
+                journalEntry.ImageType, 
+                DefaultImage.GardenImage);
+            
             ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
             return View(journalEntry);
         }
 
         // POST: JournalEntries/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EntryId,GardenId,EntryDate,Content,UserId")] JournalEntry journalEntry)
+        public async Task<IActionResult> Edit(int id, [Bind("EntryId,GardenId,EntryDate,Content,UserId,ImageFile")] JournalEntry journalEntry)
         {
             if (id != journalEntry.EntryId)
             {
@@ -125,8 +156,26 @@ namespace GardenHub.Controllers
                 journalEntry.EntryDate = journalEntry.EntryDate.ToUniversalTime();
             }
 
-            ModelState.Remove("Garden"); // Remove the navigation property from validation
-            ModelState.Remove("User");   // Also remove User navigation property
+            // Handle image upload
+            if (journalEntry.ImageFile != null)
+            {
+                journalEntry.ImageData = await _imageService.ConvertFileToByteArrayAsynC(journalEntry.ImageFile);
+                journalEntry.ImageType = journalEntry.ImageFile.ContentType;
+            }
+            else
+            {
+                // Keep existing image if no new one uploaded
+                var existingEntry = await _journalEntriesService.GetJournalEntryByIdAsync(id);
+                if (existingEntry != null)
+                {
+                    journalEntry.ImageData = existingEntry.ImageData;
+                    journalEntry.ImageType = existingEntry.ImageType;
+                }
+            }
+
+            ModelState.Remove("Garden");
+            ModelState.Remove("User");
+            ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)
             {

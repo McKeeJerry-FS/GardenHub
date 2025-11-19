@@ -9,6 +9,7 @@ using GardenHub.Data;
 using GardenHub.Models;
 using Microsoft.AspNetCore.Authorization;
 using GardenHub.Services.Interfaces;
+using GardenHub.Models.Enums;
 
 namespace GardenHub.Controllers
 {
@@ -16,16 +17,29 @@ namespace GardenHub.Controllers
     public class GardensController : Controller
     {
         private readonly IGardenService _gardenService;
+        private readonly IImageService _imageService;
 
-        public GardensController(IGardenService gardenService)
+        public GardensController(IGardenService gardenService, IImageService imageService)
         {
             _gardenService = gardenService;
+            _imageService = imageService;
         }
 
         // GET: Gardens
         public async Task<IActionResult> Index()
         {
             var gardens = await _gardenService.GetAllGardens();
+            
+            // Convert image data for display
+            foreach (var garden in gardens)
+            {
+                garden.ImageFile = null; // Clear for display
+                ViewData[$"GardenImage_{garden.GardenId}"] = _imageService.ConvertByteArrayToFile(
+                    garden.ImageData, 
+                    garden.ImageType, 
+                    DefaultImage.GardenImage);
+            }
+            
             return View(gardens);
         }
 
@@ -43,6 +57,12 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
+            // Convert image data for display
+            ViewData["GardenImage"] = _imageService.ConvertByteArrayToFile(
+                garden.ImageData, 
+                garden.ImageType, 
+                DefaultImage.GardenImage);
+
             return View(garden);
         }
 
@@ -58,8 +78,17 @@ namespace GardenHub.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,UserId")] Garden garden)
+        public async Task<IActionResult> Create([Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,UserId,ImageFile")] Garden garden)
         {
+            // Handle image upload
+            if (garden.ImageFile != null)
+            {
+                garden.ImageData = await _imageService.ConvertFileToByteArrayAsynC(garden.ImageFile);
+                garden.ImageType = garden.ImageFile.ContentType;
+            }
+            
+            ModelState.Remove("ImageFile");
+            
             if (ModelState.IsValid)
             {
                 await _gardenService.CreateGarden(garden);
@@ -82,6 +111,13 @@ namespace GardenHub.Controllers
             {
                 return NotFound();
             }
+            
+            // Convert image data for display
+            ViewData["CurrentImage"] = _imageService.ConvertByteArrayToFile(
+                garden.ImageData, 
+                garden.ImageType, 
+                DefaultImage.GardenImage);
+            
             ViewData["UserId"] = new SelectList(await _gardenService.GetAllUsers(), "Id", "Id", garden.UserId);
             return View(garden);
         }
@@ -91,12 +127,31 @@ namespace GardenHub.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,UserId")] Garden garden)
+        public async Task<IActionResult> Edit(int id, [Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,UserId,ImageFile")] Garden garden)
         {
             if (id != garden.GardenId)
             {
                 return NotFound();
             }
+
+            // Handle image upload
+            if (garden.ImageFile != null)
+            {
+                garden.ImageData = await _imageService.ConvertFileToByteArrayAsynC(garden.ImageFile);
+                garden.ImageType = garden.ImageFile.ContentType;
+            }
+            else
+            {
+                // Keep existing image if no new one uploaded
+                var existingGarden = await _gardenService.GetGardenById(id);
+                if (existingGarden != null)
+                {
+                    garden.ImageData = existingGarden.ImageData;
+                    garden.ImageType = existingGarden.ImageType;
+                }
+            }
+            
+            ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)
             {

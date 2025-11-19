@@ -10,6 +10,15 @@
     <h4>Garden</h4>
     <hr />
     <dl class="row">
+        @if (ViewData["GardenImage"] != null && !string.IsNullOrEmpty(ViewData["GardenImage"]!.ToString()))
+        {
+            <dt class="col-sm-2">
+                Garden Image
+            </dt>
+            <dd class="col-sm-10">
+                <img src="@ViewData["GardenImage"]" alt="@Model.GardenName" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
+            </dd>
+        }
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.GardenName)
         </dt>
@@ -52,12 +61,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.EndDate)
         </dd>
-        <dt class = "col-sm-2">
+        @* <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.User.Id)
-        </dd>
+        </dd> *@
     </dl>
 </div>
 <div>

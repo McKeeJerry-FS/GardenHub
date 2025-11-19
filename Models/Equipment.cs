@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GardenHub.Models
 {
@@ -22,10 +23,16 @@ namespace GardenHub.Models
         [Display(Name = "Last Maintenance Date")]
         public DateTime LastMaintenanceDate { get; set; }
 
+        // Image Properties
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+        public byte[]? ImageData { get; set; }
+        public string? ImageType { get; set; }
+
         // Foreign Key to Garden
         [ForeignKey("Garden")]
         public int GardenId { get; set; }
-        public virtual Garden Garden { get; set; } = null!;
+        public Garden? Garden { get; set; }
 
 
         // Foreign key to AppUser

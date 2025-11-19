@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                Image
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.GardenName)
             </th>
             <th>
@@ -39,6 +42,12 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @if (ViewData[$"GardenImage_{item.GardenId}"] != null && !string.IsNullOrEmpty(ViewData[$"GardenImage_{item.GardenId}"]!.ToString()))
+                {
+                    <img src="@ViewData[$"GardenImage_{item.GardenId}"]" alt="@item.GardenName" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
+                }
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GardenName)
             </td>

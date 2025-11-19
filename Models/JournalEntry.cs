@@ -21,6 +21,12 @@ namespace GardenHub.Models
         [StringLength(1000)]
         public string Content { get; set; } = string.Empty;
 
+        // Image Properties
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+        public byte[]? ImageData { get; set; }
+        public string? ImageType { get; set; }
+
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
 

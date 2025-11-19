@@ -34,6 +34,12 @@ namespace GardenHub.Models
         [Display(Name = "Garden End Date")]
         public DateTime EndDate { get; set; }
 
+        // Image Properties
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+        public byte[]? ImageData { get; set; }
+        public string? ImageType { get; set; }
+
 
         // Foreign key to AppUser
         [ForeignKey("User")]

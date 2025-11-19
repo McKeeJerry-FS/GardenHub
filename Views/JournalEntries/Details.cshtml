@@ -10,6 +10,15 @@
     <h4>JournalEntry</h4>
     <hr />
     <dl class="row">
+        @if (ViewData["EntryImage"] != null && !string.IsNullOrEmpty(ViewData["EntryImage"]!.ToString()))
+        {
+            <dt class="col-sm-2">
+                Entry Image
+            </dt>
+            <dd class="col-sm-10">
+                <img src="@ViewData["EntryImage"]" alt="Journal Entry Image" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
+            </dd>
+        }
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Garden)
         </dt>
@@ -28,12 +37,6 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Content)
         </dd>
-        @* <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt> *@
-        @* <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd> *@
     </dl>
 </div>
 <div>

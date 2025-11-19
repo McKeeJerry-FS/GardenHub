@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="GardenId" />
             <div class="form-group">
@@ -53,6 +53,19 @@
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Current Image</label>
+                @if (ViewData["CurrentImage"] != null && !string.IsNullOrEmpty(ViewData["CurrentImage"]!.ToString()))
+                {
+                    <div class="mb-2">
+                        <img src="@ViewData["CurrentImage"]" alt="Current Garden Image" style="max-width: 200px; max-height: 200px;" class="img-thumbnail" />
+                    </div>
+                }
+                <label asp-for="ImageFile" class="control-label">Change Garden Image</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                <small class="form-text text-muted">Leave empty to keep current image</small>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

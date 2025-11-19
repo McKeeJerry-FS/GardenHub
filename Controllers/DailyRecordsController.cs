@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using GardenHub.Models;
 using GardenHub.Services.Interfaces;
 using GardenHub.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GardenHub.Controllers
 {
+    [Authorize]
     public class DailyRecordsController : Controller
     {
         private readonly IDailyRecordService _dailyRecordService;

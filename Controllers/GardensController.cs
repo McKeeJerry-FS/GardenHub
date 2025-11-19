@@ -83,7 +83,7 @@ namespace GardenHub.Controllers
             // Handle image upload
             if (garden.ImageFile != null)
             {
-                garden.ImageData = await _imageService.ConvertFileToByteArrayAsynC(garden.ImageFile);
+                garden.ImageData = await _imageService.ConvertFileToByteArrayAsync(garden.ImageFile);
                 garden.ImageType = garden.ImageFile.ContentType;
             }
             
@@ -137,7 +137,7 @@ namespace GardenHub.Controllers
             // Handle image upload
             if (garden.ImageFile != null)
             {
-                garden.ImageData = await _imageService.ConvertFileToByteArrayAsynC(garden.ImageFile);
+                garden.ImageData = await _imageService.ConvertFileToByteArrayAsync(garden.ImageFile);
                 garden.ImageType = garden.ImageFile.ContentType;
             }
             else

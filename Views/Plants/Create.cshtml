@@ -1,0 +1,84 @@
+﻿@model GardenHub.Models.Plant
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Plant</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PlantName" class="control-label"></label>
+                <input asp-for="PlantName" class="form-control" />
+                <span asp-validation-for="PlantName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantDescription" class="control-label"></label>
+                <input asp-for="PlantDescription" class="form-control" />
+                <span asp-validation-for="PlantDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantType" class="control-label"></label>
+                <select asp-for="PlantType" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.PlantType>()" class="form-control">
+                    <option value="">-- Select Plant Condition --</option>
+                </select>
+                <span asp-validation-for="PlantType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LightingRequirement" class="control-label"></label>
+                <select asp-for="LightingRequirement" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.LightingRequirement>()" class="form-control">
+                    <option value="">-- Select Lighting Requirement --</option>
+                </select>
+                <span asp-validation-for="LightingRequirement" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GrowMethod" class="control-label"></label>
+                <select asp-for="GrowMethod" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.GrowMethod>()" class="form-control">
+                    <option value="">-- Select Plant Grow Method --</option>
+                </select>
+                <span asp-validation-for="GrowMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatePlanted" class="control-label"></label>
+                <input asp-for="DatePlanted" class="form-control" />
+                <span asp-validation-for="DatePlanted" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantCondition" class="control-label"></label>
+                <select asp-for="PlantCondition" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.PlantCondition>()" class="form-control">
+                    <option value="">-- Select Plant Condition --</option>
+                </select>
+                <span asp-validation-for="PlantCondition" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageFile" class="control-label">Entry Image</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GardenId" class="control-label"></label>
+                <select asp-for="GardenId" class ="form-control" asp-items="ViewBag.GardenId"></select>
+            </div>
+            <div class="form-group visually-hidden">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

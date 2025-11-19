@@ -45,7 +45,7 @@ namespace GardenHub.Services
             }
         }
 
-        public async Task<byte[]> ConvertFileToByteArrayAsynC(IFormFile? file)
+        public async Task<byte[]> ConvertFileToByteArrayAsync(IFormFile? file)
         {
             try
             {

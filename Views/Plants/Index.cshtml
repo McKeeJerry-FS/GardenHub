@@ -1,0 +1,88 @@
+﻿@model IEnumerable<GardenHub.Models.Plant>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Image
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlantName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlantDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlantType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LightingRequirement)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GrowMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DatePlanted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlantCondition)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Garden)
+            </th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @if (ViewData[$"EntryImage_{item.PlantId}"] != null && !string.IsNullOrEmpty(ViewData[$"EntryImage_{item.PlantId}"]!.ToString()))
+                {
+                    <img src="@ViewData[$"EntryImage_{item.PlantId}"]" alt="Entry Image" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlantName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlantDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlantType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LightingRequirement)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GrowMethod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DatePlanted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlantCondition)
+            </td>
+            <td>
+                @(item.Garden != null ? Html.DisplayFor(modelItem => item.Garden.GardenDescription) : "")
+            </td>
+            
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PlantId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PlantId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PlantId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

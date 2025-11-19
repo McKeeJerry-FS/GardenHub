@@ -4,26 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using GardenHub.Data;
 using GardenHub.Models;
+using GardenHub.Services.Interfaces;
+using GardenHub.Models.Enums;
 
 namespace GardenHub.Controllers
 {
     public class DailyRecordsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDailyRecordService _dailyRecordService;
 
-        public DailyRecordsController(ApplicationDbContext context)
+        public DailyRecordsController(IDailyRecordService dailyRecordService)
         {
-            _context = context;
+            _dailyRecordService = dailyRecordService;
         }
 
         // GET: DailyRecords
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(PlantCondition? condition)
         {
-            var applicationDbContext = _context.DailyRecords.Include(d => d.Garden).Include(d => d.User);
-            return View(await applicationDbContext.ToListAsync());
+            IEnumerable<DailyRecord> records;
+            if (condition.HasValue)
+            {
+                records = await _dailyRecordService.GetDailyRecordsByConditionAsync(condition.Value);
+            }
+            else
+            {
+                records = await _dailyRecordService.GetAllDailyRecordsAsync();
+            }
+
+            // Build SelectList of PlantCondition enum values for the view
+            var conditionItems = Enum.GetValues(typeof(PlantCondition))
+                                     .Cast<PlantCondition>()
+                                     .Select(c => new { Id = (int)c, Name = c.ToString() })
+                                     .ToList();
+
+            ViewData["Condition"] = new SelectList(conditionItems, "Id", "Name", condition.HasValue ? (int)condition.Value : (int?)null);
+
+            return View(records);
         }
 
         // GET: DailyRecords/Details/5
@@ -34,10 +51,7 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
-            var dailyRecord = await _context.DailyRecords
-                .Include(d => d.Garden)
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.RecordId == id);
+            var dailyRecord = await _dailyRecordService.GetDailyRecordByIdAsync(id.Value);
             if (dailyRecord == null)
             {
                 return NotFound();
@@ -47,28 +61,30 @@ namespace GardenHub.Controllers
         }
 
         // GET: DailyRecords/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["GardenId"] = new SelectList(_context.Gardens, "GardenId", "GardenDescription");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var gardens = await _dailyRecordService.GetAllGardensAsync();
+            var users = await _dailyRecordService.GetAllUsersAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription");
+            ViewData["UserId"] = new SelectList(users, "Id", "Id");
             return View();
         }
 
         // POST: DailyRecords/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("RecordId,GardenId,CreatedDate,InsideTemperature,OutsideTemperature,InsideHumidity,OutsideHumidity,InsideVPD,OutsideVPD,LightingOn,LightingOff,LightingIntensity,WaterAmount,NutrientAmount,Notes,UserId")] DailyRecord dailyRecord)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(dailyRecord);
-                await _context.SaveChangesAsync();
+                await _dailyRecordService.CreateDailyRecordAsync(dailyRecord);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GardenId"] = new SelectList(_context.Gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", dailyRecord.UserId);
+
+            var gardens = await _dailyRecordService.GetAllGardensAsync();
+            var users = await _dailyRecordService.GetAllUsersAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
 
@@ -80,19 +96,20 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
-            var dailyRecord = await _context.DailyRecords.FindAsync(id);
+            var dailyRecord = await _dailyRecordService.GetDailyRecordByIdAsync(id.Value);
             if (dailyRecord == null)
             {
                 return NotFound();
             }
-            ViewData["GardenId"] = new SelectList(_context.Gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", dailyRecord.UserId);
+
+            var gardens = await _dailyRecordService.GetAllGardensAsync();
+            var users = await _dailyRecordService.GetAllUsersAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
 
         // POST: DailyRecords/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("RecordId,GardenId,CreatedDate,InsideTemperature,OutsideTemperature,InsideHumidity,OutsideHumidity,InsideVPD,OutsideVPD,LightingOn,LightingOff,LightingIntensity,WaterAmount,NutrientAmount,Notes,UserId")] DailyRecord dailyRecord)
@@ -104,26 +121,18 @@ namespace GardenHub.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var updated = await _dailyRecordService.UpdateDailyRecordAsync(id, dailyRecord);
+                if (updated == null)
                 {
-                    _context.Update(dailyRecord);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DailyRecordExists(dailyRecord.RecordId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GardenId"] = new SelectList(_context.Gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", dailyRecord.UserId);
+
+            var gardens = await _dailyRecordService.GetAllGardensAsync();
+            var users = await _dailyRecordService.GetAllUsersAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
 
@@ -135,10 +144,7 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
-            var dailyRecord = await _context.DailyRecords
-                .Include(d => d.Garden)
-                .Include(d => d.User)
-                .FirstOrDefaultAsync(m => m.RecordId == id);
+            var dailyRecord = await _dailyRecordService.GetDailyRecordByIdAsync(id.Value);
             if (dailyRecord == null)
             {
                 return NotFound();
@@ -152,19 +158,18 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var dailyRecord = await _context.DailyRecords.FindAsync(id);
-            if (dailyRecord != null)
+            var deleted = await _dailyRecordService.DeleteDailyRecordAsync(id);
+            if (!deleted)
             {
-                _context.DailyRecords.Remove(dailyRecord);
+                return NotFound();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DailyRecordExists(int id)
+        private async Task<bool> DailyRecordExists(int id)
         {
-            return _context.DailyRecords.Any(e => e.RecordId == id);
+            var record = await _dailyRecordService.GetDailyRecordByIdAsync(id);
+            return record != null;
         }
     }
 }

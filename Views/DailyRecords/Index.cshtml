@@ -9,6 +9,19 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<p>
+    <form method="get" class="form-inline">
+        <div class="form-group">
+            <label for="condition" class="mr-2">Filter by condition:</label>
+            <select id="condition" name="condition" class="form-control mr-2" asp-items="ViewBag.Condition">
+                <option value="">All</option>
+            </select>
+            <input type="submit" value="Filter" class="btn btn-secondary" />
+        </div>
+    </form>
+</p>
+
 <table class="table">
     <thead>
         <tr>

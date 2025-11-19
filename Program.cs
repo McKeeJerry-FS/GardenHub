@@ -19,7 +19,7 @@ builder.Services.AddControllersWithViews();
 
 //  DI Container registrations
 builder.Services.AddScoped<IGardenService, GardenService>();
-builder.Services.AddScoped<IDailyRecordService, IDailyRecordService>();
+builder.Services.AddScoped<IDailyRecordService, DailyRecordsService>();
 
 var app = builder.Build();
 

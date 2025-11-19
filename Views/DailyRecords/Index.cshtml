@@ -77,40 +77,40 @@
                 @(item.Garden?.GardenDescription ?? "N/A")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
+                @Html.DisplayFor(modelItem => item.CreatedDate) 
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.InsideTemperature)
+                    @Html.DisplayFor(modelItem => item.InsideTemperature) &deg;F
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OutsideTemperature)
+                    @Html.DisplayFor(modelItem => item.OutsideTemperature) &deg;F
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.InsideHumidity)
+                @Html.DisplayFor(modelItem => item.InsideHumidity)%
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OutsideHumidity)
+                @Html.DisplayFor(modelItem => item.OutsideHumidity)%
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.InsideVPD)
+                @Html.DisplayFor(modelItem => item.InsideVPD) kPa
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OutsideVPD)
+                @Html.DisplayFor(modelItem => item.OutsideVPD) kPa
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LightingOn)
+                @Html.DisplayFor(modelItem => item.LightingOn) Hrs
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LightingOff)
+                @Html.DisplayFor(modelItem => item.LightingOff) Hrs
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LightingIntensity)
+                @Html.DisplayFor(modelItem => item.LightingIntensity)%
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.WaterAmount)
+                @Html.DisplayFor(modelItem => item.WaterAmount) L
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NutrientAmount)
+                @Html.DisplayFor(modelItem => item.NutrientAmount) mL
             </td>
             <td>
                 @(item.Notes.Length > 50 ? item.Notes.Substring(0, 50) + "..." : item.Notes)

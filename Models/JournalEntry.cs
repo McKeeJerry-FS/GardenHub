@@ -11,7 +11,7 @@ namespace GardenHub.Models
         [ForeignKey("Garden")]
         public int GardenId { get; set; }
 
-        [Required]
+        
         public Garden Garden { get; set; } = null!;
 
         [Required]

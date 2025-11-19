@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GardenHub.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -17,8 +18,15 @@ namespace GardenHub.Models
         [StringLength(500, ErrorMessage = "Equipment description must be between 2 and 500 characters long.", MinimumLength = 2)]
         public string EquipmentDescription { get; set; } = string.Empty;
 
+        [Required]
+        [Display(Name = "Equipment Type")]
+        public EquipmentType EquipmentType { get; set; }
+
         [Display(Name = "Purchase Date")]
         public DateTime PurchaseDate { get; set; }
+
+        [Display(Name = "Purchase Price")]
+        public decimal PurchasePrice { get; set; }
 
         [Display(Name = "Last Maintenance Date")]
         public DateTime LastMaintenanceDate { get; set; }

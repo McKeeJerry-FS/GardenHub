@@ -23,6 +23,7 @@ builder.Services.AddScoped<IGardenService, GardenService>();
 builder.Services.AddScoped<IDailyRecordService, DailyRecordsService>();
 builder.Services.AddScoped<IJournalEntriesService, JournalEntriesService>();
 builder.Services.AddScoped<IPlantService, PlantService>();
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 
 var app = builder.Build();
 

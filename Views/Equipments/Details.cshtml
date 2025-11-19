@@ -1,0 +1,75 @@
+﻿@model GardenHub.Models.Equipment
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Equipment</h4>
+    <hr />
+    <dl class="row">
+        @if (ViewData["EquipmentImage"] != null && !string.IsNullOrEmpty(ViewData["EquipmentImage"]!.ToString()))
+        {
+            <dt class="col-sm-2">
+                Equipment Image
+            </dt>
+            <dd class="col-sm-10">
+                <img src="@ViewData["EquipmentImage"]" alt="Equipment Image" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
+            </dd>
+        }
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EquipmentName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EquipmentName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EquipmentDescription)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EquipmentDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PurchaseDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PurchaseDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastMaintenanceDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastMaintenanceDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageData)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ImageData)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ImageType)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Garden)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Garden.GardenDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.EquipmentId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GardenHub.Models;
 using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GardenHub.Controllers
 {
+    [Authorize]
     public class PlantsController : Controller
     {
         private readonly IPlantService _plantService;

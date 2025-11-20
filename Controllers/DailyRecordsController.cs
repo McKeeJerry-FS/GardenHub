@@ -194,6 +194,35 @@ namespace GardenHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: DailyRecords/Dashboard
+        public async Task<IActionResult> Dashboard(int? gardenId, int days = 30)
+        {
+            IEnumerable<DailyRecord> records;
+            
+            // Filter by garden if specified
+            if (gardenId.HasValue)
+            {
+                records = await _dailyRecordService.GetDailyRecordsByGardenIdAsync(gardenId.Value);
+            }
+            else
+            {
+                records = await _dailyRecordService.GetAllDailyRecordsAsync();
+            }
+
+            // Filter by date range
+            var startDate = DateTime.UtcNow.AddDays(-days);
+            records = records.Where(r => r.CreatedDate >= startDate)
+                            .OrderBy(r => r.CreatedDate)
+                            .ToList();
+
+            // Get gardens for filter dropdown
+            var gardens = await _dailyRecordService.GetAllGardensAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", gardenId);
+            ViewData["Days"] = days;
+            
+            return View(records);
+        }
+
         private async Task<bool> DailyRecordExists(int id)
         {
             var record = await _dailyRecordService.GetDailyRecordByIdAsync(id);

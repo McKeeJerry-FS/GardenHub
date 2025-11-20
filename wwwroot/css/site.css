@@ -394,3 +394,685 @@ body {
     display: none !important;
   }
 }
+
+/* ===== Non-Responsive Dashboard Styles ===== */
+
+/* Fixed container for dashboard */
+.dashboard-fixed-container {
+  width: 1400px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-width: 1200px;
+}
+
+/* Fixed statistics cards row */
+.dashboard-stats-row {
+  display: flex;
+  gap: 16px;
+}
+
+.dashboard-stat-item {
+  flex: 0 0 calc(20% - 12.8px);
+  min-width: 200px;
+}
+
+/* Fixed environmental metrics row */
+.dashboard-env-row {
+  display: flex;
+  gap: 20px;
+  text-align: center;
+}
+
+.dashboard-env-item {
+  flex: 0 0 calc(25% - 15px);
+  min-width: 250px;
+}
+
+/* Fixed charts row */
+.dashboard-charts-row {
+  display: flex;
+  gap: 16px;
+}
+
+.dashboard-chart-item {
+  flex: 0 0 calc(33.333% - 10.67px);
+  min-width: 400px;
+}
+
+/* Fixed gardens grid */
+.dashboard-gardens-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.dashboard-garden-card {
+  min-width: 200px;
+}
+
+/* Fixed activity grids */
+.dashboard-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.dashboard-activity-card {
+  min-width: 200px;
+}
+
+/* Fixed journal grid */
+.dashboard-journal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.dashboard-journal-card {
+  min-width: 400px;
+}
+
+/* Override Bootstrap responsive classes for dashboard */
+.dashboard-fixed-container .col-6,
+.dashboard-fixed-container .col-sm-4,
+.dashboard-fixed-container .col-md-4,
+.dashboard-fixed-container .col-lg-2,
+.dashboard-fixed-container .col-lg-3,
+.dashboard-fixed-container .col-xl-2 {
+  flex: none !important;
+  max-width: none !important;
+}
+
+/* Fixed table display */
+.dashboard-fixed-container .table-responsive {
+  overflow-x: auto;
+  min-width: 100%;
+}
+
+/* Remove flex wrapping */
+.dashboard-fixed-container .flex-column,
+.dashboard-fixed-container .flex-md-row,
+.dashboard-fixed-container .flex-sm-row {
+  flex-direction: row !important;
+}
+
+/* Fixed navigation tabs */
+.dashboard-fixed-container .nav-tabs .nav-item {
+  flex: 0 0 auto;
+}
+
+.dashboard-fixed-container .nav-tabs {
+  flex-wrap: nowrap;
+}
+
+/* Ensure icons are always visible */
+.dashboard-fixed-container .d-sm-none {
+  display: inline !important;
+}
+
+.dashboard-fixed-container .d-none.d-sm-inline {
+  display: inline !important;
+}
+
+/* Fixed card heights */
+.dashboard-fixed-container .chart-card {
+  min-height: 350px;
+  height: 350px;
+}
+
+.dashboard-stat-card .card-body {
+  padding: 2rem;
+}
+
+.stats-card-icon {
+  font-size: 3rem !important;
+}
+
+.stats-card-number {
+  font-size: 3rem !important;
+}
+
+/* Horizontal scrolling if content exceeds viewport */
+body {
+  overflow-x: auto;
+  min-width: 1200px;
+}
+
+/* Fixed display styles */
+.dashboard-fixed-container .display-4 {
+  font-size: 3.5rem !important;
+}
+
+.dashboard-fixed-container .display-6 {
+  font-size: 2.5rem !important;
+}
+
+/* Remove responsive hiding classes */
+.dashboard-fixed-container .d-none.d-md-table-cell,
+.dashboard-fixed-container .d-none.d-lg-table-cell {
+  display: table-cell !important;
+}
+
+/* Keep card hover effects */
+.dashboard-fixed-container .card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.dashboard-fixed-container .card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* ===== Non-Responsive Garden Dashboard Styles ===== */
+
+/* Fixed container for garden dashboard */
+.garden-dashboard-fixed-container {
+  width: 1400px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-width: 1200px;
+}
+
+/* Garden Overview Layout */
+.garden-overview-layout {
+  display: flex;
+  gap: 30px;
+}
+
+.garden-overview-image {
+  flex: 0 0 400px;
+  min-width: 400px;
+}
+
+.garden-overview-details {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Fixed stats row */
+.garden-stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+.garden-stat-card {
+  flex: 0 0 calc(25% - 15px);
+  min-width: 300px;
+}
+
+.garden-stat-card .card-body {
+  padding: 2rem;
+}
+
+.garden-stat-card .display-5 {
+  font-size: 3rem;
+}
+
+/* Fixed navigation tabs */
+.garden-nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.garden-nav-tabs .nav-item {
+  flex: 0 0 auto;
+}
+
+.garden-nav-tabs .nav-link {
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.garden-nav-tabs .nav-link i {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Fixed plants grid */
+.garden-plants-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.garden-plant-card {
+  min-width: 300px;
+}
+
+/* Fixed records table */
+.garden-records-table {
+  width: 100%;
+  min-width: 1200px;
+  table-layout: fixed;
+}
+
+.garden-records-table th,
+.garden-records-table td {
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+.garden-records-table th:nth-child(1),
+.garden-records-table td:nth-child(1) { width: 120px; }
+.garden-records-table th:nth-child(2),
+.garden-records-table td:nth-child(2) { width: 120px; }
+.garden-records-table th:nth-child(3),
+.garden-records-table td:nth-child(3) { width: 120px; }
+.garden-records-table th:nth-child(4),
+.garden-records-table td:nth-child(4) { width: 130px; }
+.garden-records-table th:nth-child(5),
+.garden-records-table td:nth-child(5) { width: 130px; }
+.garden-records-table th:nth-child(6),
+.garden-records-table td:nth-child(6) { width: 100px; }
+.garden-records-table th:nth-child(7),
+.garden-records-table td:nth-child(7) { width: 100px; }
+.garden-records-table th:nth-child(8),
+.garden-records-table td:nth-child(8) { width: 200px; }
+
+/* Fixed journal grid */
+.garden-journal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.garden-journal-card {
+  min-width: 400px;
+}
+
+/* Fixed equipment grid */
+.garden-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.garden-equipment-card {
+  min-width: 300px;
+}
+
+/* Override Bootstrap responsive classes for garden dashboard */
+.garden-dashboard-fixed-container .col-6,
+.garden-dashboard-fixed-container .col-sm-6,
+.garden-dashboard-fixed-container .col-md-3,
+.garden-dashboard-fixed-container .col-md-4,
+.garden-dashboard-fixed-container .col-md-6,
+.garden-dashboard-fixed-container .col-lg-3,
+.garden-dashboard-fixed-container .col-lg-4,
+.garden-dashboard-fixed-container .col-12 {
+  flex: none !important;
+  max-width: none !important;
+}
+
+/* Remove flex direction changes */
+.garden-dashboard-fixed-container .flex-column,
+.garden-dashboard-fixed-container .flex-md-row,
+.garden-dashboard-fixed-container .flex-sm-row {
+  flex-direction: row !important;
+}
+
+/* Always show all content */
+.garden-dashboard-fixed-container .d-none.d-sm-inline,
+.garden-dashboard-fixed-container .d-none.d-md-table-cell,
+.garden-dashboard-fixed-container .d-none.d-lg-table-cell,
+.garden-dashboard-fixed-container .d-md-none {
+  display: inline !important;
+}
+
+.garden-dashboard-fixed-container .d-none.d-md-table-cell,
+.garden-dashboard-fixed-container .d-none.d-lg-table-cell {
+  display: table-cell !important;
+}
+
+/* Fixed buttons layout */
+.garden-dashboard-fixed-container .d-flex.flex-column.flex-sm-row {
+  flex-direction: row !important;
+}
+
+/* Fixed gap spacing */
+.garden-dashboard-fixed-container .gap-2,
+.garden-dashboard-fixed-container .gap-3 {
+  gap: 1rem !important;
+}
+
+/* Card hover effects */
+.garden-dashboard-fixed-container .card:hover {
+  transform: translateY(-3px);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.garden-dashboard-fixed-container .card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Fixed table responsive behavior */
+.garden-dashboard-fixed-container .table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure horizontal scrolling for garden dashboard */
+.garden-dashboard-fixed-container {
+  overflow-x: auto;
+}
+
+/* Fixed display sizing */
+.garden-dashboard-fixed-container .display-4 {
+  font-size: 3.5rem !important;
+}
+
+.garden-dashboard-fixed-container h4 {
+  font-size: 1.75rem !important;
+}
+
+.garden-dashboard-fixed-container h5 {
+  font-size: 1.25rem !important;
+}
+
+/* Ensure proper card footer layout */
+.garden-dashboard-fixed-container .card-footer {
+  display: flex !important;
+  gap: 0.5rem;
+}
+
+/* Fixed button sizes */
+.garden-dashboard-fixed-container .btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+.garden-dashboard-fixed-container .btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Remove responsive alignment changes */
+.garden-dashboard-fixed-container .align-items-start,
+.garden-dashboard-fixed-container .align-items-md-center,
+.garden-dashboard-fixed-container .align-items-sm-center {
+  align-items: center !important;
+}
+
+.garden-dashboard-fixed-container .justify-content-start {
+  justify-content: space-between !important;
+}
+
+/* ===== Non-Responsive Daily Records Dashboard Styles ===== */
+
+/* Fixed container for records dashboard */
+.records-dashboard-fixed-container {
+  width: 1400px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-width: 1200px;
+}
+
+/* Fixed filter form layout */
+.records-filter-form {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.records-filter-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.records-filter-group:nth-child(1) {
+  flex: 0 0 400px;
+}
+
+.records-filter-group:nth-child(2) {
+  flex: 0 0 250px;
+}
+
+.records-filter-group:nth-child(3) {
+  flex: 0 0 200px;
+}
+
+.records-filter-group:nth-child(4) {
+  flex: 0 0 250px;
+}
+
+/* Fixed statistics cards row */
+.records-stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+.records-stat-card {
+  flex: 0 0 calc(25% - 15px);
+  min-width: 300px;
+}
+
+.records-stat-card .card-body {
+  padding: 2rem;
+}
+
+.records-stat-card h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.records-stat-card h6 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Fixed chart container */
+.records-chart-container {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.records-chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Fixed records table */
+.records-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.records-table {
+  width: 100%;
+  min-width: 1200px;
+  table-layout: fixed;
+}
+
+.records-table th,
+.records-table td {
+  padding: 0.75rem;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+/* Fixed column widths for records table */
+.records-table th:nth-child(1),
+.records-table td:nth-child(1) { width: 130px; }
+.records-table th:nth-child(2),
+.records-table td:nth-child(2) { width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.records-table th:nth-child(3),
+.records-table td:nth-child(3) { width: 120px; text-align: center; }
+.records-table th:nth-child(4),
+.records-table td:nth-child(4) { width: 120px; text-align: center; }
+.records-table th:nth-child(5),
+.records-table td:nth-child(5) { width: 140px; text-align: center; }
+.records-table th:nth-child(6),
+.records-table td:nth-child(6) { width: 140px; text-align: center; }
+.records-table th:nth-child(7),
+.records-table td:nth-child(7) { width: 110px; text-align: center; }
+.records-table th:nth-child(8),
+.records-table td:nth-child(8) { width: 110px; text-align: center; }
+.records-table th:nth-child(9),
+.records-table td:nth-child(9) { width: 130px; text-align: center; }
+
+/* Override Bootstrap responsive classes for records dashboard */
+.records-dashboard-fixed-container .row {
+  display: block !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.records-dashboard-fixed-container .col-12,
+.records-dashboard-fixed-container .col-md-3,
+.records-dashboard-fixed-container .col-md-4,
+.records-dashboard-fixed-container .col-md-2 {
+  flex: none !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Remove responsive grid gaps */
+.records-dashboard-fixed-container .g-3 {
+  gap: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Card styling */
+.records-dashboard-fixed-container .card {
+  margin-bottom: 0;
+}
+
+.records-dashboard-fixed-container .card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.records-dashboard-fixed-container .card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Fixed display sizing */
+.records-dashboard-fixed-container .display-5 {
+  font-size: 3rem !important;
+}
+
+.records-dashboard-fixed-container h5 {
+  font-size: 1.5rem !important;
+}
+
+/* Button styling */
+.records-dashboard-fixed-container .btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.records-dashboard-fixed-container .btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Icon sizing in buttons */
+.records-dashboard-fixed-container .btn i {
+  margin-right: 0.5rem;
+}
+
+/* Form control sizing */
+.records-dashboard-fixed-container .form-select,
+.records-dashboard-fixed-container .form-control {
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.records-dashboard-fixed-container .form-label {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Alert styling */
+.records-dashboard-fixed-container .alert {
+  font-size: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+/* Card header styling */
+.records-dashboard-fixed-container .card-header {
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+}
+
+.records-dashboard-fixed-container .card-body {
+  padding: 1.25rem;
+}
+
+/* DataTables override for non-responsive */
+.records-dashboard-fixed-container .dataTables_wrapper {
+  width: 100%;
+}
+
+.records-dashboard-fixed-container .dataTables_wrapper .dataTables_length,
+.records-dashboard-fixed-container .dataTables_wrapper .dataTables_filter,
+.records-dashboard-fixed-container .dataTables_wrapper .dataTables_info,
+.records-dashboard-fixed-container .dataTables_wrapper .dataTables_paginate {
+  font-size: 1rem;
+}
+
+/* Table action buttons */
+.records-table td .btn {
+  margin-right: 0.25rem;
+}
+
+.records-table td .btn:last-child {
+  margin-right: 0;
+}
+
+/* Ensure proper spacing */
+.records-dashboard-fixed-container .mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Remove any flex wrapping */
+.records-dashboard-fixed-container .flex-wrap {
+  flex-wrap: nowrap !important;
+}
+
+/* Chart legend styling */
+.records-chart-container .chartjs-legend {
+  font-size: 14px;
+}
+
+/* Horizontal scroll for container if needed */
+.records-dashboard-fixed-container {
+  overflow-x: auto;
+}
+
+/* Statistics card icon sizing */
+.records-stat-card i {
+  font-size: 2.5rem !important;
+}
+
+/* Table hover effect */
+.records-table tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.025);
+  cursor: pointer;
+}
+
+/* Ensure table wrapper scrolls horizontally if needed */
+.records-table-wrapper {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fixed card heights for consistency */
+.records-stat-card .card {
+  min-height: 180px;
+}
+
+.records-dashboard-fixed-container .card.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}

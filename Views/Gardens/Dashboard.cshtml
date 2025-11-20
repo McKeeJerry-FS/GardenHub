@@ -4,15 +4,15 @@
     ViewData["Title"] = "Garden Dashboard";
 }
 
-<div class="container-fluid">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-4 mb-0">@Model.GardenName Dashboard</h1>
-        <div class="d-flex flex-column flex-sm-row gap-2">
+        <div class="d-flex gap-2">
             <a asp-action="Edit" asp-route-id="@Model.GardenId" class="btn btn-warning">
-                <i class="bi bi-pencil"></i> <span class="d-none d-sm-inline">Edit Garden</span>
+                <i class="bi bi-pencil"></i> Edit Garden
             </a>
             <a asp-action="Index" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> <span class="d-none d-sm-inline">Back to Gardens</span>
+                <i class="bi bi-arrow-left"></i> Back to Gardens
             </a>
         </div>
     </div>
@@ -23,11 +23,11 @@
             <h3 class="mb-0">Garden Overview</h3>
         </div>
         <div class="card-body">
-            <div class="row g-3">
-                <div class="col-12 col-md-4 text-center">
+            <div class="garden-overview-layout">
+                <div class="garden-overview-image">
                     <img src="@ViewData["GardenImage"]" alt="@Model.GardenName" class="img-fluid rounded shadow-sm" style="max-height: 300px; object-fit: cover; width: 100%;" />
                 </div>
-                <div class="col-12 col-md-8">
+                <div class="garden-overview-details">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Description:</dt>
                         <dd class="col-sm-8">@Model.GardenDescription</dd>
@@ -53,8 +53,8 @@
     </div>
 
     <!-- Stats Row -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
+    <div class="garden-stats-row mb-4">
+        <div class="garden-stat-card">
             <div class="card text-white bg-success shadow h-100">
                 <div class="card-body text-center p-3">
                     <h2 class="display-5 mb-2">@Model.Plants.Count</h2>
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="garden-stat-card">
             <div class="card text-white bg-info shadow h-100">
                 <div class="card-body text-center p-3">
                     <h2 class="display-5 mb-2">@Model.DailyRecords.Count</h2>
@@ -70,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="garden-stat-card">
             <div class="card text-white bg-warning shadow h-100">
                 <div class="card-body text-center p-3">
                     <h2 class="display-5 mb-2">@Model.JournalEntries.Count</h2>
@@ -78,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="garden-stat-card">
             <div class="card text-white bg-danger shadow h-100">
                 <div class="card-body text-center p-3">
                     <h2 class="display-5 mb-2">@Model.Equipments.Count</h2>
@@ -89,25 +89,25 @@
     </div>
 
     <!-- Tabs for Different Sections -->
-    <ul class="nav nav-tabs flex-column flex-sm-row" id="dashboardTabs" role="tablist">
+    <ul class="nav nav-tabs garden-nav-tabs" id="dashboardTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="plants-tab" data-bs-toggle="tab" data-bs-target="#plants" type="button" role="tab" aria-controls="plants" aria-selected="true">
-                <i class="bi bi-flower3 d-md-none"></i> Plants (@Model.Plants.Count)
+                <i class="bi bi-flower3"></i> Plants (@Model.Plants.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="records-tab" data-bs-toggle="tab" data-bs-target="#records" type="button" role="tab" aria-controls="records" aria-selected="false">
-                <i class="bi bi-clipboard-data d-md-none"></i> Records (@Model.DailyRecords.Count)
+                <i class="bi bi-clipboard-data"></i> Records (@Model.DailyRecords.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="journal-tab" data-bs-toggle="tab" data-bs-target="#journal" type="button" role="tab" aria-controls="journal" aria-selected="false">
-                <i class="bi bi-journal-text d-md-none"></i> Journal (@Model.JournalEntries.Count)
+                <i class="bi bi-journal-text"></i> Journal (@Model.JournalEntries.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment" type="button" role="tab" aria-controls="equipment" aria-selected="false">
-                <i class="bi bi-tools d-md-none"></i> Equipment (@Model.Equipments.Count)
+                <i class="bi bi-tools"></i> Equipment (@Model.Equipments.Count)
             </button>
         </li>
     </ul>
@@ -115,7 +115,7 @@
     <div class="tab-content border border-top-0 p-3" id="dashboardTabsContent">
         <!-- Plants Tab -->
         <div class="tab-pane fade show active" id="plants" role="tabpanel" aria-labelledby="plants-tab">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Plants in this Garden</h4>
                 <a asp-controller="Plants" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-success btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Plant
@@ -123,10 +123,10 @@
             </div>
             @if (Model.Plants.Any())
             {
-                <div class="row g-3">
+                <div class="garden-plants-grid">
                     @foreach (var plant in Model.Plants.OrderBy(p => p.PlantName))
                     {
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="garden-plant-card">
                             <div class="card h-100 shadow-sm">
                                 <img src="@ViewData[$"PlantImage_{plant.PlantId}"]" class="card-img-top" alt="@plant.PlantName" style="height: 200px; object-fit: cover;" />
                                 <div class="card-body">
@@ -163,7 +163,7 @@
 
         <!-- Daily Records Tab -->
         <div class="tab-pane fade" id="records" role="tabpanel" aria-labelledby="records-tab">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Daily Records</h4>
                 <a asp-controller="DailyRecords" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-info btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Record
@@ -172,16 +172,16 @@
             @if (Model.DailyRecords.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover garden-records-table">
                         <thead class="table-dark">
                             <tr>
                                 <th>Date</th>
-                                <th class="d-none d-md-table-cell">Inside Temp</th>
-                                <th class="d-none d-lg-table-cell">Outside Temp</th>
-                                <th class="d-none d-md-table-cell">Inside Humidity</th>
-                                <th class="d-none d-lg-table-cell">Outside Humidity</th>
-                                <th class="d-none d-lg-table-cell">Water</th>
-                                <th class="d-none d-lg-table-cell">Nutrients</th>
+                                <th>Inside Temp</th>
+                                <th>Outside Temp</th>
+                                <th>Inside Humidity</th>
+                                <th>Outside Humidity</th>
+                                <th>Water</th>
+                                <th>Nutrients</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -190,14 +190,14 @@
                             {
                                 <tr>
                                     <td>@record.CreatedDate.ToShortDateString()</td>
-                                    <td class="d-none d-md-table-cell">@record.InsideTemperature°F</td>
-                                    <td class="d-none d-lg-table-cell">@record.OutsideTemperature°F</td>
-                                    <td class="d-none d-md-table-cell">@record.InsideHumidity%</td>
-                                    <td class="d-none d-lg-table-cell">@record.OutsideHumidity%</td>
-                                    <td class="d-none d-lg-table-cell">@record.WaterAmount</td>
-                                    <td class="d-none d-lg-table-cell">@record.NutrientAmount</td>
+                                    <td>@record.InsideTemperature°F</td>
+                                    <td>@record.OutsideTemperature°F</td>
+                                    <td>@record.InsideHumidity%</td>
+                                    <td>@record.OutsideHumidity%</td>
+                                    <td>@record.WaterAmount</td>
+                                    <td>@record.NutrientAmount</td>
                                     <td>
-                                        <div class="d-flex flex-column flex-sm-row gap-1">
+                                        <div class="d-flex gap-1">
                                             <a asp-controller="DailyRecords" asp-action="Details" asp-route-id="@record.RecordId" class="btn btn-sm btn-outline-primary">Details</a>
                                             <a asp-controller="DailyRecords" asp-action="Edit" asp-route-id="@record.RecordId" class="btn btn-sm btn-outline-warning">Edit</a>
                                         </div>
@@ -218,7 +218,7 @@
 
         <!-- Journal Entries Tab -->
         <div class="tab-pane fade" id="journal" role="tabpanel" aria-labelledby="journal-tab">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Journal Entries</h4>
                 <a asp-controller="JournalEntries" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-warning btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Entry
@@ -226,10 +226,10 @@
             </div>
             @if (Model.JournalEntries.Any())
             {
-                <div class="row g-3">
+                <div class="garden-journal-grid">
                     @foreach (var entry in Model.JournalEntries.OrderByDescending(e => e.EntryDate))
                     {
-                        <div class="col-12 col-md-6 col-lg-4">
+                        <div class="garden-journal-card">
                             <div class="card shadow-sm h-100">
                                 @if (entry.ImageData != null)
                                 {
@@ -258,7 +258,7 @@
 
         <!-- Equipment Tab -->
         <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="equipment-tab">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Equipment</h4>
                 <a asp-controller="Equipments" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-danger btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Equipment
@@ -266,10 +266,10 @@
             </div>
             @if (Model.Equipments.Any())
             {
-                <div class="row g-3">
+                <div class="garden-equipment-grid">
                     @foreach (var equipment in Model.Equipments.OrderBy(e => e.EquipmentName))
                     {
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="garden-equipment-card">
                             <div class="card h-100 shadow-sm">
                                 <img src="@ViewData[$"EquipmentImage_{equipment.EquipmentId}"]" class="card-img-top" alt="@equipment.EquipmentName" style="height: 200px; object-fit: cover;" />
                                 <div class="card-body">

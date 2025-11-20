@@ -43,6 +43,56 @@ namespace GardenHub.Controllers
             return View(gardens);
         }
 
+        // GET: Gardens/Dashboard/5
+        public async Task<IActionResult> Dashboard(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var garden = await _gardenService.GetGardenWithDetailsById(id.Value);
+            if (garden == null)
+            {
+                return NotFound();
+            }
+
+            // Convert garden image
+            ViewData["GardenImage"] = _imageService.ConvertByteArrayToFile(
+                garden.ImageData, 
+                garden.ImageType, 
+                DefaultImage.GardenImage);
+
+            // Convert plant images
+            foreach (var plant in garden.Plants)
+            {
+                ViewData[$"PlantImage_{plant.PlantId}"] = _imageService.ConvertByteArrayToFile(
+                    plant.ImageData,
+                    plant.ImageType,
+                    DefaultImage.PlantImage);
+            }
+
+            // Convert equipment images
+            foreach (var equipment in garden.Equipments)
+            {
+                ViewData[$"EquipmentImage_{equipment.EquipmentId}"] = _imageService.ConvertByteArrayToFile(
+                    equipment.ImageData,
+                    equipment.ImageType,
+                    DefaultImage.EquipmentImage);
+            }
+
+            // Convert journal entry images
+            foreach (var entry in garden.JournalEntries)
+            {
+                ViewData[$"JournalImage_{entry.EntryId}"] = _imageService.ConvertByteArrayToFile(
+                    entry.ImageData,
+                    entry.ImageType,
+                    DefaultImage.GardenImage);
+            }
+
+            return View(garden);
+        }
+
         // GET: Gardens/Details/5
         public async Task<IActionResult> Details(int? id)
         {

@@ -29,3 +29,368 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ===== Dashboard Improvements for Web ===== */
+
+/* Better container spacing on large screens */
+@media (min-width: 1200px) {
+  .container-fluid {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  .container-fluid {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
+
+/* Card hover effects for web */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.15s ease-in-out;
+  }
+  
+  .btn {
+    transition: transform 0.15s ease-in-out;
+  }
+}
+
+/* Better statistics cards for desktop */
+@media (min-width: 1200px) {
+  .stats-card-icon {
+    font-size: 3rem !important;
+  }
+  
+  .stats-card-number {
+    font-size: 3rem !important;
+  }
+}
+
+/* Tablet-specific improvements for iPad and similar devices */
+
+/* iPad Portrait (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+  
+  .display-5 {
+    font-size: 2rem;
+  }
+  
+  .display-6 {
+    font-size: 1.5rem;
+  }
+  
+  /* Better touch targets for tablets */
+  .btn {
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+  }
+  
+  .btn-sm {
+    min-height: 38px;
+  }
+  
+  /* Improve card spacing */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Better table readability */
+  .table {
+    font-size: 0.95rem;
+  }
+  
+  /* Nav tabs optimization */
+  .nav-tabs .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* iPad Landscape and larger tablets (1024px - 1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .container-fluid {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .display-4 {
+    font-size: 2.75rem;
+  }
+}
+
+/* Improve touch interactions on tablets */
+@media (min-width: 768px) and (max-width: 1024px) and (hover: none) and (pointer: coarse) {
+  /* Increase button sizes for touch */
+  .btn {
+    padding: 0.625rem 1.25rem;
+  }
+  
+  /* Larger tap targets for links */
+  a.card {
+    min-height: 44px;
+  }
+  
+  /* Better spacing for touch interactions */
+  .nav-link {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* Card image consistency across breakpoints */
+.card-img-top {
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Responsive text truncation */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Better responsive tables */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1200px) {
+  .table {
+    font-size: 1rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.75rem;
+  }
+}
+
+/* Improve gap consistency */
+.g-3 {
+  gap: 1rem !important;
+}
+
+/* Better badge sizing */
+@media (max-width: 767px) {
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+  }
+}
+
+@media (min-width: 768px) {
+  .badge {
+    font-size: 0.875rem;
+    padding: 0.35em 0.65em;
+  }
+}
+
+/* Optimize flexbox layouts */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .d-flex.flex-column.flex-md-row {
+    gap: 1rem;
+  }
+}
+
+/* Dashboard-specific improvements */
+.dashboard-stat-card {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.dashboard-stat-card .card-body {
+  padding: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .dashboard-stat-card .card-body {
+    padding: 2rem;
+  }
+}
+
+/* Better chart cards */
+.chart-card {
+  min-height: 300px;
+}
+
+@media (min-width: 992px) {
+  .chart-card {
+    min-height: 350px;
+  }
+}
+
+/* Navigation improvements */
+.nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #6c757d;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-tabs .nav-link:hover {
+  border-bottom-color: #0d6efd;
+  color: #0d6efd;
+}
+
+.nav-tabs .nav-link.active {
+  border-bottom-color: #0d6efd;
+  color: #0d6efd;
+  background-color: transparent;
+}
+
+/* Better scrollbar for webkit browsers */
+@media (min-width: 768px) {
+  .table-responsive::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+/* Card image zoom on hover (web only) */
+@media (hover: hover) and (pointer: fine) {
+  .card-img-top {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+  
+  .card {
+    overflow: hidden;
+  }
+}
+
+/* Better footer spacing */
+.card-footer {
+  background-color: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Typography improvements for large screens */
+@media (min-width: 1400px) {
+  .display-4 {
+    font-size: 3.5rem;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h4 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Better alert styling */
+.alert {
+  border-radius: 0.5rem;
+  border-left: 4px solid;
+}
+
+.alert-info {
+  border-left-color: #0dcaf0;
+}
+
+/* Loading states and animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Better shadow utilities */
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.shadow {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow-lg {
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+
+/* Utility for consistent card heights */
+.h-100 {
+  height: 100% !important;
+}
+
+/* Better list group items */
+.list-group-item {
+  transition: background-color 0.15s ease-in-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .list-group-item:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+/* Responsive display utilities enhancement */
+@media (max-width: 767px) {
+  .display-mobile-none {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .display-tablet-none {
+    display: none !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .display-desktop-none {
+    display: none !important;
+  }
+}

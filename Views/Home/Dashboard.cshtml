@@ -1,0 +1,441 @@
+@model GardenHub.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid fade-in">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+        <h1 class="display-4 mb-0">
+            <i class="bi bi-speedometer2"></i> GardenHub Dashboard
+        </h1>
+        <div>
+            <a asp-controller="Gardens" asp-action="Index" class="btn btn-primary">
+                <i class="bi bi-grid-3x3"></i> All Gardens
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Overview Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-sm-4 col-md-4 col-lg-2 mb-3 mb-lg-0">
+            <div class="card dashboard-stat-card text-white bg-primary shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-tree fs-1 stats-card-icon"></i>
+                    <h2 class="display-6 stats-card-number mt-2 mb-0">@Model.TotalGardens</h2>
+                    <p class="card-text small mb-0">Gardens</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-2">
+                    <a asp-controller="Gardens" asp-action="Index" class="btn btn-light btn-sm w-100">View All</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-4 col-lg-2 mb-3 mb-lg-0">
+            <div class="card dashboard-stat-card text-white bg-success shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-flower3 fs-1 stats-card-icon"></i>
+                    <h2 class="display-6 stats-card-number mt-2 mb-0">@Model.TotalPlants</h2>
+                    <p class="card-text small mb-0">Plants</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-2">
+                    <a asp-controller="Plants" asp-action="Index" class="btn btn-light btn-sm w-100">View All</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-4 col-lg-2 mb-3 mb-lg-0">
+            <div class="card dashboard-stat-card text-white bg-info shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-clipboard-data fs-1 stats-card-icon"></i>
+                    <h2 class="display-6 stats-card-number mt-2 mb-0">@Model.TotalDailyRecords</h2>
+                    <p class="card-text small mb-0">Daily Records</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-2">
+                    <a asp-controller="DailyRecords" asp-action="Index" class="btn btn-light btn-sm w-100">View All</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-4 col-lg-2 mb-3 mb-lg-0">
+            <div class="card dashboard-stat-card text-white bg-warning shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-journal-text fs-1 stats-card-icon"></i>
+                    <h2 class="display-6 stats-card-number mt-2 mb-0">@Model.TotalJournalEntries</h2>
+                    <p class="card-text small mb-0">Journal Entries</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-2">
+                    <a asp-controller="JournalEntries" asp-action="Index" class="btn btn-light btn-sm w-100">View All</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-4 col-lg-2 mb-3 mb-lg-0">
+            <div class="card dashboard-stat-card text-white bg-danger shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-tools fs-1 stats-card-icon"></i>
+                    <h2 class="display-6 stats-card-number mt-2 mb-0">@Model.TotalEquipment</h2>
+                    <p class="card-text small mb-0">Equipment</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 p-2">
+                    <a asp-controller="Equipments" asp-action="Index" class="btn btn-light btn-sm w-100">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Averages (Last 30 Days) -->
+    @if (Model.TotalDailyRecords > 0)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-thermometer-half"></i> Environmental Averages (Last 30 Days)
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center g-3">
+                            <div class="col-6 col-md-3">
+                                <h5 class="fs-6 mb-2">Inside Temperature</h5>
+                                <p class="display-6 text-info mb-0">@Model.AverageInsideTemperature°F</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h5 class="fs-6 mb-2">Outside Temperature</h5>
+                                <p class="display-6 text-warning mb-0">@Model.AverageOutsideTemperature°F</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h5 class="fs-6 mb-2">Inside Humidity</h5>
+                                <p class="display-6 text-primary mb-0">@Model.AverageInsideHumidity%</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h5 class="fs-6 mb-2">Outside Humidity</h5>
+                                <p class="display-6 text-success mb-0">@Model.AverageOutsideHumidity%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Distribution Charts -->
+    <div class="row g-3 mb-4">
+        @if (Model.GardensByType.Any())
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card chart-card shadow h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Gardens by Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.GardensByType.OrderByDescending(x => x.Value))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @item.Key
+                                    <span class="badge bg-primary rounded-pill">@item.Value</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.PlantsByType.Any())
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card chart-card shadow h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Plants by Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.PlantsByType.OrderByDescending(x => x.Value))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @item.Key
+                                    <span class="badge bg-success rounded-pill">@item.Value</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.EquipmentByType.Any())
+        {
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card chart-card shadow h-100">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">Equipment by Type</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.EquipmentByType.OrderByDescending(x => x.Value))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    @item.Key
+                                    <span class="badge bg-danger rounded-pill">@item.Value</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Quick Access to Gardens -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                    <h4 class="mb-0">
+                        <i class="bi bi-grid-3x3"></i> Quick Access to Gardens
+                    </h4>
+                    <a asp-controller="Gardens" asp-action="Create" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Create New Garden
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.AllGardens.Any())
+                    {
+                        <div class="row g-3">
+                            @foreach (var garden in Model.AllGardens)
+                            {
+                                <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                    <div class="card h-100 shadow-sm">
+                                        <img src="@ViewData[$"GardenImage_{garden.GardenId}"]" class="card-img-top" alt="@garden.GardenName" style="height: 150px; object-fit: cover;" />
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title mb-2 text-truncate" title="@garden.GardenName">@garden.GardenName</h6>
+                                            <p class="card-text small text-muted mb-2">
+                                                <span class="badge bg-secondary small">@garden.Type</span>
+                                                <span class="badge bg-info small">@garden.GardenGrowMethod</span>
+                                            </p>
+                                        </div>
+                                        <div class="card-footer p-2">
+                                            <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@garden.GardenId" class="btn btn-sm btn-primary w-100">
+                                                <i class="bi bi-speedometer2"></i> Dashboard
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> No gardens created yet. <a asp-controller="Gardens" asp-action="Create">Create your first garden!</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-clock-history"></i> Recent Activity
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs flex-column flex-sm-row" id="recentActivityTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="recent-plants-tab" data-bs-toggle="tab" data-bs-target="#recent-plants" type="button" role="tab" aria-controls="recent-plants" aria-selected="true">
+                                <i class="bi bi-flower3 d-sm-none"></i><span class="d-none d-sm-inline">Plants</span> (@Model.RecentPlants.Count)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="recent-records-tab" data-bs-toggle="tab" data-bs-target="#recent-records" type="button" role="tab" aria-controls="recent-records" aria-selected="false">
+                                <i class="bi bi-clipboard-data d-sm-none"></i><span class="d-none d-sm-inline">Records</span> (@Model.RecentDailyRecords.Count)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="recent-journal-tab" data-bs-toggle="tab" data-bs-target="#recent-journal" type="button" role="tab" aria-controls="recent-journal" aria-selected="false">
+                                <i class="bi bi-journal-text d-sm-none"></i><span class="d-none d-sm-inline">Journal</span> (@Model.RecentJournalEntries.Count)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="recent-equipment-tab" data-bs-toggle="tab" data-bs-target="#recent-equipment" type="button" role="tab" aria-controls="recent-equipment" aria-selected="false">
+                                <i class="bi bi-tools d-sm-none"></i><span class="d-none d-sm-inline">Equipment</span> (@Model.RecentEquipment.Count)
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content border border-top-0 p-3" id="recentActivityTabsContent">
+                        <!-- Recent Plants -->
+                        <div class="tab-pane fade show active" id="recent-plants" role="tabpanel" aria-labelledby="recent-plants-tab">
+                            @if (Model.RecentPlants.Any())
+                            {
+                                <div class="row g-3">
+                                    @foreach (var plant in Model.RecentPlants)
+                                    {
+                                        <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                            <div class="card shadow-sm h-100">
+                                                <img src="@ViewData[$"PlantImage_{plant.PlantId}"]" class="card-img-top" alt="@plant.PlantName" style="height: 120px; object-fit: cover;" />
+                                                <div class="card-body p-2">
+                                                    <h6 class="card-title small mb-1 text-truncate" title="@plant.PlantName">@plant.PlantName</h6>
+                                                    <p class="card-text small text-muted mb-1">
+                                                        <small class="text-truncate d-block" title="@plant.Garden?.GardenName">@plant.Garden?.GardenName</small>
+                                                    </p>
+                                                    <p class="card-text small mb-0">
+                                                        <small>@plant.DatePlanted.ToShortDateString()</small>
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer p-1">
+                                                    <a asp-controller="Plants" asp-action="Details" asp-route-id="@plant.PlantId" class="btn btn-sm btn-outline-success w-100">View</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">No recent plants.</div>
+                            }
+                        </div>
+
+                        <!-- Recent Daily Records -->
+                        <div class="tab-pane fade" id="recent-records" role="tabpanel" aria-labelledby="recent-records-tab">
+                            @if (Model.RecentDailyRecords.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Garden</th>
+                                                <th class="d-none d-md-table-cell">Inside Temp</th>
+                                                <th class="d-none d-md-table-cell">Humidity</th>
+                                                <th class="d-none d-lg-table-cell">Water</th>
+                                                <th class="d-none d-lg-table-cell">Nutrients</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var record in Model.RecentDailyRecords)
+                                            {
+                                                <tr>
+                                                    <td>@record.CreatedDate.ToShortDateString()</td>
+                                                    <td class="text-truncate" style="max-width: 150px;">@record.Garden?.GardenName</td>
+                                                    <td class="d-none d-md-table-cell">@record.InsideTemperature°F</td>
+                                                    <td class="d-none d-md-table-cell">@record.InsideHumidity%</td>
+                                                    <td class="d-none d-lg-table-cell">@record.WaterAmount</td>
+                                                    <td class="d-none d-lg-table-cell">@record.NutrientAmount</td>
+                                                    <td>
+                                                        <a asp-controller="DailyRecords" asp-action="Details" asp-route-id="@record.RecordId" class="btn btn-sm btn-outline-info">View</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">No recent daily records.</div>
+                            }
+                        </div>
+
+                        <!-- Recent Journal Entries -->
+                        <div class="tab-pane fade" id="recent-journal" role="tabpanel" aria-labelledby="recent-journal-tab">
+                            @if (Model.RecentJournalEntries.Any())
+                            {
+                                <div class="row g-3">
+                                    @foreach (var entry in Model.RecentJournalEntries)
+                                    {
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="card shadow-sm h-100">
+                                                @if (entry.ImageData != null)
+                                                {
+                                                    <img src="@ViewData[$"JournalImage_{entry.EntryId}"]" class="card-img-top" alt="Journal Entry" style="height: 150px; object-fit: cover;" />
+                                                }
+                                                <div class="card-body p-2">
+                                                    <h6 class="card-subtitle mb-2 text-muted small">
+                                                        @entry.EntryDate.ToShortDateString() - @entry.Garden?.GardenName
+                                                    </h6>
+                                                    <p class="card-text small">@(entry.Content.Length > 100 ? entry.Content.Substring(0, 100) + "..." : entry.Content)</p>
+                                                </div>
+                                                <div class="card-footer p-1">
+                                                    <a asp-controller="JournalEntries" asp-action="Details" asp-route-id="@entry.EntryId" class="btn btn-sm btn-outline-warning w-100">View</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">No recent journal entries.</div>
+                            }
+                        </div>
+
+                        <!-- Recent Equipment -->
+                        <div class="tab-pane fade" id="recent-equipment" role="tabpanel" aria-labelledby="recent-equipment-tab">
+                            @if (Model.RecentEquipment.Any())
+                            {
+                                <div class="row g-3">
+                                    @foreach (var equipment in Model.RecentEquipment)
+                                    {
+                                        <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                            <div class="card shadow-sm h-100">
+                                                <img src="@ViewData[$"EquipmentImage_{equipment.EquipmentId}"]" class="card-img-top" alt="@equipment.EquipmentName" style="height: 120px; object-fit: cover;" />
+                                                <div class="card-body p-2">
+                                                    <h6 class="card-title small mb-1 text-truncate" title="@equipment.EquipmentName">@equipment.EquipmentName</h6>
+                                                    <p class="card-text small text-muted mb-1">
+                                                        <small class="text-truncate d-block" title="@equipment.Garden?.GardenName">@equipment.Garden?.GardenName</small>
+                                                    </p>
+                                                    <p class="card-text small mb-0">
+                                                        <span class="badge bg-secondary">@equipment.EquipmentType</span>
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer p-1">
+                                                    <a asp-controller="Equipments" asp-action="Details" asp-route-id="@equipment.EquipmentId" class="btn btn-sm btn-outline-danger w-100">View</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">No recent equipment.</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Initialize Bootstrap tabs with fade animation
+        var triggerTabList = [].slice.call(document.querySelectorAll('#recentActivityTabs button'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+
+        // Add fade-in animation to cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('fade-in');
+                }, index * 50);
+            });
+        });
+    </script>
+}

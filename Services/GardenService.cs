@@ -3,6 +3,7 @@ using GardenHub.Models;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GardenHub.Services
 {
@@ -61,7 +62,6 @@ namespace GardenHub.Services
                 existingGarden.GardenGrowMethod = garden.GardenGrowMethod;
                 existingGarden.StartDate = DateTime.SpecifyKind(garden.StartDate, DateTimeKind.Utc);
                 existingGarden.EndDate = DateTime.SpecifyKind(garden.EndDate, DateTimeKind.Utc);
-                existingGarden.UserId = garden.UserId;
                 
                 // No need to call Update() - EF will detect changes automatically
                 await _context.SaveChangesAsync();
@@ -88,6 +88,32 @@ namespace GardenHub.Services
         public Task<bool> GardenExists(int id)
         {
             return _context.Gardens.AnyAsync(e => e.GardenId == id);
+        }
+
+        public async Task<IActionResult> Edit(int id, [Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,ImageFile")] Garden garden)
+        {
+            if (id != garden.GardenId)
+            {
+                return new BadRequestResult();
+            }
+
+            try
+            {
+                await UpdateGarden(garden, id);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await GardenExists(id))
+                {
+                    return new NotFoundResult();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return new NoContentResult();
         }
     }
 }

@@ -177,7 +177,7 @@ namespace GardenHub.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,UserId,ImageFile")] Garden garden)
+        public async Task<IActionResult> Edit(int id, [Bind("GardenId,GardenName,GardenDescription,GardenLocation,Type,GardenGrowMethod,StartDate,EndDate,ImageFile")] Garden garden)
         {
             if (id != garden.GardenId)
             {
@@ -207,6 +207,13 @@ namespace GardenHub.Controllers
             {
                 try
                 {
+                    // Before UpdateGarden call
+                    var existingGarden = await _gardenService.GetGardenById(id);
+                    if (existingGarden != null)
+                    {
+                        // Remove this line
+                    }
+
                     await _gardenService.UpdateGarden(garden, id);
                 }
                 catch (DbUpdateConcurrencyException)

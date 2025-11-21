@@ -1,0 +1,169 @@
+﻿@model GardenHub.Models.GardenCareActivity
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>GardenCareActivity</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ActivityId" />
+            <div class="form-group">
+                <label asp-for="GardenId" class="control-label"></label>
+                <select asp-for="GardenId" class="form-control" asp-items="ViewBag.GardenId"></select>
+                <span asp-validation-for="GardenId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActivityDate" class="control-label"></label>
+                <input asp-for="ActivityDate" class="form-control" />
+                <span asp-validation-for="ActivityDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActivityType" class="control-label"></label>
+                <select asp-for="ActivityType" class="form-control"></select>
+                <span asp-validation-for="ActivityType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantInspectionStatus" class="control-label"></label>
+                <input asp-for="PlantInspectionStatus" class="form-control" />
+                <span asp-validation-for="PlantInspectionStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EquipmentInspectionStatus" class="control-label"></label>
+                <input asp-for="EquipmentInspectionStatus" class="form-control" />
+                <span asp-validation-for="EquipmentInspectionStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WaterLevel" class="control-label"></label>
+                <input asp-for="WaterLevel" class="form-control" />
+                <span asp-validation-for="WaterLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="WateringPerformed" /> @Html.DisplayNameFor(model => model.WateringPerformed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="WaterAmountAdded" class="control-label"></label>
+                <input asp-for="WaterAmountAdded" class="form-control" />
+                <span asp-validation-for="WaterAmountAdded" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="NutrientsAdded" /> @Html.DisplayNameFor(model => model.NutrientsAdded)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="NutrientType" class="control-label"></label>
+                <input asp-for="NutrientType" class="form-control" />
+                <span asp-validation-for="NutrientType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NutrientAmount" class="control-label"></label>
+                <input asp-for="NutrientAmount" class="form-control" />
+                <span asp-validation-for="NutrientAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="NewPlantingsAdded" /> @Html.DisplayNameFor(model => model.NewPlantingsAdded)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfPlantsAdded" class="control-label"></label>
+                <input asp-for="NumberOfPlantsAdded" class="form-control" />
+                <span asp-validation-for="NumberOfPlantsAdded" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlantTypesAdded" class="control-label"></label>
+                <input asp-for="PlantTypesAdded" class="form-control" />
+                <span asp-validation-for="PlantTypesAdded" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="WeedingPerformed" /> @Html.DisplayNameFor(model => model.WeedingPerformed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeedingDuration" class="control-label"></label>
+                <input asp-for="WeedingDuration" class="form-control" />
+                <span asp-validation-for="WeedingDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PruningPerformed" /> @Html.DisplayNameFor(model => model.PruningPerformed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="PruningNotes" class="control-label"></label>
+                <input asp-for="PruningNotes" class="form-control" />
+                <span asp-validation-for="PruningNotes" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PestControlPerformed" /> @Html.DisplayNameFor(model => model.PestControlPerformed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="PestControlDetails" class="control-label"></label>
+                <input asp-for="PestControlDetails" class="form-control" />
+                <span asp-validation-for="PestControlDetails" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhLevel" class="control-label"></label>
+                <input asp-for="PhLevel" class="form-control" />
+                <span asp-validation-for="PhLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EcLevel" class="control-label"></label>
+                <input asp-for="EcLevel" class="form-control" />
+                <span asp-validation-for="EcLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GardenStatus" class="control-label"></label>
+                <input asp-for="GardenStatus" class="form-control" />
+                <span asp-validation-for="GardenStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActivityDuration" class="control-label"></label>
+                <input asp-for="ActivityDuration" class="form-control" />
+                <span asp-validation-for="ActivityDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageData" class="control-label"></label>
+                <input asp-for="ImageData" class="form-control" />
+                <span asp-validation-for="ImageData" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageType" class="control-label"></label>
+                <input asp-for="ImageType" class="form-control" />
+                <span asp-validation-for="ImageType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

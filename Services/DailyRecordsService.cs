@@ -4,6 +4,7 @@ using GardenHub.Models;
 using GardenHub.Models.Enums;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace GardenHub.Services
 {

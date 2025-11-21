@@ -44,7 +44,7 @@ namespace GardenHub.Controllers
         }
 
         // GET: Gardens/Dashboard/5
-        public async Task<IActionResult> Dashboard(int? id)
+        public async Task<IActionResult> Dashboard(int? id, int? month, int? year)
         {
             if (id == null)
             {
@@ -56,6 +56,63 @@ namespace GardenHub.Controllers
             {
                 return NotFound();
             }
+
+            // Set default month/year to current if not specified
+            int selectedMonth = month ?? DateTime.Now.Month;
+            int selectedYear = year ?? DateTime.Now.Year;
+
+            // Create view model
+            var viewModel = new GardenHub.Models.ViewModels.GardenDashboardViewModel
+            {
+                Garden = garden,
+                SelectedMonth = selectedMonth,
+                SelectedYear = selectedYear,
+                // Get the most recent daily record for current conditions
+                MostRecentRecord = garden.DailyRecords
+                    .OrderByDescending(r => r.CreatedDate)
+                    .FirstOrDefault()
+            };
+
+            // Get available months based on daily records
+            var recordDates = garden.DailyRecords
+                .Select(r => new { r.CreatedDate.Year, r.CreatedDate.Month })
+                .Distinct()
+                .OrderByDescending(d => d.Year)
+                .ThenByDescending(d => d.Month)
+                .ToList();
+
+            viewModel.AvailableMonths = recordDates.Select(d => new GardenHub.Models.ViewModels.MonthYearOption
+            {
+                Month = d.Month,
+                Year = d.Year,
+                DisplayText = new DateTime(d.Year, d.Month, 1).ToString("MMMM yyyy")
+            }).ToList();
+
+            // If no available months, add current month
+            if (!viewModel.AvailableMonths.Any())
+            {
+                viewModel.AvailableMonths.Add(new GardenHub.Models.ViewModels.MonthYearOption
+                {
+                    Month = selectedMonth,
+                    Year = selectedYear,
+                    DisplayText = new DateTime(selectedYear, selectedMonth, 1).ToString("MMMM yyyy")
+                });
+            }
+
+            // Filter daily records for selected month
+            var monthlyRecords = garden.DailyRecords
+                .Where(r => r.CreatedDate.Month == selectedMonth && r.CreatedDate.Year == selectedYear)
+                .OrderBy(r => r.CreatedDate)
+                .ToList();
+
+            // Prepare chart data
+            viewModel.ChartLabels = monthlyRecords.Select(r => r.CreatedDate.ToString("MMM dd")).ToList();
+            viewModel.InsideTemperatureData = monthlyRecords.Select(r => r.InsideTemperature).ToList();
+            viewModel.OutsideTemperatureData = monthlyRecords.Select(r => r.OutsideTemperature).ToList();
+            viewModel.InsideHumidityData = monthlyRecords.Select(r => r.InsideHumidity).ToList();
+            viewModel.OutsideHumidityData = monthlyRecords.Select(r => r.OutsideHumidity).ToList();
+            viewModel.InsideVPDData = monthlyRecords.Select(r => r.InsideVPD).ToList();
+            viewModel.OutsideVPDData = monthlyRecords.Select(r => r.OutsideVPD).ToList();
 
             // Convert garden image
             ViewData["GardenImage"] = _imageService.ConvertByteArrayToFile(
@@ -90,7 +147,7 @@ namespace GardenHub.Controllers
                     DefaultImage.GardenImage);
             }
 
-            return View(garden);
+            return View(viewModel);
         }
 
         // GET: Gardens/Details/5
@@ -207,13 +264,6 @@ namespace GardenHub.Controllers
             {
                 try
                 {
-                    // Before UpdateGarden call
-                    var existingGarden = await _gardenService.GetGardenById(id);
-                    if (existingGarden != null)
-                    {
-                        // Remove this line
-                    }
-
                     await _gardenService.UpdateGarden(garden, id);
                 }
                 catch (DbUpdateConcurrencyException)

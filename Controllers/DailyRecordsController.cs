@@ -8,6 +8,7 @@ using GardenHub.Models;
 using GardenHub.Services.Interfaces;
 using GardenHub.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace GardenHub.Controllers
 {
@@ -92,6 +93,8 @@ namespace GardenHub.Controllers
             
             if (ModelState.IsValid)
             {
+                // Get the current logged-in user's ID
+                dailyRecord.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 await _dailyRecordService.CreateDailyRecordAsync(dailyRecord);
                 return RedirectToAction(nameof(Index));
             }

@@ -1,4 +1,4 @@
-@model GardenHub.Models.Garden
+@model GardenHub.Models.ViewModels.GardenDashboardViewModel
 
 @{
     ViewData["Title"] = "Garden Dashboard";
@@ -6,9 +6,9 @@
 
 <div class="garden-dashboard-fixed-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-4 mb-0">@Model.GardenName Dashboard</h1>
+        <h1 class="display-4 mb-0">@Model.Garden.GardenName Dashboard</h1>
         <div class="d-flex gap-2">
-            <a asp-action="Edit" asp-route-id="@Model.GardenId" class="btn btn-warning">
+            <a asp-action="Edit" asp-route-id="@Model.Garden.GardenId" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Edit Garden
             </a>
             <a asp-action="Index" class="btn btn-secondary">
@@ -25,27 +25,27 @@
         <div class="card-body">
             <div class="garden-overview-layout">
                 <div class="garden-overview-image">
-                    <img src="@ViewData["GardenImage"]" alt="@Model.GardenName" class="img-fluid rounded shadow-sm" style="max-height: 300px; object-fit: cover; width: 100%;" />
+                    <img src="@ViewData["GardenImage"]" alt="@Model.Garden.GardenName" class="img-fluid rounded shadow-sm" style="max-height: 300px; object-fit: cover; width: 100%;" />
                 </div>
                 <div class="garden-overview-details">
                     <dl class="row mb-0">
                         <dt class="col-sm-4">Description:</dt>
-                        <dd class="col-sm-8">@Model.GardenDescription</dd>
+                        <dd class="col-sm-8">@Model.Garden.GardenDescription</dd>
 
                         <dt class="col-sm-4">Location:</dt>
-                        <dd class="col-sm-8">@Model.GardenLocation</dd>
+                        <dd class="col-sm-8">@Model.Garden.GardenLocation</dd>
 
                         <dt class="col-sm-4">Type:</dt>
-                        <dd class="col-sm-8">@Model.Type</dd>
+                        <dd class="col-sm-8">@Model.Garden.Type</dd>
 
                         <dt class="col-sm-4">Grow Method:</dt>
-                        <dd class="col-sm-8">@Model.GardenGrowMethod</dd>
+                        <dd class="col-sm-8">@Model.Garden.GardenGrowMethod</dd>
 
                         <dt class="col-sm-4">Start Date:</dt>
-                        <dd class="col-sm-8">@Model.StartDate.ToShortDateString()</dd>
+                        <dd class="col-sm-8">@Model.Garden.StartDate.ToShortDateString()</dd>
 
                         <dt class="col-sm-4">End Date:</dt>
-                        <dd class="col-sm-8">@Model.EndDate.ToShortDateString()</dd>
+                        <dd class="col-sm-8">@Model.Garden.EndDate.ToShortDateString()</dd>
                     </dl>
                 </div>
             </div>
@@ -57,7 +57,7 @@
         <div class="garden-stat-card">
             <div class="card text-white bg-success shadow h-100">
                 <div class="card-body text-center p-3">
-                    <h2 class="display-5 mb-2">@Model.Plants.Count</h2>
+                    <h2 class="display-5 mb-2">@Model.Garden.Plants.Count</h2>
                     <p class="card-text mb-0">Plants</p>
                 </div>
             </div>
@@ -65,7 +65,7 @@
         <div class="garden-stat-card">
             <div class="card text-white bg-info shadow h-100">
                 <div class="card-body text-center p-3">
-                    <h2 class="display-5 mb-2">@Model.DailyRecords.Count</h2>
+                    <h2 class="display-5 mb-2">@Model.Garden.DailyRecords.Count</h2>
                     <p class="card-text mb-0">Daily Records</p>
                 </div>
             </div>
@@ -73,7 +73,7 @@
         <div class="garden-stat-card">
             <div class="card text-white bg-warning shadow h-100">
                 <div class="card-body text-center p-3">
-                    <h2 class="display-5 mb-2">@Model.JournalEntries.Count</h2>
+                    <h2 class="display-5 mb-2">@Model.Garden.JournalEntries.Count</h2>
                     <p class="card-text mb-0">Journal Entries</p>
                 </div>
             </div>
@@ -81,33 +81,245 @@
         <div class="garden-stat-card">
             <div class="card text-white bg-danger shadow h-100">
                 <div class="card-body text-center p-3">
-                    <h2 class="display-5 mb-2">@Model.Equipments.Count</h2>
+                    <h2 class="display-5 mb-2">@Model.Garden.Equipments.Count</h2>
                     <p class="card-text mb-0">Equipment</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Current Conditions Card -->
+    @if (Model.MostRecentRecord != null)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-thermometer-half"></i> Current Conditions</h3>
+                <small class="text-white">Last Updated: @Model.MostRecentRecord.CreatedDate.ToString("MMM dd, yyyy h:mm tt")</small>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Inside Conditions -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-house-door"></i> Inside Conditions</h5>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-thermometer text-danger fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.InsideTemperature°F</h4>
+                                        <small class="text-muted">Temperature</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-droplet text-primary fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.InsideHumidity%</h4>
+                                        <small class="text-muted">Humidity</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-activity text-warning fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.InsideVPD kPa</h4>
+                                        <small class="text-muted">VPD</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-brightness-high text-warning fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.LightingIntensity%</h4>
+                                        <small class="text-muted">Light Intensity</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outside Conditions -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-cloud-sun"></i> Outside Conditions</h5>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-thermometer text-danger fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.OutsideTemperature°F</h4>
+                                        <small class="text-muted">Temperature</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-droplet text-primary fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.OutsideHumidity%</h4>
+                                        <small class="text-muted">Humidity</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-activity text-warning fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.OutsideVPD kPa</h4>
+                                        <small class="text-muted">VPD</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-sun text-warning fs-3"></i>
+                                        <h4 class="mb-0">@Model.MostRecentRecord.LightingOn - @Model.MostRecentRecord.LightingOff</h4>
+                                        <small class="text-muted">Lighting Hours</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="col-12">
+                        <hr class="my-3" />
+                        <div class="row g-2">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card bg-info bg-opacity-10">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-droplet-fill text-info fs-3"></i>
+                                        <h5 class="mb-0">@Model.MostRecentRecord.WaterAmount</h5>
+                                        <small class="text-muted">Water Amount</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card bg-success bg-opacity-10">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-moisture text-success fs-3"></i>
+                                        <h5 class="mb-0">@Model.MostRecentRecord.NutrientAmount</h5>
+                                        <small class="text-muted">Nutrient Amount</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                @if (!string.IsNullOrWhiteSpace(Model.MostRecentRecord.Notes))
+                                {
+                                    <div class="card bg-warning bg-opacity-10">
+                                        <div class="card-body">
+                                            <h6 class="mb-2"><i class="bi bi-sticky"></i> Notes:</h6>
+                                            <p class="mb-0 small">@Model.MostRecentRecord.Notes</p>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center text-muted">
+                                            <i class="bi bi-sticky"></i> No notes recorded
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-controller="DailyRecords" asp-action="Details" asp-route-id="@Model.MostRecentRecord.RecordId" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-eye"></i> View Full Record
+                    </a>
+                    <a asp-controller="DailyRecords" asp-action="Create" class="btn btn-sm btn-info">
+                        <i class="bi bi-plus-circle"></i> Add New Record
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info mb-4">
+            <i class="bi bi-info-circle"></i> No daily records available yet. 
+            <a asp-controller="DailyRecords" asp-action="Create" class="alert-link">Create your first record</a> to see current conditions.
+        </div>
+    }
+
+    <!-- Charts Section -->
+    @if (Model.Garden.DailyRecords.Any())
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="bi bi-graph-up"></i> Environmental Data Charts</h3>
+                <form asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" method="get" class="d-flex gap-2">
+                    <select name="month" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
+                        @foreach (var option in Model.AvailableMonths)
+                        {
+                            <option value="@option.Month" 
+                                    data-year="@option.Year"
+                                    selected="@(option.Month == Model.SelectedMonth && option.Year == Model.SelectedYear)">
+                                @option.DisplayText
+                            </option>
+                        }
+                    </select>
+                    <input type="hidden" name="year" value="@Model.SelectedYear" id="selectedYear" />
+                </form>
+            </div>
+            <div class="card-body">
+                @if (Model.ChartLabels.Any())
+                {
+                    <div class="row">
+                        <!-- Temperature Chart -->
+                        <div class="col-12 mb-4">
+                            <h5 class="text-center mb-3">Temperature Tracking (°F)</h5>
+                            <canvas id="temperatureChart"></canvas>
+                        </div>
+                        
+                        <!-- Humidity Chart -->
+                        <div class="col-12 mb-4">
+                            <h5 class="text-center mb-3">Humidity Tracking (%)</h5>
+                            <canvas id="humidityChart"></canvas>
+                        </div>
+                        
+                        <!-- VPD Chart -->
+                        <div class="col-12 mb-4">
+                            <h5 class="text-center mb-3">VPD Tracking (kPa)</h5>
+                            <canvas id="vpdChart"></canvas>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> No daily records found for @(new DateTime(Model.SelectedYear, Model.SelectedMonth, 1).ToString("MMMM yyyy")).
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
     <!-- Tabs for Different Sections -->
     <ul class="nav nav-tabs garden-nav-tabs" id="dashboardTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="plants-tab" data-bs-toggle="tab" data-bs-target="#plants" type="button" role="tab" aria-controls="plants" aria-selected="true">
-                <i class="bi bi-flower3"></i> Plants (@Model.Plants.Count)
+                <i class="bi bi-flower3"></i> Plants (@Model.Garden.Plants.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="records-tab" data-bs-toggle="tab" data-bs-target="#records" type="button" role="tab" aria-controls="records" aria-selected="false">
-                <i class="bi bi-clipboard-data"></i> Records (@Model.DailyRecords.Count)
+                <i class="bi bi-clipboard-data"></i> Records (@Model.Garden.DailyRecords.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="journal-tab" data-bs-toggle="tab" data-bs-target="#journal" type="button" role="tab" aria-controls="journal" aria-selected="false">
-                <i class="bi bi-journal-text"></i> Journal (@Model.JournalEntries.Count)
+                <i class="bi bi-journal-text"></i> Journal (@Model.Garden.JournalEntries.Count)
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment" type="button" role="tab" aria-controls="equipment" aria-selected="false">
-                <i class="bi bi-tools"></i> Equipment (@Model.Equipments.Count)
+                <i class="bi bi-tools"></i> Equipment (@Model.Garden.Equipments.Count)
             </button>
         </li>
     </ul>
@@ -117,14 +329,14 @@
         <div class="tab-pane fade show active" id="plants" role="tabpanel" aria-labelledby="plants-tab">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Plants in this Garden</h4>
-                <a asp-controller="Plants" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-success btn-sm">
+                <a asp-controller="Plants" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-success btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Plant
                 </a>
             </div>
-            @if (Model.Plants.Any())
+            @if (Model.Garden.Plants.Any())
             {
                 <div class="garden-plants-grid">
-                    @foreach (var plant in Model.Plants.OrderBy(p => p.PlantName))
+                    @foreach (var plant in Model.Garden.Plants.OrderBy(p => p.PlantName))
                     {
                         <div class="garden-plant-card">
                             <div class="card h-100 shadow-sm">
@@ -165,11 +377,11 @@
         <div class="tab-pane fade" id="records" role="tabpanel" aria-labelledby="records-tab">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Daily Records</h4>
-                <a asp-controller="DailyRecords" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-info btn-sm">
+                <a asp-controller="DailyRecords" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-info btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Record
                 </a>
             </div>
-            @if (Model.DailyRecords.Any())
+            @if (Model.Garden.DailyRecords.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-striped table-hover garden-records-table">
@@ -186,7 +398,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var record in Model.DailyRecords.OrderByDescending(r => r.CreatedDate))
+                            @foreach (var record in Model.Garden.DailyRecords.OrderByDescending(r => r.CreatedDate))
                             {
                                 <tr>
                                     <td>@record.CreatedDate.ToShortDateString()</td>
@@ -220,14 +432,14 @@
         <div class="tab-pane fade" id="journal" role="tabpanel" aria-labelledby="journal-tab">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Journal Entries</h4>
-                <a asp-controller="JournalEntries" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-warning btn-sm">
+                <a asp-controller="JournalEntries" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-warning btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Entry
                 </a>
             </div>
-            @if (Model.JournalEntries.Any())
+            @if (Model.Garden.JournalEntries.Any())
             {
                 <div class="garden-journal-grid">
-                    @foreach (var entry in Model.JournalEntries.OrderByDescending(e => e.EntryDate))
+                    @foreach (var entry in Model.Garden.JournalEntries.OrderByDescending(e => e.EntryDate))
                     {
                         <div class="garden-journal-card">
                             <div class="card shadow-sm h-100">
@@ -260,14 +472,14 @@
         <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="equipment-tab">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="mb-0">Equipment</h4>
-                <a asp-controller="Equipments" asp-action="Create" asp-route-gardenId="@Model.GardenId" class="btn btn-danger btn-sm">
+                <a asp-controller="Equipments" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-danger btn-sm">
                     <i class="bi bi-plus-circle"></i> Add Equipment
                 </a>
             </div>
-            @if (Model.Equipments.Any())
+            @if (Model.Garden.Equipments.Any())
             {
                 <div class="garden-equipment-grid">
-                    @foreach (var equipment in Model.Equipments.OrderBy(e => e.EquipmentName))
+                    @foreach (var equipment in Model.Garden.Equipments.OrderBy(e => e.EquipmentName))
                     {
                         <div class="garden-equipment-card">
                             <div class="card h-100 shadow-sm">
@@ -302,6 +514,9 @@
 </div>
 
 @section Scripts {
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <script>
         // Initialize Bootstrap tabs
         var triggerTabList = [].slice.call(document.querySelectorAll('#dashboardTabs button'))
@@ -313,5 +528,173 @@
                 tabTrigger.show()
             })
         })
+
+        // Update hidden year field when month is selected
+        document.querySelector('select[name="month"]').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            var year = selectedOption.getAttribute('data-year');
+            document.getElementById('selectedYear').value = year;
+        });
+
+        // Chart data from server
+        var chartLabels = @Html.Raw(Json.Serialize(Model.ChartLabels));
+        var insideTemperatureData = @Html.Raw(Json.Serialize(Model.InsideTemperatureData));
+        var outsideTemperatureData = @Html.Raw(Json.Serialize(Model.OutsideTemperatureData));
+        var insideHumidityData = @Html.Raw(Json.Serialize(Model.InsideHumidityData));
+        var outsideHumidityData = @Html.Raw(Json.Serialize(Model.OutsideHumidityData));
+        var insideVPDData = @Html.Raw(Json.Serialize(Model.InsideVPDData));
+        var outsideVPDData = @Html.Raw(Json.Serialize(Model.OutsideVPDData));
+
+        // Common chart options
+        var commonOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    beginAtZero: false
+                }
+            }
+        };
+
+        // Temperature Chart
+        if (chartLabels.length > 0) {
+            var tempCtx = document.getElementById('temperatureChart').getContext('2d');
+            new Chart(tempCtx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Inside Temperature (°F)',
+                            data: insideTemperatureData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Outside Temperature (°F)',
+                            data: outsideTemperatureData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Temperature (°F)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Humidity Chart
+            var humidityCtx = document.getElementById('humidityChart').getContext('2d');
+            new Chart(humidityCtx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Inside Humidity (%)',
+                            data: insideHumidityData,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Outside Humidity (%)',
+                            data: outsideHumidityData,
+                            borderColor: 'rgb(153, 102, 255)',
+                            backgroundColor: 'rgba(153, 102, 255, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Humidity (%)'
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // VPD Chart
+            var vpdCtx = document.getElementById('vpdChart').getContext('2d');
+            new Chart(vpdCtx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [
+                        {
+                            label: 'Inside VPD (kPa)',
+                            data: insideVPDData,
+                            borderColor: 'rgb(255, 159, 64)',
+                            backgroundColor: 'rgba(255, 159, 64, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Outside VPD (kPa)',
+                            data: outsideVPDData,
+                            borderColor: 'rgb(201, 203, 207)',
+                            backgroundColor: 'rgba(201, 203, 207, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'VPD (kPa)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 }

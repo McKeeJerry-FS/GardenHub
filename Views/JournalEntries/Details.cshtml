@@ -1,45 +1,197 @@
 ﻿@model GardenHub.Models.JournalEntry
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Journal Entry Details";
 }
 
-<h1>Details</h1>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-journal-text"></i> Journal Entry</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model?.EntryId" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit Entry
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>JournalEntry</h4>
-    <hr />
-    <dl class="row">
-        @if (ViewData["EntryImage"] != null && !string.IsNullOrEmpty(ViewData["EntryImage"]!.ToString()))
-        {
-            <dt class="col-sm-2">
-                Entry Image
-            </dt>
-            <dd class="col-sm-10">
-                <img src="@ViewData["EntryImage"]" alt="Journal Entry Image" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
-            </dd>
-        }
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Garden)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Garden.GardenDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EntryDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EntryDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.EntryId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <!-- Entry Header Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="mb-0"><i class="bi bi-calendar3"></i> Entry Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-calendar-event"></i> Entry Date</h5>
+                    <p class="fs-4 mb-0">@Model.EntryDate.ToString("MMMM dd, yyyy")</p>
+                    <small class="text-muted">@((DateTime.UtcNow - Model.EntryDate).Days) days ago</small>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-house-door"></i> Garden</h5>
+                    @if (Model.Garden != null)
+                    {
+                        <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-outline-primary">
+                            <i class="bi bi-speedometer2"></i> @Model.Garden.GardenDescription
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No garden assigned</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entry Image Card -->
+    @if (ViewData["EntryImage"] != null && !string.IsNullOrEmpty(ViewData["EntryImage"]!.ToString()))
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-image"></i> Entry Image</h3>
+            </div>
+            <div class="card-body text-center">
+                <img src="@ViewData["EntryImage"]" alt="Journal Entry" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;" />
+            </div>
+        </div>
+    }
+
+    <!-- Entry Content Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0"><i class="bi bi-card-text"></i> Entry Content</h3>
+        </div>
+        <div class="card-body">
+            <div class="p-3">
+                <p class="fs-5 lh-lg" style="white-space: pre-wrap;">@Model.Content</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Entry Statistics Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="bi bi-graph-up"></i> Entry Statistics</h3>
+        </div>
+        <div class="card-body">
+            <div class="garden-stats-row">
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calendar-check text-primary" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">
+                                @{
+                                    var daysAgo = (DateTime.UtcNow - Model.EntryDate).Days;
+                                }
+                                @daysAgo
+                            </h3>
+                            <p class="text-muted mb-0">Days Ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-fonts text-info" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">@Model.Content.Length</h3>
+                            <p class="text-muted mb-0">Characters</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-chat-quote text-success" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">@Model.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length</h3>
+                            <p class="text-muted mb-0">Words</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            @if (ViewData["EntryImage"] != null && !string.IsNullOrEmpty(ViewData["EntryImage"]!.ToString()))
+                            {
+                                <i class="bi bi-image-fill text-success" style="font-size: 3rem;"></i>
+                                <h3 class="display-6 mt-3 mb-2">Yes</h3>
+                            }
+                            else
+                            {
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                <h3 class="display-6 mt-3 mb-2">No</h3>
+                            }
+                            <p class="text-muted mb-0">Has Image</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Garden != null)
+    {
+        <!-- Garden Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-house-door"></i> Related Garden</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Garden Name:</strong></p>
+                        <p class="text-muted">@Model.Garden.GardenName</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Description:</strong></p>
+                        <p class="text-muted">@Model.Garden.GardenDescription</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Type:</strong></p>
+                        <p class="text-muted">@Model.Garden.Type</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1"><strong>Location:</strong></p>
+                        <p class="text-muted">@Model.Garden.GardenLocation</p>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-outline-primary">
+                        <i class="bi bi-speedometer2"></i> View Garden Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions Card -->
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a asp-action="Edit" asp-route-id="@Model?.EntryId" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit Entry
+                </a>
+                @if (Model.Garden != null)
+                {
+                    <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-primary">
+                        <i class="bi bi-house-door"></i> Go to Garden
+                    </a>
+                    <a asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Add New Entry
+                    </a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-list-ul"></i> View All Entries
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

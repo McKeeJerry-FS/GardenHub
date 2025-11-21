@@ -1,74 +1,213 @@
 ﻿@model GardenHub.Models.Garden
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Garden";
 }
 
-<h1>Create</h1>
-
-<h4>Garden</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="GardenName" class="control-label"></label>
-                <input asp-for="GardenName" class="form-control" />
-                <span asp-validation-for="GardenName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GardenDescription" class="control-label"></label>
-                <input asp-for="GardenDescription" class="form-control" />
-                <span asp-validation-for="GardenDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GardenLocation" class="control-label"></label>
-                <select asp-for="GardenLocation" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.Location>()" class="form-control">
-                    <option value="">-- Select Garden Location --</option>
-                </select>
-                <span asp-validation-for="GardenLocation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="Type" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.GardenType>()" class="form-control">
-                    <option value="">-- Select Garden Type --</option>
-                </select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GardenGrowMethod" class="control-label"></label>
-                <select asp-for="GardenGrowMethod" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.GrowMethod>()" class="form-control">
-                    <option value="">-- Select Garden Grow Method --</option>
-                </select>
-                <span asp-validation-for="GardenGrowMethod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFile" class="control-label">Garden Image</label>
-                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-plus-circle"></i> Create New Garden</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <!-- Basic Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-info-circle"></i> Basic Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="GardenName" class="form-control" id="gardenName" placeholder="Garden Name" />
+                            <label asp-for="GardenName" for="gardenName" class="form-label">
+                                <i class="bi bi-house-door"></i> Garden Name
+                            </label>
+                            <span asp-validation-for="GardenName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Type" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.GardenType>()" class="form-select" id="gardenType">
+                                <option value="">-- Select Garden Type --</option>
+                            </select>
+                            <label asp-for="Type" for="gardenType">
+                                <i class="bi bi-tag"></i> Garden Type
+                            </label>
+                            <span asp-validation-for="Type" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea asp-for="GardenDescription" class="form-control" id="gardenDescription" placeholder="Garden Description" style="height: 120px"></textarea>
+                            <label asp-for="GardenDescription" for="gardenDescription">
+                                <i class="bi bi-card-text"></i> Garden Description
+                            </label>
+                            <span asp-validation-for="GardenDescription" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location & Growing Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-geo-alt"></i> Location & Growing Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="GardenLocation" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.Location>()" class="form-select" id="gardenLocation">
+                                <option value="">-- Select Garden Location --</option>
+                            </select>
+                            <label asp-for="GardenLocation" for="gardenLocation">
+                                <i class="bi bi-pin-map"></i> Garden Location
+                            </label>
+                            <span asp-validation-for="GardenLocation" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="GardenGrowMethod" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.GrowMethod>()" class="form-select" id="growMethod">
+                                <option value="">-- Select Garden Grow Method --</option>
+                            </select>
+                            <label asp-for="GardenGrowMethod" for="growMethod">
+                                <i class="bi bi-droplet"></i> Grow Method
+                            </label>
+                            <span asp-validation-for="GardenGrowMethod" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-calendar-range"></i> Garden Timeline</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="StartDate" type="date" class="form-control" id="startDate" />
+                            <label asp-for="StartDate" for="startDate">
+                                <i class="bi bi-calendar-check"></i> Start Date
+                            </label>
+                            <span asp-validation-for="StartDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="EndDate" type="date" class="form-control" id="endDate" />
+                            <label asp-for="EndDate" for="endDate">
+                                <i class="bi bi-calendar-x"></i> End Date
+                            </label>
+                            <span asp-validation-for="EndDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garden Image Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-image"></i> Garden Image</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label">
+                                <i class="bi bi-cloud-upload"></i> Upload Garden Image
+                            </label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageFile" onchange="previewImage(this)" />
+                            <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Accepted formats: JPG, PNG, GIF. Max size: 5MB
+                            </div>
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div id="imagePreview" class="text-center mt-3" style="display: none;">
+                            <p class="text-muted mb-2"><strong>Image Preview:</strong></p>
+                            <img id="previewImg" src="#" alt="Image Preview" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: contain;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons Card -->
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle"></i> Create Garden
+                    </button>
+                    <button type="reset" class="btn btn-warning btn-lg">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Form
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            
+            if (!startDate.value) {
+                const today = new Date().toISOString().split('T')[0];
+                startDate.value = today;
+            }
+            
+            if (!endDate.value) {
+                const sixMonthsLater = new Date();
+                sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                endDate.value = sixMonthsLater.toISOString().split('T')[0];
+            }
+        });
+    </script>
 }

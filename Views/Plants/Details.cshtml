@@ -1,82 +1,271 @@
 ﻿@model GardenHub.Models.Plant
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Plant Details";
 }
 
-<h1>Details</h1>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-flower3"></i> @Model.PlantName</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model?.PlantId" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit Plant
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>Plant</h4>
-    <hr />
-    <dl class="row">
-        @if (ViewData["PlantImage"] != null && !string.IsNullOrEmpty(ViewData["PlantImage"]!.ToString()))
-        {
-            <dt class="col-sm-2">
-                Plant Image
-            </dt>
-            <dd class="col-sm-10">
-                <img src="@ViewData["PlantImage"]" alt="Plant Image" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
-            </dd>
-        }
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LightingRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LightingRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GrowMethod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GrowMethod)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatePlanted)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatePlanted)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantCondition)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantCondition)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Garden)
-        </dt>
-        <dd class = "col-sm-10">
-            @if (Model.Garden != null)
-            {
-                @Html.DisplayFor(model => model.Garden.GardenDescription)
-            }
-            else
-            {
-                <span class="text-muted">No garden assigned</span>
-            }
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PlantId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <!-- Plant Overview Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="bi bi-info-circle"></i> Plant Overview</h3>
+        </div>
+        <div class="card-body">
+            <div class="garden-overview-layout">
+                <div class="garden-overview-image">
+                    @if (ViewData["PlantImage"] != null && !string.IsNullOrEmpty(ViewData["PlantImage"]!.ToString()))
+                    {
+                        <img src="@ViewData["PlantImage"]" alt="@Model.PlantName" class="img-fluid rounded shadow-sm" style="max-height: 400px; object-fit: cover; width: 100%;" />
+                    }
+                    else
+                    {
+                        <div class="text-center p-5 bg-light rounded">
+                            <i class="bi bi-flower3 text-muted" style="font-size: 5rem;"></i>
+                            <p class="text-muted mt-2">No image available</p>
+                        </div>
+                    }
+                </div>
+                <div class="garden-overview-details">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Plant Name:</dt>
+                        <dd class="col-sm-8">
+                            <h4 class="mb-0">@Html.DisplayFor(model => model.PlantName)</h4>
+                        </dd>
+
+                        <dt class="col-sm-4">Description:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.PlantDescription)</dd>
+
+                        <dt class="col-sm-4">Plant Type:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.PlantType)</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Lighting Requirement:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-warning text-dark fs-6">
+                                <i class="bi bi-brightness-high"></i> @Html.DisplayFor(model => model.LightingRequirement)
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Grow Method:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info fs-6">@Html.DisplayFor(model => model.GrowMethod)</span>
+                        </dd>
+
+                        <dt class="col-sm-4">Date Planted:</dt>
+                        <dd class="col-sm-8">
+                            <i class="bi bi-calendar3"></i> @Html.DisplayFor(model => model.DatePlanted)
+                        </dd>
+
+                        <dt class="col-sm-4">Plant Condition:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.PlantCondition.HasValue)
+                            {
+                                var conditionBadge = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "success" :
+                                                     Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "warning" : "danger";
+                                var conditionIcon = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "check-circle-fill" :
+                                                    Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "exclamation-triangle-fill" : "x-circle-fill";
+                                <span class="badge bg-@conditionBadge fs-6">
+                                    <i class="bi bi-@conditionIcon"></i> @Html.DisplayFor(model => model.PlantCondition)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not specified</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Garden:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Garden != null)
+                            {
+                                <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-house-door"></i> @Html.DisplayFor(model => model.Garden.GardenDescription)
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No garden assigned</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Statistics Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0"><i class="bi bi-graph-up"></i> Plant Statistics</h3>
+        </div>
+        <div class="card-body">
+            <div class="garden-stats-row">
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-calendar-check text-success" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">
+                                @{
+                                    var daysPlanted = (DateTime.Now - Model.DatePlanted).Days;
+                                }
+                                @daysPlanted
+                            </h3>
+                            <p class="text-muted mb-0">Days Since Planted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-flower3 text-primary" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">@Model.PlantType</h3>
+                            <p class="text-muted mb-0">Plant Type</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-brightness-high text-warning" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">@Model.LightingRequirement</h3>
+                            <p class="text-muted mb-0">Light Required</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="garden-stat-card">
+                    <div class="card bg-light shadow-sm h-100">
+                        <div class="card-body text-center">
+                            @{
+                                var conditionColor = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "success" :
+                                                     Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "warning" : "danger";
+                                var conditionIconLarge = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "heart-fill" :
+                                                         Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "exclamation-triangle-fill" : "heart-break-fill";
+                            }
+                            <i class="bi bi-@conditionIconLarge text-@conditionColor" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">
+                                @if (Model.PlantCondition.HasValue)
+                                {
+                                    @Model.PlantCondition
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Unknown</span>
+                                }
+                            </h3>
+                            <p class="text-muted mb-0">Current Condition</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Growing Information Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-clipboard-data"></i> Growing Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title border-bottom pb-2 mb-3">
+                                <i class="bi bi-droplet-fill text-info"></i> Grow Method
+                            </h5>
+                            <p class="fs-5 mb-0">@Html.DisplayFor(model => model.GrowMethod)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                        <div class="card-body">
+                            <h5 class="card-title border-bottom pb-2 mb-3">
+                                <i class="bi bi-brightness-high text-warning"></i> Light Requirements
+                            </h5>
+                            <p class="fs-5 mb-0">@Html.DisplayFor(model => model.LightingRequirement)</p>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Garden != null)
+                {
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-house-door text-success"></i> Garden Information
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p class="mb-1"><strong>Garden Name:</strong></p>
+                                        <p class="text-muted">@Model.Garden.GardenName</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p class="mb-1"><strong>Type:</strong></p>
+                                        <p class="text-muted">@Model.Garden.Type</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <p class="mb-1"><strong>Location:</strong></p>
+                                        <p class="text-muted">@Model.Garden.GardenLocation</p>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-outline-primary">
+                                        <i class="bi bi-speedometer2"></i> View Garden Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a asp-action="Edit" asp-route-id="@Model?.PlantId" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit Plant Details
+                </a>
+                @if (Model.Garden != null)
+                {
+                    <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-primary">
+                        <i class="bi bi-house-door"></i> Go to Garden
+                    </a>
+                    <a asp-controller="JournalEntries" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-info">
+                        <i class="bi bi-journal-plus"></i> Add Journal Entry
+                    </a>
+                    <a asp-controller="DailyRecords" asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-success">
+                        <i class="bi bi-clipboard-plus"></i> Add Daily Record
+                    </a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-list-ul"></i> View All Plants
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

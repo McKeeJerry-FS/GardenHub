@@ -1,108 +1,237 @@
 ﻿@model GardenHub.Models.DailyRecord
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Daily Record Details";
 }
 
-<h1>Details</h1>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-clipboard-data"></i> Daily Record</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model?.RecordId" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit Record
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
 
-<div>
-    <h4>DailyRecord</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Garden)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Garden.GardenDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InsideTemperature)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InsideTemperature)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OutsideTemperature)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OutsideTemperature)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InsideHumidity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InsideHumidity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OutsideHumidity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OutsideHumidity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InsideVPD)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InsideVPD)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OutsideVPD)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OutsideVPD)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LightingOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LightingOn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LightingOff)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LightingOff)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LightingIntensity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LightingIntensity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WaterAmount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WaterAmount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NutrientAmount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NutrientAmount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.RecordId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <!-- Record Header Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0"><i class="bi bi-info-circle"></i> Record Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-calendar3"></i> Date & Time</h5>
+                    <p class="fs-4 mb-0">@Model.CreatedDate.ToString("MMMM dd, yyyy h:mm tt")</p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-house-door"></i> Garden</h5>
+                    @if (Model.Garden != null)
+                    {
+                        <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-outline-primary">
+                            <i class="bi bi-speedometer2"></i> @Model.Garden.GardenDescription
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No garden assigned</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Conditions Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-thermometer-half"></i> Environmental Conditions</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- Inside Conditions -->
+                <div class="col-md-6">
+                    <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-house-door"></i> Inside Conditions</h5>
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-thermometer text-danger fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.InsideTemperature°F</h4>
+                                    <small class="text-muted">Temperature</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-droplet text-primary fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.InsideHumidity%</h4>
+                                    <small class="text-muted">Humidity</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-activity text-warning fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.InsideVPD kPa</h4>
+                                    <small class="text-muted">Vapor Pressure Deficit</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outside Conditions -->
+                <div class="col-md-6">
+                    <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-cloud-sun"></i> Outside Conditions</h5>
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-thermometer text-danger fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.OutsideTemperature°F</h4>
+                                    <small class="text-muted">Temperature</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-droplet text-primary fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.OutsideHumidity%</h4>
+                                    <small class="text-muted">Humidity</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-activity text-warning fs-3"></i>
+                                    <h4 class="mb-0 mt-2">@Model.OutsideVPD kPa</h4>
+                                    <small class="text-muted">Vapor Pressure Deficit</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lighting Information Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="mb-0"><i class="bi bi-brightness-high"></i> Lighting Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card bg-light h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-sunrise text-warning" style="font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2">Lights On</h5>
+                            <p class="fs-4 mb-0">@Model.LightingOn</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-light h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-sunset text-warning" style="font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2">Lights Off</h5>
+                            <p class="fs-4 mb-0">@Model.LightingOff</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-light h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-brightness-high text-warning" style="font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2">Intensity</h5>
+                            <p class="fs-4 mb-0">@Model.LightingIntensity%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Care Information Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="bi bi-droplet-fill"></i> Water & Nutrients</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-droplet-fill text-info" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 mb-2">Water Amount</h5>
+                            <p class="fs-4 mb-0">@Model.WaterAmount</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-moisture text-success" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 mb-2">Nutrient Amount</h5>
+                            <p class="fs-4 mb-0">@Model.NutrientAmount</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Card -->
+    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="mb-0"><i class="bi bi-sticky"></i> Notes</h3>
+            </div>
+            <div class="card-body">
+                <p class="fs-5 mb-0">@Model.Notes</p>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions Card -->
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a asp-action="Edit" asp-route-id="@Model?.RecordId" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Edit Record
+                </a>
+                @if (Model.Garden != null)
+                {
+                    <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-primary">
+                        <i class="bi bi-house-door"></i> Go to Garden
+                    </a>
+                    <a asp-action="Create" asp-route-gardenId="@Model.Garden.GardenId" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Add New Record
+                    </a>
+                }
+                <a asp-action="Dashboard" class="btn btn-info">
+                    <i class="bi bi-graph-up"></i> View Dashboard
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-list-ul"></i> View All Records
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,62 +1,189 @@
 ﻿@model GardenHub.Models.JournalEntry
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Journal Entry";
 }
 
-<h1>Edit</h1>
-
-<h4>JournalEntry</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EntryId" />
-            <div class="form-group">
-                <label asp-for="GardenId" class="control-label"></label>
-                <select asp-for="GardenId" class="form-control" asp-items="ViewBag.GardenId"></select>
-                <span asp-validation-for="GardenId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EntryDate" class="control-label"></label>
-                <input asp-for="EntryDate" class="form-control" />
-                <span asp-validation-for="EntryDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Current Image</label>
-                @if (ViewData["CurrentImage"] != null && !string.IsNullOrEmpty(ViewData["CurrentImage"]!.ToString()))
-                {
-                    <div class="mb-2">
-                        <img src="@ViewData["CurrentImage"]" alt="Current Entry Image" style="max-width: 200px; max-height: 200px;" class="img-thumbnail" />
-                    </div>
-                }
-                <label asp-for="ImageFile" class="control-label">Change Entry Image</label>
-                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
-                <small class="form-text text-muted">Leave empty to keep current image</small>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-pencil"></i> Edit Journal Entry</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Details" asp-route-id="@Model.EntryId" class="btn btn-info">
+                <i class="bi bi-eye"></i> View Details
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Edit" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        <input type="hidden" asp-for="EntryId" />
+
+        <!-- Entry Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-calendar3"></i> Entry Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="GardenId" class="form-select" asp-items="ViewBag.GardenId" id="gardenId">
+                                <option value="">-- Select Garden --</option>
+                            </select>
+                            <label asp-for="GardenId" for="gardenId">
+                                <i class="bi bi-house-door"></i> Select Garden
+                            </label>
+                            <span asp-validation-for="GardenId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="EntryDate" type="date" class="form-control" id="entryDate" />
+                            <label asp-for="EntryDate" for="entryDate">
+                                <i class="bi bi-calendar-event"></i> Entry Date
+                            </label>
+                            <span asp-validation-for="EntryDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entry Content Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-card-text"></i> Journal Content</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-floating">
+                    <textarea asp-for="Content" class="form-control" id="content" placeholder="Write your journal entry here..." style="height: 250px"></textarea>
+                    <label asp-for="Content" for="content">
+                        <i class="bi bi-pencil-square"></i> Write your journal entry here...
+                    </label>
+                    <span asp-validation-for="Content" class="text-danger small"></span>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        <span id="charCount">@Model.Content.Length</span> / 1000 characters
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Entry Image Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-image"></i> Entry Image</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <!-- Current Image -->
+                    @if (ViewData["CurrentImage"] != null && !string.IsNullOrEmpty(ViewData["CurrentImage"]!.ToString()))
+                    {
+                        <div class="col-md-6">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title mb-3">
+                                        <i class="bi bi-image-fill text-success"></i> Current Image
+                                    </h5>
+                                    <img src="@ViewData["CurrentImage"]" alt="Current Entry Image" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: contain;" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Upload New Image -->
+                    <div class="@(ViewData["CurrentImage"] != null ? "col-md-6" : "col-12")">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-cloud-upload text-primary"></i> Upload New Image
+                                </h5>
+                                <div class="mb-3">
+                                    <label asp-for="ImageFile" class="form-label">Change Entry Image</label>
+                                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageFile" onchange="previewImage(this)" />
+                                    <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i> Leave empty to keep current image. Max size: 5MB
+                                    </div>
+                                </div>
+                                
+                                <!-- New Image Preview -->
+                                <div id="imagePreview" class="text-center mt-3" style="display: none;">
+                                    <p class="text-muted mb-2"><strong>New Image Preview:</strong></p>
+                                    <img id="previewImg" src="#" alt="New Image Preview" class="img-fluid rounded shadow" style="max-height: 250px; object-fit: contain;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Fields -->
+        <input type="hidden" asp-for="UserId" />
+
+        <!-- Action Buttons Card -->
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.EntryId" class="btn btn-info btn-lg">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Character counter
+        const contentTextarea = document.getElementById('content');
+        const charCount = document.getElementById('charCount');
+        
+        contentTextarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length > 1000) {
+                charCount.classList.add('text-danger');
+                charCount.classList.remove('text-muted');
+            } else {
+                charCount.classList.add('text-muted');
+                charCount.classList.remove('text-danger');
+            }
+        });
+    </script>
 }

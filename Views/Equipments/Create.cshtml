@@ -1,73 +1,210 @@
 ﻿@model GardenHub.Models.Equipment
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Equipment";
 }
 
-<h1>Create</h1>
-
-<h4>Equipment</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="EquipmentName" class="control-label"></label>
-                <input asp-for="EquipmentName" class="form-control" />
-                <span asp-validation-for="EquipmentName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EquipmentDescription" class="control-label"></label>
-                <input asp-for="EquipmentDescription" class="form-control" />
-                <span asp-validation-for="EquipmentDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EquipmentType" class="control-label"></label>
-                <select asp-for="EquipmentType" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.EquipmentType>()" class="form-control">
-                    <option value="">-- Select Equipment Type --</option>
-                </select>
-                <span asp-validation-for="EquipmentType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" />
-                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastMaintenanceDate" class="control-label"></label>
-                <input asp-for="LastMaintenanceDate" class="form-control" />
-                <span asp-validation-for="LastMaintenanceDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageFile" class="control-label">Entry Image</label>
-                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GardenId" class="control-label"></label>
-                <select asp-for="GardenId" class ="form-control" asp-items="ViewBag.GardenId"></select>
-            </div>
-            <div class="form-group visually-hidden">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-plus-circle"></i> Add New Equipment</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <!-- Basic Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0"><i class="bi bi-info-circle"></i> Basic Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="EquipmentName" class="form-control" id="equipmentName" placeholder="Equipment Name" />
+                            <label asp-for="EquipmentName" for="equipmentName">
+                                <i class="bi bi-tools"></i> Equipment Name
+                            </label>
+                            <span asp-validation-for="EquipmentName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="EquipmentType" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.EquipmentType>()" class="form-select" id="equipmentType">
+                                <option value="">-- Select Equipment Type --</option>
+                            </select>
+                            <label asp-for="EquipmentType" for="equipmentType">
+                                <i class="bi bi-tag"></i> Equipment Type
+                            </label>
+                            <span asp-validation-for="EquipmentType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea asp-for="EquipmentDescription" class="form-control" id="equipmentDescription" placeholder="Equipment Description" style="height: 120px"></textarea>
+                            <label asp-for="EquipmentDescription" for="equipmentDescription">
+                                <i class="bi bi-card-text"></i> Equipment Description
+                            </label>
+                            <span asp-validation-for="EquipmentDescription" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-cart-check"></i> Purchase Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="PurchaseDate" type="date" class="form-control" id="purchaseDate" />
+                            <label asp-for="PurchaseDate" for="purchaseDate">
+                                <i class="bi bi-calendar-check"></i> Purchase Date
+                            </label>
+                            <span asp-validation-for="PurchaseDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="PurchasePrice" type="number" step="0.01" class="form-control" id="purchasePrice" placeholder="Purchase Price" />
+                            <label asp-for="PurchasePrice" for="purchasePrice">
+                                <i class="bi bi-currency-dollar"></i> Purchase Price
+                            </label>
+                            <span asp-validation-for="PurchasePrice" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-wrench"></i> Maintenance Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-floating">
+                    <input asp-for="LastMaintenanceDate" type="date" class="form-control" id="lastMaintenanceDate" />
+                    <label asp-for="LastMaintenanceDate" for="lastMaintenanceDate">
+                        <i class="bi bi-calendar-event"></i> Last Maintenance Date
+                    </label>
+                    <span asp-validation-for="LastMaintenanceDate" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garden Assignment Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-house-door"></i> Garden Assignment</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-floating">
+                    <select asp-for="GardenId" class="form-select" asp-items="ViewBag.GardenId" id="gardenId">
+                        <option value="">-- Select Garden --</option>
+                    </select>
+                    <label asp-for="GardenId" for="gardenId">
+                        <i class="bi bi-house"></i> Select Garden
+                    </label>
+                    <span asp-validation-for="GardenId" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Image Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-image"></i> Equipment Image</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="ImageFile" class="form-label">
+                        <i class="bi bi-cloud-upload"></i> Upload Equipment Image
+                    </label>
+                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" id="imageFile" onchange="previewImage(this)" />
+                    <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle"></i> Accepted formats: JPG, PNG, GIF. Max size: 5MB
+                    </div>
+                </div>
+                
+                <!-- Image Preview -->
+                <div id="imagePreview" class="text-center mt-3" style="display: none;">
+                    <p class="text-muted mb-2"><strong>Image Preview:</strong></p>
+                    <img id="previewImg" src="#" alt="Image Preview" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: contain;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden UserId Field -->
+        <input type="hidden" asp-for="UserId" />
+
+        <!-- Action Buttons Card -->
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle"></i> Create Equipment
+                    </button>
+                    <button type="reset" class="btn btn-warning btn-lg">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Form
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const purchaseDate = document.getElementById('purchaseDate');
+            const maintenanceDate = document.getElementById('lastMaintenanceDate');
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (!purchaseDate.value) {
+                purchaseDate.value = today;
+            }
+            
+            if (!maintenanceDate.value) {
+                maintenanceDate.value = today;
+            }
+        });
+    </script>
 }

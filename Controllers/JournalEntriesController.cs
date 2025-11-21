@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GardenHub.Data;
+using GardenHub.Models;
+using GardenHub.Models.Enums;
+using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GardenHub.Data;
-using GardenHub.Models;
-using GardenHub.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using GardenHub.Models.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GardenHub.Controllers
 {
@@ -103,8 +104,18 @@ namespace GardenHub.Controllers
 
             if (ModelState.IsValid)
             {
-                await _journalEntriesService.CreateJournalEntryAsync(journalEntry);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Get the current logged -in user's ID
+                    journalEntry.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _journalEntriesService.CreateJournalEntryAsync(journalEntry);
+                    TempData["SuccessMessage"] = "Journal entry has been created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while creating the journal entry: {ex.Message}";
+                }
             }
             ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
@@ -182,16 +193,23 @@ namespace GardenHub.Controllers
                 try
                 {
                     await _journalEntriesService.UpdateJournalEntryAsync(id, journalEntry);
+                    TempData["SuccessMessage"] = "Journal entry has been updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (KeyNotFoundException)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "The journal entry you are trying to update no longer exists.";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (ArgumentException)
+                catch (ArgumentException ex)
                 {
-                    return BadRequest();
+                    TempData["ErrorMessage"] = $"Invalid data: {ex.Message}";
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while updating the journal entry: {ex.Message}";
+                }
             }
             ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
@@ -220,10 +238,21 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var result = await _journalEntriesService.DeleteJournalEntryAsync(id);
-            if (!result)
+            try
             {
-                return NotFound();
+                var result = await _journalEntriesService.DeleteJournalEntryAsync(id);
+                if (!result)
+                {
+                    TempData["ErrorMessage"] = "The journal entry you are trying to delete no longer exists.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Journal entry has been deleted successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while deleting the journal entry: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));

@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GardenHub.Data;
+using GardenHub.Models;
+using GardenHub.Models.Enums;
+using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GardenHub.Data;
-using GardenHub.Models;
-using Microsoft.AspNetCore.Authorization;
-using GardenHub.Services.Interfaces;
-using GardenHub.Models.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GardenHub.Controllers
 {
@@ -198,8 +199,18 @@ namespace GardenHub.Controllers
             
             if (ModelState.IsValid)
             {
-                await _gardenService.CreateGarden(garden);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Get the current logged -in user's ID
+                    garden.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _gardenService.CreateGarden(garden);
+                    TempData["SuccessMessage"] = $"Garden '{garden.GardenName}' has been created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while creating the garden: {ex.Message}";
+                }
             }
             ViewData["UserId"] = new SelectList(await _gardenService.GetAllUsers(), "Id", "Id", garden.UserId);
             return View(garden);
@@ -265,19 +276,26 @@ namespace GardenHub.Controllers
                 try
                 {
                     await _gardenService.UpdateGarden(garden, id);
+                    TempData["SuccessMessage"] = $"Garden '{garden.GardenName}' has been updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!await GardenExists(garden.GardenId))
                     {
-                        return NotFound();
+                        TempData["ErrorMessage"] = "The garden you are trying to update no longer exists.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
+                        TempData["ErrorMessage"] = "A concurrency error occurred. Please try again.";
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while updating the garden: {ex.Message}";
+                }
             }
             ViewData["UserId"] = new SelectList(await _gardenService.GetAllUsers(), "Id", "Id", garden.UserId);
             return View(garden);
@@ -305,7 +323,17 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _gardenService.DeleteGarden(id);
+            try
+            {
+                var garden = await _gardenService.GetGardenById(id);
+                var gardenName = garden?.GardenName ?? "Garden";
+                await _gardenService.DeleteGarden(id);
+                TempData["SuccessMessage"] = $"Garden '{gardenName}' has been deleted successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while deleting the garden: {ex.Message}";
+            }
             return RedirectToAction(nameof(Index));
         }
 

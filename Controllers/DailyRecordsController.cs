@@ -93,10 +93,18 @@ namespace GardenHub.Controllers
             
             if (ModelState.IsValid)
             {
-                // Get the current logged-in user's ID
-                dailyRecord.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                await _dailyRecordService.CreateDailyRecordAsync(dailyRecord);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Get the current logged-in user's ID
+                    dailyRecord.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _dailyRecordService.CreateDailyRecordAsync(dailyRecord);
+                    TempData["SuccessMessage"] = "Daily record has been created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while creating the daily record: {ex.Message}";
+                }
             }
 
             var gardens = await _dailyRecordService.GetAllGardensAsync();
@@ -152,12 +160,21 @@ namespace GardenHub.Controllers
 
             if (ModelState.IsValid)
             {
-                var updated = await _dailyRecordService.UpdateDailyRecordAsync(id, dailyRecord);
-                if (updated == null)
+                try
                 {
-                    return NotFound();
+                    var updated = await _dailyRecordService.UpdateDailyRecordAsync(id, dailyRecord);
+                    if (updated == null)
+                    {
+                        TempData["ErrorMessage"] = "The daily record you are trying to update no longer exists.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    TempData["SuccessMessage"] = "Daily record has been updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while updating the daily record: {ex.Message}";
+                }
             }
 
             var gardens = await _dailyRecordService.GetAllGardensAsync();
@@ -189,10 +206,21 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var deleted = await _dailyRecordService.DeleteDailyRecordAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound();
+                var deleted = await _dailyRecordService.DeleteDailyRecordAsync(id);
+                if (!deleted)
+                {
+                    TempData["ErrorMessage"] = "The daily record you are trying to delete no longer exists.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Daily record has been deleted successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while deleting the daily record: {ex.Message}";
             }
             return RedirectToAction(nameof(Index));
         }

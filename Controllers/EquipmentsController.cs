@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GardenHub.Models;
+using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GardenHub.Models;
-using Microsoft.AspNetCore.Authorization;
-using GardenHub.Services.Interfaces;
+using System.Security.Claims;
 
 
 namespace GardenHub.Controllers
@@ -96,8 +97,18 @@ namespace GardenHub.Controllers
 
             if (ModelState.IsValid)
             {
-                await _equipmentService.CreateEquipmentAsync(equipment);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Get the current logged -in user's ID
+                    equipment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _equipmentService.CreateEquipmentAsync(equipment);
+                    TempData["SuccessMessage"] = $"Equipment '{equipment.EquipmentName}' has been created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while creating the equipment: {ex.Message}";
+                }
             }
             
             ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenDescription", equipment.GardenId);
@@ -163,19 +174,26 @@ namespace GardenHub.Controllers
                 try
                 {
                     await _equipmentService.UpdateEquipmentAsync(id, equipment);
+                    TempData["SuccessMessage"] = $"Equipment '{equipment.EquipmentName}' has been updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!await _equipmentService.EquipmentExistsAsync(equipment.EquipmentId))
                     {
-                        return NotFound();
+                        TempData["ErrorMessage"] = "The equipment you are trying to update no longer exists.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
+                        TempData["ErrorMessage"] = "A concurrency error occurred. Please try again.";
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while updating the equipment: {ex.Message}";
+                }
             }
             
             ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenDescription", equipment.GardenId);
@@ -206,10 +224,24 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var equipment = await _equipmentService.GetEquipmentByIdAsync(id);
-            if (equipment != null)
+            try
             {
-                await _equipmentService.DeleteEquipmentAsync(id);
+                var equipment = await _equipmentService.GetEquipmentByIdAsync(id);
+                var equipmentName = equipment?.EquipmentName ?? "Equipment";
+                
+                if (equipment != null)
+                {
+                    await _equipmentService.DeleteEquipmentAsync(id);
+                    TempData["SuccessMessage"] = $"Equipment '{equipmentName}' has been deleted successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "The equipment you are trying to delete no longer exists.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while deleting the equipment: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));

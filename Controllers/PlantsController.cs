@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using GardenHub.Models;
+using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GardenHub.Models;
-using GardenHub.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace GardenHub.Controllers
 {
@@ -78,8 +79,18 @@ namespace GardenHub.Controllers
 
             if (ModelState.IsValid)
             {
-                await _plantService.CreatePlantAsync(plant);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    // Get the current logged -in user's ID
+                    plant.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    await _plantService.CreatePlantAsync(plant);
+                    TempData["SuccessMessage"] = $"Plant '{plant.PlantName}' has been created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while creating the plant: {ex.Message}";
+                }
             }
             
             var gardens = await _plantService.GetAllGardensAsync();
@@ -143,24 +154,32 @@ namespace GardenHub.Controllers
                 try
                 {
                     await _plantService.UpdatePlantAsync(id, plant);
+                    TempData["SuccessMessage"] = $"Plant '{plant.PlantName}' has been updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     var existingPlant = await _plantService.GetPlantByIdAsync(plant.PlantId);
                     if (existingPlant == null)
                     {
-                        return NotFound();
+                        TempData["ErrorMessage"] = "The plant you are trying to update no longer exists.";
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
+                        TempData["ErrorMessage"] = "A concurrency error occurred. Please try again.";
                         throw;
                     }
                 }
                 catch (KeyNotFoundException)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "The plant you are trying to update no longer exists.";
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"An error occurred while updating the plant: {ex.Message}";
+                }
             }
             
             var gardens = await _plantService.GetAllGardensAsync();
@@ -193,10 +212,24 @@ namespace GardenHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var deleted = await _plantService.DeletePlantAsync(id);
-            if (!deleted)
+            try
             {
-                return NotFound();
+                var plant = await _plantService.GetPlantByIdAsync(id);
+                var plantName = plant?.PlantName ?? "Plant";
+                var deleted = await _plantService.DeletePlantAsync(id);
+                
+                if (!deleted)
+                {
+                    TempData["ErrorMessage"] = "The plant you are trying to delete no longer exists.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"Plant '{plantName}' has been deleted successfully!";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while deleting the plant: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));

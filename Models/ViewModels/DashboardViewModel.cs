@@ -29,5 +29,10 @@ namespace GardenHub.Models.ViewModels
         public double AverageOutsideTemperature { get; set; }
         public double AverageInsideHumidity { get; set; }
         public double AverageOutsideHumidity { get; set; }
+
+        // Equipment Maintenance Notifications
+        public List<Equipment> EquipmentUnderMaintenance { get; set; } = new List<Equipment>();
+        public List<Equipment> EquipmentMaintenanceRequested { get; set; } = new List<Equipment>();
+        public int OperationalEquipmentCount { get; set; }
     }
 }

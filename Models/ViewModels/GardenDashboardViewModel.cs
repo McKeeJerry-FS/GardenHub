@@ -1,3 +1,5 @@
+using GardenHub.Models.Enums;
+
 namespace GardenHub.Models.ViewModels
 {
     public class GardenDashboardViewModel
@@ -28,6 +30,11 @@ namespace GardenHub.Models.ViewModels
         
         // Available months (for dropdown)
         public List<MonthYearOption> AvailableMonths { get; set; } = new List<MonthYearOption>();
+
+        // Equipment Maintenance for this garden
+        public List<Equipment> EquipmentUnderMaintenance { get; set; } = new List<Equipment>();
+        public List<Equipment> EquipmentMaintenanceRequested { get; set; } = new List<Equipment>();
+        public int OperationalEquipmentCount { get; set; }
     }
     
     public class MonthYearOption

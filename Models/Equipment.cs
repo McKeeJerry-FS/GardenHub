@@ -1,7 +1,6 @@
 ﻿using GardenHub.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GardenHub.Models
 {
@@ -31,6 +30,9 @@ namespace GardenHub.Models
         [Display(Name = "Last Maintenance Date")]
         public DateTime LastMaintenanceDate { get; set; }
 
+        [Display(Name = "Maintenance Status")]
+        public MaintenanceStatus MaintenanceStatus { get; set; } = MaintenanceStatus.Operational;
+
         // Image Properties
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
@@ -42,12 +44,12 @@ namespace GardenHub.Models
         public int GardenId { get; set; }
         public Garden? Garden { get; set; }
 
-
         // Foreign key to AppUser
-
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
-
         public virtual AppUser? User { get; set; }
+
+        // Navigation property for maintenance records
+        public virtual ICollection<MaintenanceRecord>? MaintenanceRecords { get; set; }
     }
 }

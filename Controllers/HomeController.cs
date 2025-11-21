@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using GardenHub.Models;
+using GardenHub.Models.Enums;
 using GardenHub.Models.ViewModels;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -114,6 +115,11 @@ namespace GardenHub.Controllers
                 viewModel.AverageOutsideHumidity = Math.Round(recentRecords.Average(r => r.OutsideHumidity), 1);
             }
 
+            // Equipment Maintenance Status
+            viewModel.EquipmentUnderMaintenance = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.UnderMaintenance);
+            viewModel.EquipmentMaintenanceRequested = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.MaintenanceRequested);
+            viewModel.OperationalEquipmentCount = allEquipment.Count(e => e.MaintenanceStatus == MaintenanceStatus.Operational);
+
             // Convert images for display
             foreach (var garden in viewModel.RecentGardens.Concat(viewModel.AllGardens).Distinct())
             {
@@ -145,6 +151,15 @@ namespace GardenHub.Controllers
                     entry.ImageData,
                     entry.ImageType,
                     Models.Enums.DefaultImage.GardenImage);
+            }
+
+            // Convert images for maintenance equipment
+            foreach (var equipment in viewModel.EquipmentUnderMaintenance.Concat(viewModel.EquipmentMaintenanceRequested))
+            {
+                ViewData[$"EquipmentImage_{equipment.EquipmentId}"] = _imageService.ConvertByteArrayToFile(
+                    equipment.ImageData,
+                    equipment.ImageType,
+                    Models.Enums.DefaultImage.EquipmentImage);
             }
 
             return View(viewModel);

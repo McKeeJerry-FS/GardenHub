@@ -1,7 +1,11 @@
 ﻿@model GardenHub.Models.Equipment
+@using GardenHub.Models.Enums
 
 @{
     ViewData["Title"] = "Equipment Details";
+    var activeMaintenance = ViewData["ActiveMaintenance"] as GardenHub.Models.MaintenanceRecord;
+    var maintenanceHistory = ViewData["MaintenanceHistory"] as List<GardenHub.Models.MaintenanceRecord> ?? new List<GardenHub.Models.MaintenanceRecord>();
+    var lastCompletedMaintenance = maintenanceHistory.FirstOrDefault(m => m.Status == MaintenanceStatus.Completed);
 }
 
 <div class="garden-dashboard-fixed-container">
@@ -17,10 +21,55 @@
         </div>
     </div>
 
+    <!-- Maintenance Status Alert -->
+    @if (Model.MaintenanceStatus != MaintenanceStatus.Operational)
+    {
+        var alertClass = Model.MaintenanceStatus switch
+        {
+            MaintenanceStatus.MaintenanceRequested => "alert-warning",
+            MaintenanceStatus.UnderMaintenance => "alert-danger",
+            _ => "alert-info"
+        };
+
+        <div class="alert @alertClass shadow mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-1 me-3"></i>
+                <div>
+                    <h4 class="alert-heading mb-2">
+                        @Model.MaintenanceStatus.ToString().Replace("MaintenanceRequested", "Maintenance Requested").Replace("UnderMaintenance", "Under Maintenance")
+                    </h4>
+                    @if (activeMaintenance != null)
+                    {
+                        <p class="mb-0">
+                            <strong>Requested:</strong> @activeMaintenance.RequestDate.ToString("MMMM dd, yyyy 'at' h:mm tt")<br />
+                            @if (!string.IsNullOrWhiteSpace(activeMaintenance.Notes))
+                            {
+                                <strong>Notes:</strong> @activeMaintenance.Notes
+                            }
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Equipment Overview Card -->
     <div class="card mb-4 shadow">
-        <div class="card-header bg-danger text-white">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
             <h3 class="mb-0"><i class="bi bi-info-circle"></i> Equipment Overview</h3>
+            @{
+                var statusBadge = Model.MaintenanceStatus switch
+                {
+                    MaintenanceStatus.Operational => "bg-success",
+                    MaintenanceStatus.MaintenanceRequested => "bg-warning text-dark",
+                    MaintenanceStatus.UnderMaintenance => "bg-danger",
+                    MaintenanceStatus.Completed => "bg-info",
+                    _ => "bg-secondary"
+                };
+            }
+            <span class="badge @statusBadge fs-6">
+                @Model.MaintenanceStatus.ToString().Replace("MaintenanceRequested", "Maintenance Requested").Replace("UnderMaintenance", "Under Maintenance")
+            </span>
         </div>
         <div class="card-body">
             <div class="garden-overview-layout">
@@ -128,9 +177,18 @@
                 <div class="garden-stat-card">
                     <div class="card bg-light shadow-sm h-100">
                         <div class="card-body text-center">
-                            <i class="bi bi-tag text-danger" style="font-size: 3rem;"></i>
-                            <h3 class="display-6 mt-3 mb-2">@Model.EquipmentType</h3>
-                            <p class="text-muted mb-0">Equipment Type</p>
+                            @{
+                                var statusIcon = Model.MaintenanceStatus switch
+                                {
+                                    MaintenanceStatus.Operational => "bi-check-circle text-success",
+                                    MaintenanceStatus.MaintenanceRequested => "bi-exclamation-triangle text-warning",
+                                    MaintenanceStatus.UnderMaintenance => "bi-tools text-danger",
+                                    _ => "bi-info-circle text-info"
+                                };
+                            }
+                            <i class="bi @statusIcon" style="font-size: 3rem;"></i>
+                            <h3 class="display-6 mt-3 mb-2">@Model.MaintenanceStatus.ToString().Replace("MaintenanceRequested", "Maintenance Requested").Replace("UnderMaintenance", "Under Maintenance")</h3>
+                            <p class="text-muted mb-0">Current Status</p>
                         </div>
                     </div>
                 </div>
@@ -138,10 +196,208 @@
         </div>
     </div>
 
+    <!-- Maintenance Actions Card -->
+    @if (Model.MaintenanceStatus == MaintenanceStatus.Operational)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-wrench-adjustable"></i> Request Maintenance</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="RequestMaintenance" asp-route-id="@Model.EquipmentId" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Maintenance Notes (Optional)</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Describe the maintenance needed..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-lg">
+                        <i class="bi bi-exclamation-triangle"></i> Request Maintenance
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+    else if (Model.MaintenanceStatus == MaintenanceStatus.MaintenanceRequested)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0"><i class="bi bi-play-circle"></i> Start Maintenance</h3>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">Equipment is awaiting maintenance. Click below to mark as under maintenance.</p>
+                <form asp-action="StartMaintenance" asp-route-id="@Model.EquipmentId" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-tools"></i> Start Maintenance
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+    else if (Model.MaintenanceStatus == MaintenanceStatus.UnderMaintenance)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-check-circle"></i> Complete Maintenance</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="CompleteMaintenance" asp-route-id="@Model.EquipmentId" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="completionNotes" class="form-label">Completion Notes (Optional)</label>
+                        <textarea class="form-control" id="completionNotes" name="completionNotes" rows="3" placeholder="Describe what was done during maintenance..."></textarea>
+                    </div>
+                    @if (activeMaintenance?.MaintenanceStartDate.HasValue == true)
+                    {
+                        var currentDowntime = DateTime.UtcNow - activeMaintenance.MaintenanceStartDate.Value;
+                        <div class="alert alert-info">
+                            <i class="bi bi-clock"></i> <strong>Current Downtime:</strong> 
+                            @if (currentDowntime.Days > 0)
+                            {
+                                <text>@currentDowntime.Days day(s) </text>
+                            }
+                            @currentDowntime.Hours hour(s) @currentDowntime.Minutes minute(s)
+                        </div>
+                    }
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle"></i> Complete Maintenance & Return to Service
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <!-- Last Maintenance Card -->
+    @if (lastCompletedMaintenance != null)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-clock-history"></i> Last Maintenance</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-calendar-event text-primary"></i> Maintenance Date
+                                </h5>
+                                <p class="mb-2"><strong>Completed:</strong></p>
+                                <p class="fs-5 text-muted">@lastCompletedMaintenance.MaintenanceEndDate?.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                                <small class="text-muted">@((DateTime.UtcNow - (lastCompletedMaintenance.MaintenanceEndDate ?? DateTime.UtcNow)).Days) days ago</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
+                            <div class="card-body">
+                                <h5 class="card-title border-bottom pb-2 mb-3">
+                                    <i class="bi bi-hourglass-split text-warning"></i> Downtime Duration
+                                </h5>
+                                @if (lastCompletedMaintenance.DowntimeDuration.HasValue)
+                                {
+                                    var downtime = lastCompletedMaintenance.DowntimeDuration.Value;
+                                    <p class="fs-5 text-muted">
+                                        @if (downtime.Days > 0)
+                                        {
+                                            <text>@downtime.Days day(s) </text>
+                                        }
+                                        @downtime.Hours hour(s) @downtime.Minutes minute(s)
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No downtime recorded</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(lastCompletedMaintenance.Notes))
+                    {
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title border-bottom pb-2 mb-3">
+                                        <i class="bi bi-journal-text text-secondary"></i> Maintenance Notes
+                                    </h5>
+                                    <p class="mb-0" style="white-space: pre-line;">@lastCompletedMaintenance.Notes</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Maintenance History Card -->
+    @if (maintenanceHistory.Any())
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0"><i class="bi bi-list-ul"></i> Maintenance History</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Requested</th>
+                                <th>Started</th>
+                                <th>Completed</th>
+                                <th>Downtime</th>
+                                <th>Requested By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in maintenanceHistory)
+                            {
+                                var recordStatusBadge = record.Status switch
+                                {
+                                    MaintenanceStatus.Operational => "bg-success",
+                                    MaintenanceStatus.MaintenanceRequested => "bg-warning text-dark",
+                                    MaintenanceStatus.UnderMaintenance => "bg-danger",
+                                    MaintenanceStatus.Completed => "bg-info",
+                                    _ => "bg-secondary"
+                                };
+
+                                <tr>
+                                    <td><span class="badge @recordStatusBadge">@record.Status.ToString().Replace("MaintenanceRequested", "Maintenance Requested").Replace("UnderMaintenance", "Under Maintenance")</span></td>
+                                    <td>@record.RequestDate.ToString("MM/dd/yyyy h:mm tt")</td>
+                                    <td>@(record.MaintenanceStartDate?.ToString("MM/dd/yyyy h:mm tt") ?? "-")</td>
+                                    <td>@(record.MaintenanceEndDate?.ToString("MM/dd/yyyy h:mm tt") ?? "-")</td>
+                                    <td>
+                                        @if (record.DowntimeDuration.HasValue)
+                                        {
+                                            var dt = record.DowntimeDuration.Value;
+                                            if (dt.Days > 0)
+                                            {
+                                                <text>@dt.Days day(s) </text>
+                                            }
+                                            <text>@dt.Hours hour(s) @dt.Minutes min(s)</text>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </td>
+                                    <td>@(record.RequestedBy?.FirstName ?? "Unknown") @(record.RequestedBy?.LastName ?? "")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Timeline Information Card -->
     <div class="card mb-4 shadow">
         <div class="card-header bg-info text-white">
-            <h3 class="mb-0"><i class="bi bi-clock-history"></i> Timeline & Maintenance</h3>
+            <h3 class="mb-0"><i class="bi bi-clock-history"></i> Timeline Information</h3>
         </div>
         <div class="card-body">
             <div class="row g-4">
@@ -158,41 +414,16 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card bg-light h-100">
-                        <div class="card-body">
-                            <h5 class="card-title border-bottom pb-2 mb-3">
-                                <i class="bi bi-wrench-adjustable text-warning"></i> Last Maintenance
-                            </h5>
-                            <p class="mb-2"><strong>Maintenance Date:</strong></p>
-                            <p class="fs-5 text-muted">@Model.LastMaintenanceDate.ToString("MMMM dd, yyyy")</p>
-                            <small class="text-muted">@daysSinceMaintenance days ago</small>
-                        </div>
-                    </div>
-                </div>
-
                 @if (Model.Garden != null)
                 {
-                    <div class="col-12">
-                        <div class="card bg-light">
+                    <div class="col-md-6">
+                        <div class="card bg-light h-100">
                             <div class="card-body">
                                 <h5 class="card-title border-bottom pb-2 mb-3">
                                     <i class="bi bi-house-door text-primary"></i> Garden Information
                                 </h5>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <p class="mb-1"><strong>Garden Name:</strong></p>
-                                        <p class="text-muted">@Model.Garden.GardenName</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p class="mb-1"><strong>Type:</strong></p>
-                                        <p class="text-muted">@Model.Garden.Type</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p class="mb-1"><strong>Location:</strong></p>
-                                        <p class="text-muted">@Model.Garden.GardenLocation</p>
-                                    </div>
-                                </div>
+                                <p class="mb-1"><strong>Garden Name:</strong></p>
+                                <p class="text-muted">@Model.Garden.GardenName</p>
                                 <div class="text-center mt-3">
                                     <a asp-controller="Gardens" asp-action="Dashboard" asp-route-id="@Model.Garden.GardenId" class="btn btn-outline-primary">
                                         <i class="bi bi-speedometer2"></i> View Garden Dashboard

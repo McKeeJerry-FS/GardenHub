@@ -19,11 +19,13 @@ namespace GardenHub.Controllers
     {
         private readonly IGardenService _gardenService;
         private readonly IImageService _imageService;
+        private readonly IEquipmentService _equipmentService;
 
-        public GardensController(IGardenService gardenService, IImageService imageService)
+        public GardensController(IGardenService gardenService, IImageService imageService, IEquipmentService equipmentService)
         {
             _gardenService = gardenService;
             _imageService = imageService;
+            _equipmentService = equipmentService;
         }
 
         // GET: Gardens
@@ -146,6 +148,20 @@ namespace GardenHub.Controllers
                     entry.ImageData,
                     entry.ImageType,
                     DefaultImage.GardenImage);
+            }
+
+            // Equipment Maintenance Status for this Garden
+            viewModel.EquipmentUnderMaintenance = await _equipmentService.GetEquipmentByGardenAndStatusAsync(id.Value, MaintenanceStatus.UnderMaintenance);
+            viewModel.EquipmentMaintenanceRequested = await _equipmentService.GetEquipmentByGardenAndStatusAsync(id.Value, MaintenanceStatus.MaintenanceRequested);
+            viewModel.OperationalEquipmentCount = garden.Equipments.Count(e => e.MaintenanceStatus == MaintenanceStatus.Operational);
+
+            // Convert images for maintenance equipment
+            foreach (var equipment in viewModel.EquipmentUnderMaintenance.Concat(viewModel.EquipmentMaintenanceRequested))
+            {
+                ViewData[$"EquipmentImage_{equipment.EquipmentId}"] = _imageService.ConvertByteArrayToFile(
+                    equipment.ImageData,
+                    equipment.ImageType,
+                    DefaultImage.EquipmentImage);
             }
 
             return View(viewModel);

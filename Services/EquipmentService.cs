@@ -1,5 +1,6 @@
 ﻿using GardenHub.Data;
 using GardenHub.Models;
+using GardenHub.Models.Enums;
 using GardenHub.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,6 +57,8 @@ namespace GardenHub.Services
             var equipment = await _context.Equipments
                 .Include(e => e.Garden)
                 .Include(e => e.User)
+                .Include(e => e.MaintenanceRecords)
+                    .ThenInclude(mr => mr.RequestedBy)
                 .FirstOrDefaultAsync(e => e.EquipmentId == id);
             
             if (equipment == null)
@@ -118,6 +121,141 @@ namespace GardenHub.Services
         {
             return await _context.Gardens
                 .OrderBy(g => g.GardenName)
+                .ToListAsync();
+        }
+
+        // Maintenance methods
+        public async Task<MaintenanceRecord> RequestMaintenanceAsync(int equipmentId, string userId, string? notes)
+        {
+            var equipment = await _context.Equipments.FindAsync(equipmentId);
+            if (equipment == null)
+                throw new KeyNotFoundException($"Equipment with ID {equipmentId} not found.");
+
+            // Check if there's already an active maintenance request
+            var activeRecord = await GetActiveMaintenanceRecordAsync(equipmentId);
+            if (activeRecord != null)
+                throw new InvalidOperationException("There is already an active maintenance request for this equipment.");
+
+            var maintenanceRecord = new MaintenanceRecord
+            {
+                EquipmentId = equipmentId,
+                Status = MaintenanceStatus.MaintenanceRequested,
+                RequestDate = DateTime.UtcNow,
+                RequestedByUserId = userId,
+                Notes = notes
+            };
+
+            equipment.MaintenanceStatus = MaintenanceStatus.MaintenanceRequested;
+
+            _context.MaintenanceRecords.Add(maintenanceRecord);
+            await _context.SaveChangesAsync();
+
+            return maintenanceRecord;
+        }
+
+        public async Task<MaintenanceRecord> StartMaintenanceAsync(int equipmentId, string userId)
+        {
+            var equipment = await _context.Equipments.FindAsync(equipmentId);
+            if (equipment == null)
+                throw new KeyNotFoundException($"Equipment with ID {equipmentId} not found.");
+
+            var activeRecord = await GetActiveMaintenanceRecordAsync(equipmentId);
+            if (activeRecord == null)
+                throw new InvalidOperationException("No active maintenance request found for this equipment.");
+
+            if (activeRecord.Status != MaintenanceStatus.MaintenanceRequested)
+                throw new InvalidOperationException("Equipment must be in 'Maintenance Requested' status to start maintenance.");
+
+            activeRecord.Status = MaintenanceStatus.UnderMaintenance;
+            activeRecord.MaintenanceStartDate = DateTime.UtcNow;
+            equipment.MaintenanceStatus = MaintenanceStatus.UnderMaintenance;
+
+            await _context.SaveChangesAsync();
+
+            return activeRecord;
+        }
+
+        public async Task<MaintenanceRecord> CompleteMaintenanceAsync(int equipmentId, string userId, string? notes)
+        {
+            var equipment = await _context.Equipments.FindAsync(equipmentId);
+            if (equipment == null)
+                throw new KeyNotFoundException($"Equipment with ID {equipmentId} not found.");
+
+            var activeRecord = await GetActiveMaintenanceRecordAsync(equipmentId);
+            if (activeRecord == null)
+                throw new InvalidOperationException("No active maintenance record found for this equipment.");
+
+            if (activeRecord.Status != MaintenanceStatus.UnderMaintenance)
+                throw new InvalidOperationException("Equipment must be 'Under Maintenance' to complete maintenance.");
+
+            activeRecord.Status = MaintenanceStatus.Completed;
+            activeRecord.MaintenanceEndDate = DateTime.UtcNow;
+            
+            if (!string.IsNullOrWhiteSpace(notes))
+            {
+                activeRecord.Notes = string.IsNullOrWhiteSpace(activeRecord.Notes) 
+                    ? notes 
+                    : $"{activeRecord.Notes}\n\nCompletion Notes: {notes}";
+            }
+
+            equipment.MaintenanceStatus = MaintenanceStatus.Operational;
+            equipment.LastMaintenanceDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return activeRecord;
+        }
+
+        public async Task<List<MaintenanceRecord>> GetMaintenanceHistoryAsync(int equipmentId)
+        {
+            return await _context.MaintenanceRecords
+                .Where(mr => mr.EquipmentId == equipmentId)
+                .Include(mr => mr.RequestedBy)
+                .OrderByDescending(mr => mr.RequestDate)
+                .ToListAsync();
+        }
+
+        public async Task<MaintenanceRecord?> GetActiveMaintenanceRecordAsync(int equipmentId)
+        {
+            return await _context.MaintenanceRecords
+                .Where(mr => mr.EquipmentId == equipmentId && 
+                            (mr.Status == MaintenanceStatus.MaintenanceRequested || 
+                             mr.Status == MaintenanceStatus.UnderMaintenance))
+                .Include(mr => mr.RequestedBy)
+                .FirstOrDefaultAsync();
+        }
+
+        // Equipment status query methods
+        public async Task<List<Equipment>> GetEquipmentByStatusAsync(MaintenanceStatus status)
+        {
+            return await _context.Equipments
+                .AsNoTracking()
+                .Include(e => e.Garden)
+                .Include(e => e.MaintenanceRecords.Where(mr => mr.Status == status))
+                .Where(e => e.MaintenanceStatus == status)
+                .OrderBy(e => e.EquipmentName)
+                .ToListAsync();
+        }
+
+        public async Task<List<Equipment>> GetEquipmentByGardenAndStatusAsync(int gardenId, MaintenanceStatus status)
+        {
+            return await _context.Equipments
+                .AsNoTracking()
+                .Include(e => e.Garden)
+                .Include(e => e.MaintenanceRecords.Where(mr => mr.Status == status))
+                .Where(e => e.GardenId == gardenId && e.MaintenanceStatus == status)
+                .OrderBy(e => e.EquipmentName)
+                .ToListAsync();
+        }
+
+        public async Task<List<Equipment>> GetEquipmentByGardenAsync(int gardenId)
+        {
+            return await _context.Equipments
+                .AsNoTracking()
+                .Include(e => e.Garden)
+                .Include(e => e.MaintenanceRecords)
+                .Where(e => e.GardenId == gardenId)
+                .OrderBy(e => e.EquipmentName)
                 .ToListAsync();
         }
     }

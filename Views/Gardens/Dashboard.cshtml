@@ -1,4 +1,5 @@
 @model GardenHub.Models.ViewModels.GardenDashboardViewModel
+@using GardenHub.Models.Enums
 
 @{
     ViewData["Title"] = "Garden Dashboard";
@@ -16,6 +17,157 @@
             </a>
         </div>
     </div>
+
+    <!-- Equipment Maintenance Notifications -->
+    @if (Model.EquipmentUnderMaintenance.Any() || Model.EquipmentMaintenanceRequested.Any())
+    {
+        <div class="card mb-4 shadow border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Equipment Maintenance Alerts
+                </h3>
+            </div>
+            <div class="card-body">
+                @if (Model.EquipmentUnderMaintenance.Any())
+                {
+                    <div class="alert alert-danger mb-3">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-tools"></i> Equipment Under Maintenance (@Model.EquipmentUnderMaintenance.Count)
+                        </h5>
+                        <hr />
+                        <div class="row g-3">
+                            @foreach (var equipment in Model.EquipmentUnderMaintenance)
+                            {
+                                var activeRecord = equipment.MaintenanceRecords?
+                                    .FirstOrDefault(mr => mr.Status == MaintenanceStatus.UnderMaintenance);
+                                var downtime = activeRecord?.MaintenanceStartDate.HasValue == true 
+                                    ? DateTime.UtcNow - activeRecord.MaintenanceStartDate.Value 
+                                    : TimeSpan.Zero;
+
+                                <div class="col-md-6">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
+                                                @if (ViewData[$"EquipmentImage_{equipment.EquipmentId}"] != null)
+                                                {
+                                                    <img src="@ViewData[$"EquipmentImage_{equipment.EquipmentId}"]" 
+                                                         alt="@equipment.EquipmentName" 
+                                                         class="rounded me-3" 
+                                                         style="width: 80px; height: 80px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-secondary rounded me-3 d-flex align-items-center justify-content-center" 
+                                                         style="width: 80px; height: 80px;">
+                                                        <i class="bi bi-tools text-white fs-2"></i>
+                                                    </div>
+                                                }
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">
+                                                        <strong>@equipment.EquipmentName</strong>
+                                                    </h6>
+                                                    <p class="mb-1 small text-muted">@equipment.EquipmentType</p>
+                                                    <p class="mb-1">
+                                                        <i class="bi bi-clock text-danger"></i> 
+                                                        <strong>Downtime:</strong> 
+                                                        @if (downtime.Days > 0)
+                                                        {
+                                                            <text>@downtime.Days day(s) </text>
+                                                        }
+                                                        @downtime.Hours hour(s) @downtime.Minutes min
+                                                    </p>
+                                                    @if (activeRecord != null)
+                                                    {
+                                                        <p class="mb-0 small">
+                                                            <strong>Started:</strong> @activeRecord.MaintenanceStartDate?.ToString("MMM dd, yyyy h:mm tt")
+                                                        </p>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <a asp-controller="Equipments" asp-action="Details" asp-route-id="@equipment.EquipmentId" 
+                                                   class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-eye"></i> View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (Model.EquipmentMaintenanceRequested.Any())
+                {
+                    <div class="alert alert-warning mb-0">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-exclamation-triangle"></i> Maintenance Requested (@Model.EquipmentMaintenanceRequested.Count)
+                        </h5>
+                        <hr />
+                        <div class="row g-3">
+                            @foreach (var equipment in Model.EquipmentMaintenanceRequested)
+                            {
+                                var activeRecord = equipment.MaintenanceRecords?
+                                    .FirstOrDefault(mr => mr.Status == MaintenanceStatus.MaintenanceRequested);
+                                var daysAgo = activeRecord != null 
+                                    ? (DateTime.UtcNow - activeRecord.RequestDate).Days 
+                                    : 0;
+
+                                <div class="col-md-6">
+                                    <div class="card bg-light h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
+                                                @if (ViewData[$"EquipmentImage_{equipment.EquipmentId}"] != null)
+                                                {
+                                                    <img src="@ViewData[$"EquipmentImage_{equipment.EquipmentId}"]" 
+                                                         alt="@equipment.EquipmentName" 
+                                                         class="rounded me-3" 
+                                                         style="width: 80px; height: 80px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-secondary rounded me-3 d-flex align-items-center justify-content-center" 
+                                                         style="width: 80px; height: 80px;">
+                                                        <i class="bi bi-tools text-white fs-2"></i>
+                                                    </div>
+                                                }
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">
+                                                        <strong>@equipment.EquipmentName</strong>
+                                                    </h6>
+                                                    <p class="mb-1 small text-muted">@equipment.EquipmentType</p>
+                                                    @if (activeRecord != null)
+                                                    {
+                                                        <p class="mb-1">
+                                                            <i class="bi bi-calendar-event text-warning"></i> 
+                                                            <strong>Requested:</strong> @daysAgo day(s) ago
+                                                        </p>
+                                                        @if (!string.IsNullOrWhiteSpace(activeRecord.Notes))
+                                                        {
+                                                            <p class="mb-0 small text-muted">
+                                                                <strong>Notes:</strong> @activeRecord.Notes
+                                                            </p>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <a asp-controller="Equipments" asp-action="Details" asp-route-id="@equipment.EquipmentId" 
+                                                   class="btn btn-sm btn-outline-warning">
+                                                    <i class="bi bi-eye"></i> View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 
     <!-- Garden Overview Card -->
     <div class="card mb-4 shadow">
@@ -83,6 +235,13 @@
                 <div class="card-body text-center p-3">
                     <h2 class="display-5 mb-2">@Model.Garden.Equipments.Count</h2>
                     <p class="card-text mb-0">Equipment</p>
+                    @if (Model.EquipmentUnderMaintenance.Any() || Model.EquipmentMaintenanceRequested.Any())
+                    {
+                        <small class="d-block mt-1">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            @(Model.EquipmentUnderMaintenance.Count + Model.EquipmentMaintenanceRequested.Count) needs attention
+                        </small>
+                    }
                 </div>
             </div>
         </div>

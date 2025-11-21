@@ -12,14 +12,11 @@ namespace GardenHub.Controllers
     [Authorize]
     public class EquipmentsController : Controller
     {
-        
         private readonly IImageService _imageService;
         private readonly IEquipmentService _equipmentService;
 
-
         public EquipmentsController(IEquipmentService equipmentService, IImageService imageService)
         {
-            
             _equipmentService = equipmentService;
             _imageService = imageService;
         }
@@ -45,7 +42,100 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
+            // Get active maintenance record
+            ViewData["ActiveMaintenance"] = await _equipmentService.GetActiveMaintenanceRecordAsync(id.Value);
+            
+            // Get maintenance history
+            ViewData["MaintenanceHistory"] = await _equipmentService.GetMaintenanceHistoryAsync(id.Value);
+
             return View(equipment);
+        }
+
+        // POST: Equipments/RequestMaintenance/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestMaintenance(int id, string? notes)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    TempData["ErrorMessage"] = "User not authenticated.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                await _equipmentService.RequestMaintenanceAsync(id, userId, notes);
+                TempData["SuccessMessage"] = "Maintenance request has been submitted successfully!";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["WarningMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // POST: Equipments/StartMaintenance/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartMaintenance(int id)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    TempData["ErrorMessage"] = "User not authenticated.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                await _equipmentService.StartMaintenanceAsync(id, userId);
+                TempData["InfoMessage"] = "Maintenance has been started. Equipment is now under maintenance.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["WarningMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // POST: Equipments/CompleteMaintenance/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteMaintenance(int id, string? completionNotes)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    TempData["ErrorMessage"] = "User not authenticated.";
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+
+                await _equipmentService.CompleteMaintenanceAsync(id, userId, completionNotes);
+                TempData["SuccessMessage"] = "Maintenance has been completed successfully! Equipment is now operational.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["WarningMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         // GET: Equipments/Create
@@ -63,7 +153,7 @@ namespace GardenHub.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EquipmentId,EquipmentName,EquipmentDescription,EquipmentType,PurchaseDate,PurchasePrice,LastMaintenanceDate,ImageFile,GardenId,UserId")] Equipment equipment)
+        public async Task<IActionResult> Create([Bind("EquipmentId,EquipmentName,EquipmentDescription,EquipmentType,PurchaseDate,PurchasePrice,LastMaintenanceDate,ImageFile,GardenId")] Equipment equipment)
         {
             // Process image upload
             if (equipment.ImageFile != null)
@@ -90,6 +180,14 @@ namespace GardenHub.Controllers
                     _ => equipment.LastMaintenanceDate
                 };
             }
+            else
+            {
+                // Set LastMaintenanceDate to current date for new equipment
+                equipment.LastMaintenanceDate = DateTime.UtcNow;
+            }
+
+            // Ensure new equipment is set to Operational status
+            equipment.MaintenanceStatus = GardenHub.Models.Enums.MaintenanceStatus.Operational;
 
             ModelState.Remove("Garden");
             ModelState.Remove("User");
@@ -99,10 +197,10 @@ namespace GardenHub.Controllers
             {
                 try
                 {
-                    // Get the current logged -in user's ID
+                    // Get the current logged-in user's ID
                     equipment.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     await _equipmentService.CreateEquipmentAsync(equipment);
-                    TempData["SuccessMessage"] = $"Equipment '{equipment.EquipmentName}' has been created successfully!";
+                    TempData["SuccessMessage"] = $"Equipment '{equipment.EquipmentName}' has been created successfully and is now operational!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -139,7 +237,7 @@ namespace GardenHub.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,EquipmentName,EquipmentDescription,EquipmentType,PurchaseDate,PurchasePrice,LastMaintenanceDate,ImageFile,GardenId,UserId")] Equipment equipment)
+        public async Task<IActionResult> Edit(int id, [Bind("EquipmentId,EquipmentName,EquipmentDescription,EquipmentType,PurchaseDate,PurchasePrice,LastMaintenanceDate,ImageFile,GardenId")] Equipment equipment)
         {
             if (id != equipment.EquipmentId)
             {

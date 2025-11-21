@@ -77,7 +77,7 @@ namespace GardenHub.Controllers
         // POST: JournalEntries/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EntryId,GardenId,EntryDate,Content,UserId,ImageFile")] JournalEntry journalEntry)
+        public async Task<IActionResult> Create([Bind("EntryId,GardenId,EntryDate,Content,ImageFile")] JournalEntry journalEntry)
         {
             // Ensure DateTime is in UTC for PostgreSQL
             if (journalEntry.EntryDate.Kind == DateTimeKind.Unspecified)
@@ -99,7 +99,8 @@ namespace GardenHub.Controllers
             ModelState.Remove("Garden");
             ModelState.Remove("User");
             ModelState.Remove("ImageFile");
-
+            ModelState.Remove("UserId"); // Add this line
+    
             if (ModelState.IsValid)
             {
                 try

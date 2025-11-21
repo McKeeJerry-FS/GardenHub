@@ -75,6 +75,7 @@ namespace GardenHub.Controllers
 
             ModelState.Remove("Garden");
             ModelState.Remove("User");
+            ModelState.Remove("UserId");  // Add this line
             ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)
@@ -147,6 +148,7 @@ namespace GardenHub.Controllers
 
             ModelState.Remove("Garden");
             ModelState.Remove("User");
+            ModelState.Remove("UserId");  // Add this line
             ModelState.Remove("ImageFile");
 
             if (ModelState.IsValid)

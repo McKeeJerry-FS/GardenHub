@@ -62,6 +62,17 @@ namespace GardenHub.Services
             return null;
         }
 
+        public async Task<List<JournalEntry>> GetJournalEntriesByGardenIdAsync(int gardenId)
+        {
+            return await _context.JournalEntries
+                .AsNoTracking()
+                .Where(je => je.GardenId == gardenId)
+                .Include(j => j.Garden)
+                .Include(j => j.User)
+                .OrderByDescending(j => j.EntryDate)
+                .ToListAsync();
+        }
+
         public async Task UpdateJournalEntryAsync(int id, JournalEntry journalEntry)
         {
             if (id > 0)

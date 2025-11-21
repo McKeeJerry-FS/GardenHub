@@ -1,131 +1,333 @@
 ﻿@model IEnumerable<GardenHub.Models.DailyRecord>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Daily Records";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4"><i class="bi bi-clipboard-data"></i> Daily Records</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Dashboard" class="btn btn-info btn-lg">
+                <i class="bi bi-graph-up"></i> View Dashboard
+            </a>
+            <a asp-action="Create" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-circle"></i> Add New Record
+            </a>
+        </div>
+    </div>
 
-<div class="mb-3">
-    <a asp-action="Dashboard" class="btn btn-info">
-        <i class="bi bi-graph-up"></i> View Dashboard
-    </a>
-    <a asp-action="Create" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Create New
-    </a>
+    <!-- Statistics Cards - Single Row -->
+    <div class="row g-3 mb-4">
+        <div class="col">
+            <div class="card bg-info text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-clipboard-data fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Count()</h4>
+                    <small>Total Records</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-thermometer-half fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.InsideTemperature).ToString("F1") : "0")°F</h4>
+                    <small>Avg Inside Temp</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-thermometer fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.OutsideTemperature).ToString("F1") : "0")°F</h4>
+                    <small>Avg Outside Temp</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-success text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-droplet fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.InsideHumidity).ToString("F1") : "0")%</h4>
+                    <small>Avg Inside Humidity</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-droplet-half fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.OutsideHumidity).ToString("F1") : "0")%</h4>
+                    <small>Avg Outside Humidity</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-secondary text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-activity fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.InsideVPD).ToString("F2") : "0")</h4>
+                    <small>Avg VPD (kPa)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-warning text-dark shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-brightness-high fs-2"></i>
+                    <h4 class="mt-2 mb-0">@(Model.Any() ? Model.Average(r => r.LightingIntensity).ToString("F0") : "0")%</h4>
+                    <small>Avg Lighting</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-calendar-week fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Count(r => r.CreatedDate >= DateTime.UtcNow.AddDays(-7))</h4>
+                    <small>This Week</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTable Card -->
+    <div class="card shadow">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0"><i class="bi bi-table"></i> All Daily Records</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="recordsTable" class="table table-striped table-hover table-bordered" style="width:100%">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Garden</th>
+                            <th>Inside Temp</th>
+                            <th>Outside Temp</th>
+                            <th>Inside Humidity</th>
+                            <th>Outside Humidity</th>
+                            <th>Inside VPD</th>
+                            <th>Outside VPD</th>
+                            <th>Lighting</th>
+                            <th>Water</th>
+                            <th>Nutrients</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td data-order="@item.CreatedDate.ToString("yyyy-MM-dd HH:mm")">
+                                    <strong>@item.CreatedDate.ToString("MMM dd, yyyy")</strong>
+                                    <br><small class="text-muted">@item.CreatedDate.ToString("h:mm tt")</small>
+                                    <br><small class="text-muted">(@((DateTime.UtcNow - item.CreatedDate).Days) days ago)</small>
+                                </td>
+                                <td>
+                                    @if (item.Garden != null)
+                                    {
+                                        <span class="badge bg-primary">@item.Garden.GardenDescription</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td data-order="@item.InsideTemperature">
+                                    <span class="badge bg-danger">@item.InsideTemperature°F</span>
+                                </td>
+                                <td data-order="@item.OutsideTemperature">
+                                    <span class="badge bg-danger">@item.OutsideTemperature°F</span>
+                                </td>
+                                <td data-order="@item.InsideHumidity">
+                                    <span class="badge bg-primary">@item.InsideHumidity%</span>
+                                </td>
+                                <td data-order="@item.OutsideHumidity">
+                                    <span class="badge bg-primary">@item.OutsideHumidity%</span>
+                                </td>
+                                <td data-order="@item.InsideVPD">
+                                    <span class="badge bg-success">@item.InsideVPD kPa</span>
+                                </td>
+                                <td data-order="@item.OutsideVPD">
+                                    <span class="badge bg-success">@item.OutsideVPD kPa</span>
+                                </td>
+                                <td>
+                                    <small>
+                                        <strong>On:</strong> @item.LightingOn<br>
+                                        <strong>Off:</strong> @item.LightingOff<br>
+                                        <span class="badge bg-warning text-dark">@item.LightingIntensity%</span>
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@item.WaterAmount</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">@item.NutrientAmount</span>
+                                </td>
+                                <td class="text-nowrap">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.RecordId" class="btn btn-primary" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.RecordId" class="btn btn-warning" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.RecordId" class="btn btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <th colspan="2" class="text-end">Averages:</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.InsideTemperature).ToString("F1") : "0")°F</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.OutsideTemperature).ToString("F1") : "0")°F</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.InsideHumidity).ToString("F1") : "0")%</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.OutsideHumidity).ToString("F1") : "0")%</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.InsideVPD).ToString("F2") : "0") kPa</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.OutsideVPD).ToString("F2") : "0") kPa</th>
+                            <th>@(Model.Any() ? Model.Average(r => r.LightingIntensity).ToString("F0") : "0")%</th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<p>
-    <form method="get" class="form-inline">
-        <div class="form-group">
-            <label for="condition" class="mr-2">Filter by condition:</label>
-            <select id="condition" name="condition" class="form-control mr-2" asp-items="ViewBag.Condition">
-                <option value="">All</option>
-            </select>
-            <input type="submit" value="Filter" class="btn btn-secondary" />
-        </div>
-    </form>
-</p>
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#recordsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                order: [[0, 'desc']],
+                dom: '<"row mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records...",
+                    lengthMenu: "Show _MENU_ records",
+                    info: "Showing _START_ to _END_ of _TOTAL_ records",
+                    infoEmpty: "No records available",
+                    infoFiltered: "(filtered from _MAX_ total records)",
+                    paginate: {
+                        first: '<i class="bi bi-chevron-double-left"></i>',
+                        previous: '<i class="bi bi-chevron-left"></i>',
+                        next: '<i class="bi bi-chevron-right"></i>',
+                        last: '<i class="bi bi-chevron-double-right"></i>'
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: [11] },
+                    { className: 'text-center', targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }
+                ]
+            });
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Garden)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InsideTemperature)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OutsideTemperature)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InsideHumidity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OutsideHumidity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InsideVPD)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OutsideVPD)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LightingOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LightingOff)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LightingIntensity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WaterAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NutrientAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @(item.Garden?.GardenDescription ?? "N/A")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate) 
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.InsideTemperature) &deg;F
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.OutsideTemperature) &deg;F
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InsideHumidity)%
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OutsideHumidity)%
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InsideVPD) kPa
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OutsideVPD) kPa
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LightingOn) Hrs
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LightingOff) Hrs
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LightingIntensity)%
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WaterAmount) L
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NutrientAmount) mL
-            </td>
-            <td>
-                @(item.Notes.Length > 50 ? item.Notes.Substring(0, 50) + "..." : item.Notes)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RecordId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.RecordId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RecordId">Delete</a>
-            </td>
-        </tr>
+            var table = $('#recordsTable').DataTable();
+            
+            $('<div class="row mb-3"><div class="col-12"><div class="card bg-light"><div class="card-body"><h6 class="mb-3"><i class="bi bi-funnel"></i> Quick Filters</h6><div class="row g-2" id="customFilters"></div></div></div></div></div>')
+                .insertBefore('#recordsTable_wrapper');
+
+            var gardens = [];
+            table.column(1).data().unique().sort().each(function(d) {
+                if (d && d.trim() !== '-') {
+                    var gardenName = $(d).text();
+                    if (gardenName && !gardens.includes(gardenName)) {
+                        gardens.push(gardenName);
+                    }
+                }
+            });
+
+            if (gardens.length > 0) {
+                var gardenSelect = $('<div class="col-md-3"><select class="form-select form-select-sm" id="gardenFilter"><option value="">All Gardens</option></select></div>');
+                gardens.forEach(function(garden) {
+                    gardenSelect.find('select').append('<option value="' + garden + '">' + garden + '</option>');
+                });
+                $('#customFilters').append(gardenSelect);
+
+                $('#gardenFilter').on('change', function() {
+                    table.column(1).search(this.value).draw();
+                });
+            }
+
+            var dateFilters = $('<div class="col-md-9"><div class="btn-group btn-group-sm" role="group"><button type="button" class="btn btn-outline-primary" data-days="7">Last 7 Days</button><button type="button" class="btn btn-outline-primary" data-days="30">Last 30 Days</button><button type="button" class="btn btn-outline-primary" data-days="90">Last 90 Days</button><button type="button" class="btn btn-outline-primary active" data-days="-1">All Time</button></div></div>');
+            $('#customFilters').append(dateFilters);
+
+            $('#customFilters .btn-group button').on('click', function() {
+                var days = $(this).data('days');
+                $('#customFilters .btn-group button').removeClass('active');
+                $(this).addClass('active');
+
+                if (days === -1) {
+                    $.fn.dataTable.ext.search.pop();
+                } else {
+                    var cutoffDate = new Date();
+                    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+                    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                        var dateStr = data[0];
+                        var dateMatch = dateStr.match(/(\w{3} \d{1,2}, \d{4})/);
+                        if (dateMatch) {
+                            var recordDate = new Date(dateMatch[1]);
+                            return recordDate >= cutoffDate;
+                        }
+                        return true;
+                    });
+                }
+                table.draw();
+            });
+        });
+    </script>
+
+    <style>
+        #recordsTable_wrapper .dataTables_filter input {
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            border: 2px solid #0dcaf0;
+        }
+
+        #recordsTable_wrapper .dataTables_filter input:focus {
+            border-color: #0dcaf0;
+            box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+        }
+
+        #recordsTable_wrapper .dataTables_length select {
+            border-radius: 5px;
+            border: 2px solid #0dcaf0;
+            padding: 0.25rem 0.5rem;
+        }
+
+        #recordsTable tbody tr:hover {
+            background-color: rgba(13, 202, 240, 0.1);
+            cursor: pointer;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0.25rem 0.5rem;
+            margin: 0 2px;
+            border-radius: 5px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: linear-gradient(to bottom, #0dcaf0 0%, #0aa2c0 100%);
+            color: white !important;
+            border: 1px solid #0dcaf0;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #0dcaf0;
+            color: white !important;
+            border: 1px solid #0dcaf0;
+        }
+    </style>
 }
-    </tbody>
-</table>

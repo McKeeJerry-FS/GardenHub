@@ -1,83 +1,187 @@
 ﻿@model IEnumerable<GardenHub.Models.Garden>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gardens";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4"><i class="bi bi-house-door"></i> Gardens</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-circle"></i> Create New Garden
+            </a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Image
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GardenName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GardenDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GardenLocation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GardenGrowMethod)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @if (ViewData[$"GardenImage_{item.GardenId}"] != null && !string.IsNullOrEmpty(ViewData[$"GardenImage_{item.GardenId}"]!.ToString()))
-                {
-                    <img src="@ViewData[$"GardenImage_{item.GardenId}"]" alt="@item.GardenName" style="max-width: 80px; max-height: 80px;" class="img-thumbnail" />
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GardenName)
-            </td>
-            <td>
-                @(item.GardenDescription.Length > 50 ? item.GardenDescription.Substring(0, 50) + "..." : item.GardenDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GardenLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GardenGrowMethod)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.GardenId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.GardenId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.GardenId">Delete</a> |
-                <a asp-action="Dashboard" asp-route-id="@item.GardenId" class="btn btn-primary">
-                    <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-            </td>
-        </tr>
+    <!-- Statistics Cards - Single Row -->
+    <div class="row g-3 mb-4">
+        <div class="col">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-house-door fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Count()</h4>
+                    <small>Total Gardens</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-success text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-flower3 fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Sum(g => g.Plants.Count)</h4>
+                    <small>Total Plants</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-info text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-clipboard-data fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Sum(g => g.DailyRecords.Count)</h4>
+                    <small>Total Records</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-warning text-dark shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-journal-text fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Sum(g => g.JournalEntries.Count)</h4>
+                    <small>Journal Entries</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-tools fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Sum(g => g.Equipments.Count)</h4>
+                    <small>Equipment</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark text-white shadow h-100">
+                <div class="card-body text-center py-3">
+                    <i class="bi bi-calendar-check fs-2"></i>
+                    <h4 class="mt-2 mb-0">@Model.Count(g => g.EndDate > DateTime.UtcNow)</h4>
+                    <small>Active Gardens</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTable Card -->
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-table"></i> All Gardens</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="gardensTable" class="table table-striped table-hover table-bordered" style="width:100%">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Image</th>
+                            <th>Garden Name</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Grow Method</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @if (ViewData[$"GardenImage_{item.GardenId}"] != null && !string.IsNullOrEmpty(ViewData[$"GardenImage_{item.GardenId}"]!.ToString()))
+                                    {
+                                        <img src="@ViewData[$"GardenImage_{item.GardenId}"]" alt="@item.GardenName" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-house-door text-muted fs-4"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td><strong>@item.GardenName</strong></td>
+                                <td>@(item.GardenDescription.Length > 80 ? item.GardenDescription.Substring(0, 80) + "..." : item.GardenDescription)</td>
+                                <td><span class="badge bg-info">@item.GardenLocation</span></td>
+                                <td><span class="badge bg-success">@item.Type</span></td>
+                                <td><span class="badge bg-primary">@item.GardenGrowMethod</span></td>
+                                <td data-order="@item.StartDate.ToString("yyyy-MM-dd")">@item.StartDate.ToShortDateString()</td>
+                                <td data-order="@item.EndDate.ToString("yyyy-MM-dd")">@item.EndDate.ToShortDateString()</td>
+                                <td>
+                                    @if (item.EndDate > DateTime.UtcNow)
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="bi bi-archive"></i> Ended</span>
+                                    }
+                                </td>
+                                <td class="text-nowrap">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Dashboard" asp-route-id="@item.GardenId" class="btn btn-info" title="Dashboard">
+                                            <i class="bi bi-speedometer2"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.GardenId" class="btn btn-primary" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.GardenId" class="btn btn-warning" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.GardenId" class="btn btn-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#gardensTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                order: [[6, 'desc']],
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search gardens...",
+                    lengthMenu: "Show _MENU_ gardens",
+                    info: "Showing _START_ to _END_ of _TOTAL_ gardens",
+                    infoEmpty: "No gardens available",
+                    infoFiltered: "(filtered from _MAX_ total gardens)",
+                    paginate: {
+                        first: '<i class="bi bi-chevron-double-left"></i>',
+                        previous: '<i class="bi bi-chevron-left"></i>',
+                        next: '<i class="bi bi-chevron-right"></i>',
+                        last: '<i class="bi bi-chevron-double-right"></i>'
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: [0, 9] },
+                    { className: 'text-center', targets: [0, 8, 9] }
+                ]
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

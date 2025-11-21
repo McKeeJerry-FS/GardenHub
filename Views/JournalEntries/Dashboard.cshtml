@@ -1,0 +1,486 @@
+@model IEnumerable<GardenHub.Models.JournalEntry>
+
+@{
+    ViewData["Title"] = "Journal Entries Dashboard";
+    var days = ViewData["Days"] as int? ?? 30;
+}
+
+<div class="records-dashboard-fixed-container">
+    <div class="mb-4">
+        <h1 class="display-5">
+            <i class="bi bi-journal-text"></i> Journal Entries Dashboard
+        </h1>
+        <p class="text-muted">Track your gardening journey and observations</p>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Dashboard" method="get" class="records-filter-form">
+                    <div class="records-filter-group">
+                        <label for="gardenId" class="form-label">Filter by Garden</label>
+                        <select name="gardenId" id="gardenId" class="form-select" asp-items="ViewBag.GardenId">
+                            <option value="">All Gardens</option>
+                        </select>
+                    </div>
+                    <div class="records-filter-group">
+                        <label for="days" class="form-label">Time Period</label>
+                        <select name="days" id="days" class="form-select">
+                            <option value="7" selected="@(days == 7)">Last 7 Days</option>
+                            <option value="14" selected="@(days == 14)">Last 14 Days</option>
+                            <option value="30" selected="@(days == 30)">Last 30 Days</option>
+                            <option value="60" selected="@(days == 60)">Last 60 Days</option>
+                            <option value="90" selected="@(days == 90)">Last 90 Days</option>
+                            <option value="180" selected="@(days == 180)">Last 6 Months</option>
+                            <option value="365" selected="@(days == 365)">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="records-filter-group">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel"></i> Apply Filter
+                        </button>
+                    </div>
+                    <div class="records-filter-group">
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-table"></i> View All Entries
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No journal entries found for the selected criteria. 
+            <a asp-action="Create" class="alert-link">Create a new entry</a>
+        </div>
+    }
+    else
+    {
+        <!-- Summary Statistics -->
+        <div class="records-stats-row mb-4">
+            <div class="records-stat-card">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="text-warning mb-2">
+                            <i class="bi bi-journal-text" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h6 class="text-muted mb-2">Total Entries</h6>
+                        <h3 class="mb-0">@Model.Count()</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="records-stat-card">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="text-success mb-2">
+                            <i class="bi bi-image" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h6 class="text-muted mb-2">Entries with Images</h6>
+                        <h3 class="mb-0">@Model.Count(e => e.ImageData != null && e.ImageData.Length > 0)</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="records-stat-card">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="text-info mb-2">
+                            <i class="bi bi-fonts" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h6 class="text-muted mb-2">Avg Words per Entry</h6>
+                        <h3 class="mb-0">@(Model.Any() ? Model.Average(e => e.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length).ToString("F0") : "0")</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="records-stat-card">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <div class="text-primary mb-2">
+                            <i class="bi bi-house-door" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h6 class="text-muted mb-2">Gardens Documented</h6>
+                        <h3 class="mb-0">@Model.Select(e => e.GardenId).Distinct().Count()</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Timeline Chart -->
+        <div class="mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up text-warning"></i> Entry Activity Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <div class="records-chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Length Chart -->
+        <div class="mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart text-info"></i> Entry Content Length</h5>
+                </div>
+                <div class="card-body">
+                    <div class="records-chart-container">
+                        <canvas id="contentLengthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garden Distribution -->
+        <div class="mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart text-success"></i> Entries by Garden</h5>
+                </div>
+                <div class="card-body">
+                    <div class="records-chart-container">
+                        <canvas id="gardenDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Entries Grid -->
+        <div class="mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-card-list"></i> Recent Journal Entries</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        @foreach (var entry in Model.Take(12))
+                        {
+                            var imageSource = ViewData[$"EntryImage_{entry.EntryId}"]?.ToString();
+                            var hasImage = !string.IsNullOrEmpty(imageSource);
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm">
+                                    @if (hasImage)
+                                    {
+                                        <img src="@imageSource" class="card-img-top" alt="Entry Image" style="height: 200px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                            <i class="bi bi-journal-text text-muted" style="font-size: 3rem;"></i>
+                                        </div>
+                                    }
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <h6 class="card-title mb-0">
+                                                <i class="bi bi-calendar-event text-warning"></i>
+                                                @entry.EntryDate.ToLocalTime().ToString("MMM dd, yyyy")
+                                            </h6>
+                                            @if (hasImage)
+                                            {
+                                                <span class="badge bg-success"><i class="bi bi-image"></i></span>
+                                            }
+                                        </div>
+                                        <p class="card-text text-muted small mb-2">
+                                            <i class="bi bi-house-door"></i> @entry.Garden?.GardenDescription
+                                        </p>
+                                        <p class="card-text" style="
+                                            display: -webkit-box;
+                                            -webkit-line-clamp: 3;
+                                            -webkit-box-orient: vertical;
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;
+                                            min-height: 60px;
+                                        ">
+                                            @entry.Content
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <small class="text-muted">
+                                                <i class="bi bi-fonts"></i> @entry.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length words
+                                            </small>
+                                            <div class="btn-group btn-group-sm">
+                                                <a asp-action="Details" asp-route-id="@entry.EntryId" class="btn btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a asp-action="Edit" asp-route-id="@entry.EntryId" class="btn btn-outline-secondary">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> @((DateTime.UtcNow - entry.EntryDate).Days) days ago
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Entries Table -->
+        <div class="mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-table"></i> All Entries</h5>
+                </div>
+                <div class="card-body">
+                    <div class="records-table-wrapper">
+                        <table class="table table-hover records-table" id="entriesTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Garden</th>
+                                    <th>Preview</th>
+                                    <th>Word Count</th>
+                                    <th>Has Image</th>
+                                    <th>Days Ago</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model)
+                                {
+                                    var hasImage = entry.ImageData != null && entry.ImageData.Length > 0;
+                                    
+                                    <tr>
+                                        <td>@entry.EntryDate.ToLocalTime().ToString("MMM dd, yyyy")</td>
+                                        <td>@entry.Garden?.GardenDescription</td>
+                                        <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            @(entry.Content.Length > 50 ? entry.Content.Substring(0, 50) + "..." : entry.Content)
+                                        </td>
+                                        <td>@entry.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length</td>
+                                        <td>
+                                            @if (hasImage)
+                                            {
+                                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> No</span>
+                                            }
+                                        </td>
+                                        <td>@((DateTime.UtcNow - entry.EntryDate).Days)</td>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@entry.EntryId" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@entry.EntryId" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // Prepare data from model
+        const entries = @Html.Raw(Json.Serialize(Model.Select(e => new {
+            date = e.EntryDate.ToString("yyyy-MM-dd"),
+            garden = e.Garden.GardenDescription,
+            gardenId = e.GardenId,
+            wordCount = e.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length,
+            charCount = e.Content.Length,
+            hasImage = e.ImageData != null && e.ImageData.Length > 0
+        })));
+
+        // Group entries by date for activity chart
+        const activityData = {};
+        entries.forEach(e => {
+            activityData[e.date] = (activityData[e.date] || 0) + 1;
+        });
+
+        const activityLabels = Object.keys(activityData).sort();
+        const activityCounts = activityLabels.map(date => activityData[date]);
+
+        // Chart configuration
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 14
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 13 }
+                }
+            }
+        };
+
+        // Activity Timeline Chart
+        new Chart(document.getElementById('activityChart'), {
+            type: 'bar',
+            data: {
+                labels: activityLabels,
+                datasets: [{
+                    label: 'Entries Created',
+                    data: activityCounts,
+                    backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                    borderColor: 'rgb(255, 193, 7)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...chartOptions,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // Content Length Chart
+        new Chart(document.getElementById('contentLengthChart'), {
+            type: 'line',
+            data: {
+                labels: entries.map(e => e.date),
+                datasets: [
+                    {
+                        label: 'Word Count',
+                        data: entries.map(e => e.wordCount),
+                        borderColor: 'rgb(13, 202, 240)',
+                        backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        fill: true
+                    },
+                    {
+                        label: 'Character Count',
+                        data: entries.map(e => e.charCount),
+                        borderColor: 'rgb(111, 66, 193)',
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        yAxisID: 'y1',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                ...chartOptions,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Words'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Characters'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Garden Distribution Chart
+        const gardenData = {};
+        entries.forEach(e => {
+            gardenData[e.garden] = (gardenData[e.garden] || 0) + 1;
+        });
+
+        const gardenLabels = Object.keys(gardenData);
+        const gardenCounts = Object.values(gardenData);
+
+        // Generate colors for each garden
+        const colors = [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(199, 199, 199, 0.7)',
+            'rgba(83, 102, 255, 0.7)',
+            'rgba(255, 99, 255, 0.7)',
+            'rgba(99, 255, 132, 0.7)'
+        ];
+
+        new Chart(document.getElementById('gardenDistributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: gardenLabels,
+                datasets: [{
+                    data: gardenCounts,
+                    backgroundColor: colors.slice(0, gardenLabels.length),
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                ...chartOptions,
+                cutout: '50%'
+            }
+        });
+
+        // Initialize DataTable for the entries table
+        $(document).ready(function() {
+            $('#entriesTable').DataTable({
+                order: [[0, 'desc']],
+                pageLength: 10,
+                responsive: false,
+                scrollX: false,
+                autoWidth: false,
+                columnDefs: [
+                    { orderable: false, targets: 6 }
+                ]
+            });
+        });
+    </script>
+}

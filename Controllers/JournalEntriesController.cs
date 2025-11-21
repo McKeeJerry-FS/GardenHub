@@ -1,16 +1,14 @@
-﻿using GardenHub.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using GardenHub.Models;
 using GardenHub.Models.Enums;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace GardenHub.Controllers
 {
@@ -256,6 +254,45 @@ namespace GardenHub.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: JournalEntries/Dashboard
+        public async Task<IActionResult> Dashboard(int? gardenId, int days = 30)
+        {
+            IEnumerable<JournalEntry> entries;
+            
+            // Filter by garden if specified
+            if (gardenId.HasValue)
+            {
+                entries = await _journalEntriesService.GetJournalEntriesByGardenIdAsync(gardenId.Value);
+            }
+            else
+            {
+                entries = await _journalEntriesService.GetAllJournalEntriesAsync();
+            }
+
+            // Filter by date range
+            var startDate = DateTime.UtcNow.AddDays(-days);
+            entries = entries.Where(e => e.EntryDate >= startDate)
+                            .OrderByDescending(e => e.EntryDate)
+                            .ToList();
+
+            // Convert image data for display
+            foreach (var entry in entries)
+            {
+                entry.ImageFile = null;
+                ViewData[$"EntryImage_{entry.EntryId}"] = _imageService.ConvertByteArrayToFile(
+                    entry.ImageData, 
+                    entry.ImageType, 
+                    DefaultImage.GardenImage);
+            }
+
+            // Get gardens for filter dropdown
+            var gardens = await _journalEntriesService.GetAllGardensAsync();
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", gardenId);
+            ViewData["Days"] = days;
+            
+            return View(entries);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace GardenHub.Services.Interfaces
         Task CreateJournalEntryAsync(JournalEntry journalEntry);
         Task UpdateJournalEntryAsync(int id, JournalEntry journalEntry);
         Task<bool> DeleteJournalEntryAsync(int id);
+        Task<List<JournalEntry>> GetJournalEntriesByGardenIdAsync(int gardenId);
 
         // Helper methods for controller select lists
         Task<List<Garden>> GetAllGardensAsync();

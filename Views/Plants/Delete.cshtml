@@ -1,87 +1,181 @@
 ﻿@model GardenHub.Models.Plant
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Plant";
 }
 
-<h1>Delete</h1>
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-exclamation-triangle text-danger"></i> Delete Plant</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-info">
+                <i class="bi bi-eye"></i> View Details
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Plant</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LightingRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LightingRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GrowMethod)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GrowMethod)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DatePlanted)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DatePlanted)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlantCondition)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlantCondition)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageData)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageData)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageType)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Garden)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Garden.GardenDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
-    
+    <!-- Warning Alert -->
+    <div class="alert alert-danger shadow mb-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-octagon-fill fs-1 me-3"></i>
+            <div>
+                <h4 class="alert-heading mb-2">
+                    <i class="bi bi-shield-exclamation"></i> Permanent Deletion Warning
+                </h4>
+                <p class="mb-0">
+                    You are about to permanently delete this plant. This action <strong>cannot be undone</strong>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Information Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0"><i class="bi bi-flower3"></i> Plant to be Deleted</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Plant Image -->
+                @if (ViewData["PlantImage"] != null && !string.IsNullOrEmpty(ViewData["PlantImage"]!.ToString()))
+                {
+                    <div class="col-md-4 text-center">
+                        <img src="@ViewData["PlantImage"]" alt="@Model.PlantName" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;" />
+                    </div>
+                    <div class="col-md-8">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Plant Name:</dt>
+                            <dd class="col-sm-8"><h5 class="mb-0">@Model.PlantName</h5></dd>
+
+                            <dt class="col-sm-4">Description:</dt>
+                            <dd class="col-sm-8">@Model.PlantDescription</dd>
+
+                            <dt class="col-sm-4">Type:</dt>
+                            <dd class="col-sm-8"><span class="badge bg-primary fs-6">@Model.PlantType</span></dd>
+
+                            <dt class="col-sm-4">Lighting:</dt>
+                            <dd class="col-sm-8"><span class="badge bg-warning text-dark fs-6">@Model.LightingRequirement</span></dd>
+
+                            <dt class="col-sm-4">Grow Method:</dt>
+                            <dd class="col-sm-8"><span class="badge bg-info fs-6">@Model.GrowMethod</span></dd>
+
+                            <dt class="col-sm-4">Date Planted:</dt>
+                            <dd class="col-sm-8">
+                                <i class="bi bi-calendar-check"></i> @Model.DatePlanted.ToShortDateString()
+                                <small class="text-muted">(@((DateTime.UtcNow - Model.DatePlanted).Days) days ago)</small>
+                            </dd>
+
+                            <dt class="col-sm-4">Condition:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.PlantCondition.HasValue)
+                                {
+                                    var conditionBadge = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "success" :
+                                                         Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "warning" : "danger";
+                                    <span class="badge bg-@conditionBadge fs-6">@Model.PlantCondition</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not specified</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Garden:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Garden != null)
+                                {
+                                    <span class="badge bg-success fs-6">@Model.Garden.GardenName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No garden assigned</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-12">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-3">Plant Name:</dt>
+                            <dd class="col-sm-9"><h5 class="mb-0">@Model.PlantName</h5></dd>
+
+                            <dt class="col-sm-3">Description:</dt>
+                            <dd class="col-sm-9">@Model.PlantDescription</dd>
+
+                            <dt class="col-sm-3">Type:</dt>
+                            <dd class="col-sm-9"><span class="badge bg-primary fs-6">@Model.PlantType</span></dd>
+
+                            <dt class="col-sm-3">Lighting:</dt>
+                            <dd class="col-sm-9"><span class="badge bg-warning text-dark fs-6">@Model.LightingRequirement</span></dd>
+
+                            <dt class="col-sm-3">Grow Method:</dt>
+                            <dd class="col-sm-9"><span class="badge bg-info fs-6">@Model.GrowMethod</span></dd>
+
+                            <dt class="col-sm-3">Date Planted:</dt>
+                            <dd class="col-sm-9">
+                                <i class="bi bi-calendar-check"></i> @Model.DatePlanted.ToShortDateString()
+                                <small class="text-muted">(@((DateTime.UtcNow - Model.DatePlanted).Days) days ago)</small>
+                            </dd>
+
+                            <dt class="col-sm-3">Condition:</dt>
+                            <dd class="col-sm-9">
+                                @if (Model.PlantCondition.HasValue)
+                                {
+                                    var conditionBadge = Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Healthy ? "success" :
+                                                         Model.PlantCondition == GardenHub.Models.Enums.PlantCondition.Wilting ? "warning" : "danger";
+                                    <span class="badge bg-@conditionBadge fs-6">@Model.PlantCondition</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not specified</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-3">Garden:</dt>
+                            <dd class="col-sm-9">
+                                @if (Model.Garden != null)
+                                {
+                                    <span class="badge bg-success fs-6">@Model.Garden.GardenName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No garden assigned</span>
+                                }
+                            </dd>
+                        </dl>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Card -->
     <form asp-action="Delete">
         <input type="hidden" asp-for="PlantId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        
+        <div class="card shadow border-danger">
+            <div class="card-body text-center">
+                <h4 class="mb-4">
+                    <i class="bi bi-question-circle text-danger"></i> 
+                    Are you absolutely sure you want to delete "<strong>@Model.PlantName</strong>"?
+                </h4>
+                
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <button type="submit" class="btn btn-danger btn-lg" onclick="return confirm('This will permanently delete this plant. Are you sure?')">
+                        <i class="bi bi-trash"></i> Yes, Delete Permanently
+                    </button>
+                    <a asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-info btn-lg">
+                        <i class="bi bi-eye"></i> Review Details
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-x-circle"></i> Cancel, Keep Plant
+                    </a>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

@@ -260,5 +260,122 @@ namespace GardenHub.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        // GET: PlantCare/Dashboard/5
+        public async Task<IActionResult> Dashboard(int? id, int? month, int? year)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var plant = await _careService.GetPlantWithCareActivitiesAsync(id.Value);
+
+            if (plant == null)
+            {
+                return NotFound();
+            }
+
+            // Set default month/year to current if not specified
+            int selectedMonth = month ?? DateTime.Now.Month;
+            int selectedYear = year ?? DateTime.Now.Year;
+
+            var viewModel = new GardenHub.Models.ViewModels.PlantCareDashboardViewModel
+            {
+                Plant = plant,
+                SelectedMonth = selectedMonth,
+                SelectedYear = selectedYear
+            };
+
+            // Get all activities for this plant
+            var allActivities = plant.CareActivities.ToList();
+            
+            // Get available months based on activities
+            var activityDates = allActivities
+                .Select(a => new { a.ActivityDate.Year, a.ActivityDate.Month })
+                .Distinct()
+                .OrderByDescending(d => d.Year)
+                .ThenByDescending(d => d.Month)
+                .ToList();
+
+            viewModel.AvailableMonths = activityDates.Select(d => new GardenHub.Models.ViewModels.MonthYearOption
+            {
+                Month = d.Month,
+                Year = d.Year,
+                DisplayText = new DateTime(d.Year, d.Month, 1).ToString("MMMM yyyy")
+            }).ToList();
+
+            // If no available months, add current month
+            if (!viewModel.AvailableMonths.Any())
+            {
+                viewModel.AvailableMonths.Add(new GardenHub.Models.ViewModels.MonthYearOption
+                {
+                    Month = selectedMonth,
+                    Year = selectedYear,
+                    DisplayText = new DateTime(selectedYear, selectedMonth, 1).ToString("MMMM yyyy")
+                });
+            }
+
+            // Filter activities for selected month
+            var monthlyActivities = allActivities
+                .Where(a => a.ActivityDate.Month == selectedMonth && a.ActivityDate.Year == selectedYear)
+                .OrderByDescending(a => a.ActivityDate)
+                .ToList();
+
+            viewModel.RecentActivities = monthlyActivities.Take(10).ToList();
+            viewModel.MostRecentActivity = monthlyActivities.FirstOrDefault();
+
+            // Calculate statistics
+            viewModel.TotalActivitiesCount = monthlyActivities.Count;
+            viewModel.WateringCount = monthlyActivities.Count(a => a.WateringPerformed);
+            viewModel.FertilizingCount = monthlyActivities.Count(a => a.FertilizerApplied);
+            viewModel.PruningCount = monthlyActivities.Count(a => a.PruningPerformed);
+            viewModel.PestControlCount = monthlyActivities.Count(a => a.PestControlPerformed);
+            
+            viewModel.AverageActivityDuration = monthlyActivities
+                .Where(a => a.ActivityDuration.HasValue)
+                .Select(a => a.ActivityDuration!.Value)
+                .DefaultIfEmpty(0)
+                .Average();
+
+            viewModel.TotalWaterAmount = monthlyActivities
+                .Where(a => a.WaterAmount.HasValue)
+                .Sum(a => a.WaterAmount!.Value);
+
+            // Prepare chart data - Activity counts by type
+            var activityTypeGroups = monthlyActivities
+                .GroupBy(a => a.ActivityType)
+                .OrderByDescending(g => g.Count())
+                .ToList();
+
+            viewModel.ActivityTypeLabels = activityTypeGroups.Select(g => g.Key.ToString().Replace("_", " ")).ToList();
+            viewModel.ActivityCountByType = activityTypeGroups.Select(g => g.Count()).ToList();
+
+            // Plant health history
+            var healthHistory = monthlyActivities
+                .Where(a => a.PlantHealthStatus.HasValue)
+                .OrderBy(a => a.ActivityDate)
+                .ToList();
+
+            viewModel.ChartLabels = healthHistory.Select(a => a.ActivityDate.ToString("MMM dd")).ToList();
+            viewModel.HealthStatusData = healthHistory.Select(a => (int)a.PlantHealthStatus!.Value).ToList();
+
+            // Timeline data
+            viewModel.ActivitiesByDate = monthlyActivities
+                .GroupBy(a => a.ActivityDate.Date)
+                .OrderByDescending(g => g.Key)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // Convert plant image
+            if (plant.ImageData != null)
+            {
+                ViewData["PlantImage"] = _imageService.ConvertByteArrayToFile(
+                    plant.ImageData,
+                    plant.ImageType,
+                    DefaultImage.PlantImage);
+            }
+
+            return View(viewModel);
+        }
     }
 }

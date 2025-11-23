@@ -11,6 +11,9 @@
             <a asp-action="Dashboard" asp-route-id="@Model.GardenId" class="btn btn-info">
                 <i class="bi bi-speedometer2"></i> View Dashboard
             </a>
+            <button onclick="printGardenSummary()" class="btn btn-primary no-print">
+                <i class="bi bi-printer"></i> Print Summary
+            </button>
             <a asp-action="Edit" asp-route-id="@Model?.GardenId" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Edit Garden
             </a>
@@ -20,8 +23,90 @@
         </div>
     </div>
 
+    <!-- Print-Only Summary View -->
+    <div id="printSummary" class="print-only">
+        <div class="print-header">
+            <h1>@Model.GardenName</h1>
+            <p class="print-date">Printed on: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+        </div>
+
+        <div class="print-section">
+            <h2>Garden Information</h2>
+            <table class="print-table">
+                <tr>
+                    <th>Garden Name:</th>
+                    <td>@Model.GardenName</td>
+                </tr>
+                <tr>
+                    <th>Description:</th>
+                    <td>@Model.GardenDescription</td>
+                </tr>
+                <tr>
+                    <th>Location:</th>
+                    <td>@Model.GardenLocation</td>
+                </tr>
+                <tr>
+                    <th>Type:</th>
+                    <td>@Model.Type</td>
+                </tr>
+                <tr>
+                    <th>Grow Method:</th>
+                    <td>@Model.GardenGrowMethod</td>
+                </tr>
+                <tr>
+                    <th>Start Date:</th>
+                    <td>@Model.StartDate.ToString("MMMM dd, yyyy")</td>
+                </tr>
+                <tr>
+                    <th>End Date:</th>
+                    <td>@Model.EndDate.ToString("MMMM dd, yyyy")</td>
+                </tr>
+                <tr>
+                    <th>Duration:</th>
+                    <td>@((Model.EndDate - Model.StartDate).Days) days</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <h2>Garden Statistics</h2>
+            <table class="print-table">
+                <tr>
+                    <th>Total Plants:</th>
+                    <td>@Model.Plants.Count</td>
+                </tr>
+                <tr>
+                    <th>Daily Records:</th>
+                    <td>@Model.DailyRecords.Count</td>
+                </tr>
+                <tr>
+                    <th>Journal Entries:</th>
+                    <td>@Model.JournalEntries.Count</td>
+                </tr>
+                <tr>
+                    <th>Equipment:</th>
+                    <td>@Model.Equipments.Count</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <h2>Timeline Summary</h2>
+            <table class="print-table">
+                <tr>
+                    <th>Days Since Started:</th>
+                    <td>@((DateTime.UtcNow - Model.StartDate).Days) days</td>
+                </tr>
+                <tr>
+                    <th>Days Remaining:</th>
+                    <td>@((Model.EndDate - DateTime.UtcNow).Days) days</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
     <!-- Garden Overview Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-primary text-white">
             <h3 class="mb-0"><i class="bi bi-info-circle"></i> Garden Overview</h3>
         </div>
@@ -85,7 +170,7 @@
     </div>
 
     <!-- Garden Statistics Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-success text-white">
             <h3 class="mb-0"><i class="bi bi-graph-up"></i> Garden Statistics</h3>
         </div>
@@ -135,7 +220,7 @@
     </div>
 
     <!-- Garden Timeline Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-info text-white">
             <h3 class="mb-0"><i class="bi bi-calendar-range"></i> Garden Timeline</h3>
         </div>
@@ -178,7 +263,7 @@
     </div>
 
     <!-- Quick Actions Card -->
-    <div class="card shadow">
+    <div class="card shadow no-print">
         <div class="card-header bg-dark text-white">
             <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
         </div>
@@ -209,3 +294,102 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function printGardenSummary() {
+            window.print();
+        }
+    </script>
+}
+
+<style>
+    /* Print-specific styles */
+    @@media print {
+        /* Hide everything except the print summary */
+        .no-print {
+            display: none !important;
+        }
+
+        .print-only {
+            display: block !important;
+        }
+
+        /* Reset page styles for printing */
+        body {
+            background: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .print-header h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .print-date {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .print-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .print-section h2 {
+            font-size: 20px;
+            color: #333;
+            border-bottom: 2px solid #666;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .print-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            width: 35%;
+            font-weight: 600;
+        }
+
+        .print-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        /* Remove box shadows and unnecessary decorations */
+        .card,
+        .shadow,
+        .shadow-sm {
+            box-shadow: none !important;
+        }
+    }
+
+    /* Screen-only styles */
+    @@media screen {
+        .print-only {
+            display: none;
+        }
+
+        .no-print {
+            display: block;
+        }
+    }
+</style>

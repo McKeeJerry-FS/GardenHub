@@ -8,6 +8,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-4 mb-0"><i class="bi bi-journal-text"></i> Journal Entry</h1>
         <div class="d-flex gap-2">
+            <button onclick="printJournalSummary()" class="btn btn-primary no-print">
+                <i class="bi bi-printer"></i> Print Summary
+            </button>
             <a asp-action="Edit" asp-route-id="@Model?.EntryId" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Edit Entry
             </a>
@@ -17,8 +20,65 @@
         </div>
     </div>
 
+    <!-- Print-Only Summary View -->
+    <div id="printSummary" class="print-only">
+        <div class="print-header">
+            <h1>Journal Entry</h1>
+            <p class="print-date">Entry Date: @Model.EntryDate.ToString("MMMM dd, yyyy")</p>
+            <p class="print-date">Printed on: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+        </div>
+
+        @if (Model.Garden != null)
+        {
+            <div class="print-section">
+                <h2>Garden Information</h2>
+                <table class="print-table">
+                    <tr>
+                        <th>Garden:</th>
+                        <td>@Model.Garden.GardenDescription</td>
+                    </tr>
+                    <tr>
+                        <th>Type:</th>
+                        <td>@Model.Garden.Type</td>
+                    </tr>
+                    <tr>
+                        <th>Location:</th>
+                        <td>@Model.Garden.GardenLocation</td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        <div class="print-section">
+            <h2>Entry Content</h2>
+            <div style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; white-space: pre-wrap;">@Model.Content</div>
+        </div>
+
+        <div class="print-section">
+            <h2>Entry Statistics</h2>
+            <table class="print-table">
+                <tr>
+                    <th>Entry Date:</th>
+                    <td>@Model.EntryDate.ToString("MMMM dd, yyyy")</td>
+                </tr>
+                <tr>
+                    <th>Days Ago:</th>
+                    <td>@((DateTime.UtcNow - Model.EntryDate).Days) days</td>
+                </tr>
+                <tr>
+                    <th>Word Count:</th>
+                    <td>@Model.Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length words</td>
+                </tr>
+                <tr>
+                    <th>Character Count:</th>
+                    <td>@Model.Content.Length characters</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
     <!-- Entry Header Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-warning text-dark">
             <h3 class="mb-0"><i class="bi bi-calendar3"></i> Entry Information</h3>
         </div>
@@ -49,7 +109,7 @@
     <!-- Entry Image Card -->
     @if (ViewData["EntryImage"] != null && !string.IsNullOrEmpty(ViewData["EntryImage"]!.ToString()))
     {
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow no-print">
             <div class="card-header bg-primary text-white">
                 <h3 class="mb-0"><i class="bi bi-image"></i> Entry Image</h3>
             </div>
@@ -60,7 +120,7 @@
     }
 
     <!-- Entry Content Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-info text-white">
             <h3 class="mb-0"><i class="bi bi-card-text"></i> Entry Content</h3>
         </div>
@@ -72,7 +132,7 @@
     </div>
 
     <!-- Entry Statistics Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-success text-white">
             <h3 class="mb-0"><i class="bi bi-graph-up"></i> Entry Statistics</h3>
         </div>
@@ -137,7 +197,7 @@
     @if (Model.Garden != null)
     {
         <!-- Garden Information Card -->
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow no-print">
             <div class="card-header bg-primary text-white">
                 <h3 class="mb-0"><i class="bi bi-house-door"></i> Related Garden</h3>
             </div>
@@ -170,7 +230,7 @@
     }
 
     <!-- Quick Actions Card -->
-    <div class="card shadow">
+    <div class="card shadow no-print">
         <div class="card-header bg-dark text-white">
             <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
         </div>
@@ -195,3 +255,97 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function printJournalSummary() {
+            window.print();
+        }
+    </script>
+}
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .print-only {
+            display: block !important;
+        }
+
+        body {
+            background: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .print-header h1 {
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .print-date {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .print-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .print-section h2 {
+            font-size: 20px;
+            color: #333;
+            border-bottom: 2px solid #666;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .print-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            width: 35%;
+            font-weight: 600;
+        }
+
+        .print-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .card,
+        .shadow,
+        .shadow-sm {
+            box-shadow: none !important;
+        }
+    }
+
+    @@media screen {
+        .print-only {
+            display: none;
+        }
+
+        .no-print {
+            display: block;
+        }
+    }
+</style>

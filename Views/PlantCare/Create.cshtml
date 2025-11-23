@@ -1,0 +1,577 @@
+﻿@model GardenHub.Models.PlantCareActivity
+
+@{
+    ViewData["Title"] = "Record Plant Care Activity";
+}
+
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-plus-circle"></i> Record Plant Care Activity</h1>
+        <div class="d-flex gap-2">
+            @if (Model.PlantId > 0)
+            {
+                <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Plant
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            }
+        </div>
+    </div>
+
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <!-- Basic Information Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-info-circle"></i> Basic Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="PlantId" class="form-select" asp-items="ViewBag.PlantId" id="plantId">
+                                <option value="">-- Select Plant --</option>
+                            </select>
+                            <label asp-for="PlantId" for="plantId">
+                                <i class="bi bi-flower3"></i> Select Plant
+                            </label>
+                            <span asp-validation-for="PlantId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="ActivityDate" type="datetime-local" class="form-control" id="activityDate" />
+                            <label asp-for="ActivityDate" for="activityDate">
+                                <i class="bi bi-calendar"></i> Activity Date & Time
+                            </label>
+                            <span asp-validation-for="ActivityDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="ActivityType" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.PlantCareActivityType>()" id="activityType">
+                                <option value="">-- Select Activity Type --</option>
+                            </select>
+                            <label asp-for="ActivityType" for="activityType">
+                                <i class="bi bi-list-check"></i> Activity Type
+                            </label>
+                            <span asp-validation-for="ActivityType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input asp-for="ActivityDuration" type="number" class="form-control" id="activityDuration" placeholder="Duration in minutes" />
+                            <label asp-for="ActivityDuration" for="activityDuration">
+                                <i class="bi bi-clock"></i> Activity Duration (minutes)
+                            </label>
+                            <span asp-validation-for="ActivityDuration" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Initial Planting Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-seedling"></i> Initial Planting</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="PlantingDepth" type="number" step="0.1" class="form-control" id="plantingDepth" placeholder="Planting depth" />
+                            <label asp-for="PlantingDepth" for="plantingDepth">
+                                <i class="bi bi-arrow-down"></i> Planting Depth (inches)
+                            </label>
+                            <span asp-validation-for="PlantingDepth" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="PlantingMethod" class="form-control" id="plantingMethod" placeholder="Planting method" />
+                            <label asp-for="PlantingMethod" for="plantingMethod">
+                                <i class="bi bi-tag"></i> Seed/Transplant
+                            </label>
+                            <span asp-validation-for="PlantingMethod" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="GrowingMedium" class="form-control" id="growingMedium" placeholder="Growing medium" />
+                            <label asp-for="GrowingMedium" for="growingMedium">
+                                <i class="bi bi-layers"></i> Growing Medium
+                            </label>
+                            <span asp-validation-for="GrowingMedium" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Watering Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-droplet-fill"></i> Watering</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="WateringPerformed" class="form-check-input" type="checkbox" id="wateringPerformed" />
+                            <label asp-for="WateringPerformed" class="form-check-label" for="wateringPerformed">
+                                <strong>Watering Performed</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="WaterAmount" type="number" step="0.1" class="form-control" id="waterAmount" placeholder="Water amount" />
+                            <label asp-for="WaterAmount" for="waterAmount">
+                                <i class="bi bi-droplet"></i> Water Amount (ml/oz)
+                            </label>
+                            <span asp-validation-for="WaterAmount" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="MoistureLevel" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.MoistureLevel>()" id="moistureLevel">
+                                <option value="">-- Select Moisture Level --</option>
+                            </select>
+                            <label asp-for="MoistureLevel" for="moistureLevel">
+                                <i class="bi bi-water"></i> Soil Moisture Level
+                            </label>
+                            <span asp-validation-for="MoistureLevel" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fertilizer/Nutrients Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-moisture"></i> Fertilizer/Nutrients</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="FertilizerApplied" class="form-check-input" type="checkbox" id="fertilizerApplied" />
+                            <label asp-for="FertilizerApplied" class="form-check-label" for="fertilizerApplied">
+                                <strong>Fertilizer Applied</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="FertilizerType" class="form-control" id="fertilizerType" placeholder="Fertilizer type" />
+                            <label asp-for="FertilizerType" for="fertilizerType">
+                                <i class="bi bi-tag"></i> Fertilizer Type
+                            </label>
+                            <span asp-validation-for="FertilizerType" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="FertilizerAmount" type="number" step="0.1" class="form-control" id="fertilizerAmount" placeholder="Amount" />
+                            <label asp-for="FertilizerAmount" for="fertilizerAmount">
+                                <i class="bi bi-cup"></i> Amount (ml/g)
+                            </label>
+                            <span asp-validation-for="FertilizerAmount" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="NpkRatio" class="form-control" id="npkRatio" placeholder="NPK Ratio" />
+                            <label asp-for="NpkRatio" for="npkRatio">
+                                <i class="bi bi-calculator"></i> NPK Ratio
+                            </label>
+                            <span asp-validation-for="NpkRatio" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Light Access Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-brightness-high"></i> Light Access</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="LightHours" type="number" step="0.1" class="form-control" id="lightHours" placeholder="Light hours" />
+                            <label asp-for="LightHours" for="lightHours">
+                                <i class="bi bi-clock"></i> Light Hours Per Day
+                            </label>
+                            <span asp-validation-for="LightHours" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="LightSource" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.LightSource>()" id="lightSource">
+                                <option value="">-- Select Light Source --</option>
+                            </select>
+                            <label asp-for="LightSource" for="lightSource">
+                                <i class="bi bi-lightbulb"></i> Light Source
+                            </label>
+                            <span asp-validation-for="LightSource" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="LightIntensity" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.LightIntensity>()" id="lightIntensity">
+                                <option value="">-- Select Intensity --</option>
+                            </select>
+                            <label asp-for="LightIntensity" for="lightIntensity">
+                                <i class="bi bi-speedometer"></i> Light Intensity
+                            </label>
+                            <span asp-validation-for="LightIntensity" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-tools"></i> Maintenance</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <!-- Pruning -->
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-scissors"></i> Pruning/Trimming</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="PruningPerformed" class="form-check-input" type="checkbox" id="pruning" />
+                            <label asp-for="PruningPerformed" class="form-check-label" for="pruning">
+                                <strong>Pruning Performed</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input asp-for="PruningDetails" class="form-control" id="pruningDetails" placeholder="Pruning details" />
+                            <label asp-for="PruningDetails" for="pruningDetails">
+                                <i class="bi bi-card-text"></i> Pruning Details
+                            </label>
+                            <span asp-validation-for="PruningDetails" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Support/Staking -->
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3 mt-3"><i class="bi bi-ladder"></i> Support/Staking</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="SupportAdded" class="form-check-input" type="checkbox" id="support" />
+                            <label asp-for="SupportAdded" class="form-check-label" for="support">
+                                <strong>Support/Staking Added</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input asp-for="SupportDetails" class="form-control" id="supportDetails" placeholder="Support details" />
+                            <label asp-for="SupportDetails" for="supportDetails">
+                                <i class="bi bi-card-text"></i> Support Details
+                            </label>
+                            <span asp-validation-for="SupportDetails" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pest Control Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0"><i class="bi bi-bug"></i> Pest Control & Disease Treatment</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="PestControlPerformed" class="form-check-input" type="checkbox" id="pestControl" />
+                            <label asp-for="PestControlPerformed" class="form-check-label" for="pestControl">
+                                <strong>Pest Control Performed</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input asp-for="PestDiseaseIdentified" class="form-control" id="pestDisease" placeholder="Pest/disease identified" />
+                            <label asp-for="PestDiseaseIdentified" for="pestDisease">
+                                <i class="bi bi-search"></i> Pest/Disease Identified
+                            </label>
+                            <span asp-validation-for="PestDiseaseIdentified" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea asp-for="TreatmentApplied" class="form-control" id="treatment" placeholder="Treatment applied" style="height: 80px"></textarea>
+                            <label asp-for="TreatmentApplied" for="treatment">
+                                <i class="bi bi-card-text"></i> Treatment Applied
+                            </label>
+                            <span asp-validation-for="TreatmentApplied" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Growth Conditions Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-thermometer-half"></i> Growth Conditions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="Temperature" type="number" step="0.1" class="form-control" id="temperature" placeholder="Temperature" />
+                            <label asp-for="Temperature" for="temperature">
+                                <i class="bi bi-thermometer"></i> Temperature (°F)
+                            </label>
+                            <span asp-validation-for="Temperature" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="Humidity" type="number" class="form-control" id="humidity" placeholder="Humidity" />
+                            <label asp-for="Humidity" for="humidity">
+                                <i class="bi bi-moisture"></i> Humidity (%)
+                            </label>
+                            <span asp-validation-for="Humidity" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input asp-for="PhLevel" type="number" step="0.1" class="form-control" id="phLevel" placeholder="pH Level" />
+                            <label asp-for="PhLevel" for="phLevel">
+                                <i class="bi bi-droplet-half"></i> pH Level
+                            </label>
+                            <span asp-validation-for="PhLevel" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select asp-for="PlantHealthStatus" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.PlantHealthStatus>()" id="healthStatus">
+                                <option value="">-- Select Status --</option>
+                            </select>
+                            <label asp-for="PlantHealthStatus" for="healthStatus">
+                                <i class="bi bi-heart-pulse"></i> Plant Health Status
+                            </label>
+                            <span asp-validation-for="PlantHealthStatus" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Growth Tracking Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-graph-up"></i> Growth Tracking</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="PlantHeight" type="number" step="0.1" class="form-control" id="plantHeight" placeholder="Plant height" />
+                            <label asp-for="PlantHeight" for="plantHeight">
+                                <i class="bi bi-arrow-up"></i> Height (inches)
+                            </label>
+                            <span asp-validation-for="PlantHeight" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="LeafCount" type="number" class="form-control" id="leafCount" placeholder="Leaf count" />
+                            <label asp-for="LeafCount" for="leafCount">
+                                <i class="bi bi-box-seam"></i> Leaf Count
+                            </label>
+                            <span asp-validation-for="LeafCount" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="IsFloweringFruiting" class="form-check-input" type="checkbox" id="flowering" />
+                            <label asp-for="IsFloweringFruiting" class="form-check-label" for="flowering">
+                                <strong>Flowering/Fruiting</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input asp-for="FloweringFruitingDetails" class="form-control" id="floweringDetails" placeholder="Details" />
+                            <label asp-for="FloweringFruitingDetails" for="floweringDetails">
+                                <i class="bi bi-card-text"></i> Flowering/Fruiting Details
+                            </label>
+                            <span asp-validation-for="FloweringFruitingDetails" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Harvest Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-basket"></i> Harvest</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="HarvestPerformed" class="form-check-input" type="checkbox" id="harvest" />
+                            <label asp-for="HarvestPerformed" class="form-check-label" for="harvest">
+                                <strong>Harvest Performed</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="HarvestAmount" class="form-control" id="harvestAmount" placeholder="Harvest amount" />
+                            <label asp-for="HarvestAmount" for="harvestAmount">
+                                <i class="bi bi-box"></i> Harvest Amount
+                            </label>
+                            <span asp-validation-for="HarvestAmount" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select asp-for="HarvestQuality" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.HarvestQuality>()" id="harvestQuality">
+                                <option value="">-- Select Quality --</option>
+                            </select>
+                            <label asp-for="HarvestQuality" for="harvestQuality">
+                                <i class="bi bi-star"></i> Harvest Quality
+                            </label>
+                            <span asp-validation-for="HarvestQuality" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End of Life Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0"><i class="bi bi-x-circle"></i> End of Life</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="form-check mt-3 ms-3">
+                            <input asp-for="PlantRemoved" class="form-check-input" type="checkbox" id="plantRemoved" />
+                            <label asp-for="PlantRemoved" class="form-check-label" for="plantRemoved">
+                                <strong>Plant Removed</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input asp-for="RemovalReason" class="form-control" id="removalReason" placeholder="Removal reason" />
+                            <label asp-for="RemovalReason" for="removalReason">
+                                <i class="bi bi-card-text"></i> Removal Reason
+                            </label>
+                            <span asp-validation-for="RemovalReason" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes & Image Card -->
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="mb-0"><i class="bi bi-sticky"></i> Notes & Documentation</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Notes" class="form-control" id="notes" placeholder="Additional notes" style="height: 120px"></textarea>
+                            <label asp-for="Notes" for="notes">
+                                <i class="bi bi-card-text"></i> Additional Notes
+                            </label>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label"><i class="bi bi-camera"></i> Upload Image (Optional)</label>
+                        <input asp-for="ImageFile" type="file" class="form-control" id="imageFile" accept="image/*" />
+                        <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                        <div class="form-text">Capture the current state of your plant (max 5MB)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle"></i> Save Activity
+                    </button>
+                    @if (Model.PlantId > 0)
+                    {
+                        <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-action="Index" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

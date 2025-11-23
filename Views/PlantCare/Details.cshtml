@@ -1,0 +1,491 @@
+﻿@model GardenHub.Models.PlantCareActivity
+
+@{
+    ViewData["Title"] = "Plant Care Activity Details";
+}
+
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0"><i class="bi bi-eye"></i> Plant Care Activity Details</h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.ActivityId" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.ActivityId" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+            @if (Model.PlantId > 0)
+            {
+                <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Plant
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Basic Information Card -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-info-circle"></i> Basic Information</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @if (ViewData["ActivityImage"] != null)
+                {
+                    <div class="col-md-4 text-center mb-3">
+                        <img src="@ViewData["ActivityImage"]" alt="Activity Photo" class="img-fluid rounded shadow" style="max-height: 300px; object-fit: cover;" />
+                    </div>
+                }
+                <div class="col-md-@(ViewData["ActivityImage"] != null ? "8" : "12")">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Plant:</dt>
+                        <dd class="col-sm-8">
+                            <h5 class="mb-1">@Model.Plant?.PlantName</h5>
+                            <small class="text-muted">@Model.Plant?.PlantType</small>
+                        </dd>
+
+                        <dt class="col-sm-4">Activity Date:</dt>
+                        <dd class="col-sm-8">
+                            <i class="bi bi-calendar"></i> @Model.ActivityDate.ToString("dddd, MMMM dd, yyyy")
+                            <br />
+                            <i class="bi bi-clock"></i> @Model.ActivityDate.ToString("h:mm tt")
+                        </dd>
+
+                        <dt class="col-sm-4">Activity Type:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-primary fs-6">@Model.ActivityType</span>
+                        </dd>
+
+                        @if (Model.ActivityDuration.HasValue)
+                        {
+                            <dt class="col-sm-4">Duration:</dt>
+                            <dd class="col-sm-8">
+                                <i class="bi bi-stopwatch"></i> @Model.ActivityDuration minutes
+                            </dd>
+                        }
+
+                        <dt class="col-sm-4">Recorded By:</dt>
+                        <dd class="col-sm-8">
+                            <i class="bi bi-person"></i> @Model.User?.UserName
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initial Planting Details -->
+    @if (Model.PlantingDepth.HasValue || !string.IsNullOrWhiteSpace(Model.PlantingMethod) || !string.IsNullOrWhiteSpace(Model.GrowingMedium))
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-seedling"></i> Initial Planting</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    @if (Model.PlantingDepth.HasValue)
+                    {
+                        <dt class="col-sm-3">Planting Depth:</dt>
+                        <dd class="col-sm-9">@Model.PlantingDepth.Value.ToString("F1") inches</dd>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PlantingMethod))
+                    {
+                        <dt class="col-sm-3">Planting Method:</dt>
+                        <dd class="col-sm-9">@Model.PlantingMethod</dd>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.GrowingMedium))
+                    {
+                        <dt class="col-sm-3">Growing Medium:</dt>
+                        <dd class="col-sm-9">@Model.GrowingMedium</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Watering Details -->
+    @if (Model.WateringPerformed || Model.WaterAmount.HasValue || Model.MoistureLevel.HasValue)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-droplet-fill"></i> Watering</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Watering Performed:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.WateringPerformed)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> No</span>
+                        }
+                    </dd>
+
+                    @if (Model.WaterAmount.HasValue)
+                    {
+                        <dt class="col-sm-3">Water Amount:</dt>
+                        <dd class="col-sm-9">@Model.WaterAmount.Value.ToString("F1") ml/oz</dd>
+                    }
+
+                    @if (Model.MoistureLevel.HasValue)
+                    {
+                        <dt class="col-sm-3">Soil Moisture Level:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-info">@Model.MoistureLevel</span>
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Fertilizer Details -->
+    @if (Model.FertilizerApplied || !string.IsNullOrWhiteSpace(Model.FertilizerType) || Model.FertilizerAmount.HasValue || !string.IsNullOrWhiteSpace(Model.NpkRatio))
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-moisture"></i> Fertilizer/Nutrients</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Fertilizer Applied:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.FertilizerApplied)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> No</span>
+                        }
+                    </dd>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.FertilizerType))
+                    {
+                        <dt class="col-sm-3">Fertilizer Type:</dt>
+                        <dd class="col-sm-9">@Model.FertilizerType</dd>
+                    }
+
+                    @if (Model.FertilizerAmount.HasValue)
+                    {
+                        <dt class="col-sm-3">Amount:</dt>
+                        <dd class="col-sm-9">@Model.FertilizerAmount.Value.ToString("F1") ml/g</dd>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.NpkRatio))
+                    {
+                        <dt class="col-sm-3">NPK Ratio:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-dark">@Model.NpkRatio</span></dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Light Access Details -->
+    @if (Model.LightHours.HasValue || Model.LightSource.HasValue || Model.LightIntensity.HasValue)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="bi bi-brightness-high"></i> Light Access</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    @if (Model.LightHours.HasValue)
+                    {
+                        <dt class="col-sm-3">Light Hours Per Day:</dt>
+                        <dd class="col-sm-9">@Model.LightHours.Value.ToString("F1") hours</dd>
+                    }
+
+                    @if (Model.LightSource.HasValue)
+                    {
+                        <dt class="col-sm-3">Light Source:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-primary">@Model.LightSource</span></dd>
+                    }
+
+                    @if (Model.LightIntensity.HasValue)
+                    {
+                        <dt class="col-sm-3">Light Intensity:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-info">@Model.LightIntensity</span></dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Maintenance Details -->
+    @if (Model.PruningPerformed || Model.SupportAdded)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-tools"></i> Maintenance</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.PruningPerformed)
+                {
+                    <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-scissors"></i> Pruning/Trimming</h5>
+                    <dl class="row">
+                        <dt class="col-sm-3">Pruning Performed:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                        </dd>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.PruningDetails))
+                        {
+                            <dt class="col-sm-3">Details:</dt>
+                            <dd class="col-sm-9">@Model.PruningDetails</dd>
+                        }
+                    </dl>
+                }
+
+                @if (Model.SupportAdded)
+                {
+                    <h5 class="border-bottom pb-2 mb-3 mt-3"><i class="bi bi-ladder"></i> Support/Staking</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Support Added:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                        </dd>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.SupportDetails))
+                        {
+                            <dt class="col-sm-3">Details:</dt>
+                            <dd class="col-sm-9">@Model.SupportDetails</dd>
+                        }
+                    </dl>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Pest Control Details -->
+    @if (Model.PestControlPerformed)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-danger text-white">
+                <h3 class="mb-0"><i class="bi bi-bug"></i> Pest Control & Disease Treatment</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Pest Control Performed:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-danger"><i class="bi bi-check-circle"></i> Yes</span>
+                    </dd>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PestDiseaseIdentified))
+                    {
+                        <dt class="col-sm-3">Pest/Disease Identified:</dt>
+                        <dd class="col-sm-9">@Model.PestDiseaseIdentified</dd>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.TreatmentApplied))
+                    {
+                        <dt class="col-sm-3">Treatment Applied:</dt>
+                        <dd class="col-sm-9">@Model.TreatmentApplied</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Growth Conditions Details -->
+    @if (Model.Temperature.HasValue || Model.Humidity.HasValue || Model.PhLevel.HasValue || Model.PlantHealthStatus.HasValue)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-thermometer-half"></i> Growth Conditions</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    @if (Model.Temperature.HasValue)
+                    {
+                        <dt class="col-sm-3">Temperature:</dt>
+                        <dd class="col-sm-9">@Model.Temperature.Value.ToString("F1")°F</dd>
+                    }
+
+                    @if (Model.Humidity.HasValue)
+                    {
+                        <dt class="col-sm-3">Humidity:</dt>
+                        <dd class="col-sm-9">@Model.Humidity%</dd>
+                    }
+
+                    @if (Model.PhLevel.HasValue)
+                    {
+                        <dt class="col-sm-3">pH Level:</dt>
+                        <dd class="col-sm-9">@Model.PhLevel.Value.ToString("F1")</dd>
+                    }
+
+                    @if (Model.PlantHealthStatus.HasValue)
+                    {
+                        <dt class="col-sm-3">Plant Health Status:</dt>
+                        <dd class="col-sm-9">
+                            @{
+                                var healthBadge = Model.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Excellent ? "success" :
+                                                  Model.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Good ? "info" :
+                                                  Model.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Fair ? "warning" : "danger";
+                            }
+                            <span class="badge bg-@healthBadge fs-6">@Model.PlantHealthStatus</span>
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Growth Tracking Details -->
+    @if (Model.PlantHeight.HasValue || Model.LeafCount.HasValue || Model.IsFloweringFruiting)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-graph-up"></i> Growth Tracking</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    @if (Model.PlantHeight.HasValue)
+                    {
+                        <dt class="col-sm-3">Height:</dt>
+                        <dd class="col-sm-9">@Model.PlantHeight.Value.ToString("F1") inches</dd>
+                    }
+
+                    @if (Model.LeafCount.HasValue)
+                    {
+                        <dt class="col-sm-3">Leaf Count:</dt>
+                        <dd class="col-sm-9">@Model.LeafCount leaves</dd>
+                    }
+
+                    <dt class="col-sm-3">Flowering/Fruiting:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.IsFloweringFruiting)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary"><i class="bi bi-x-circle"></i> No</span>
+                        }
+                    </dd>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.FloweringFruitingDetails))
+                    {
+                        <dt class="col-sm-3">Details:</dt>
+                        <dd class="col-sm-9">@Model.FloweringFruitingDetails</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Harvest Details -->
+    @if (Model.HarvestPerformed)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-basket"></i> Harvest</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Harvest Performed:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Yes</span>
+                    </dd>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.HarvestAmount))
+                    {
+                        <dt class="col-sm-3">Harvest Amount:</dt>
+                        <dd class="col-sm-9">@Model.HarvestAmount</dd>
+                    }
+
+                    @if (Model.HarvestQuality.HasValue)
+                    {
+                        <dt class="col-sm-3">Harvest Quality:</dt>
+                        <dd class="col-sm-9">
+                            @{
+                                var qualityBadge = Model.HarvestQuality == GardenHub.Models.Enums.HarvestQuality.Excellent ? "success" :
+                                                   Model.HarvestQuality == GardenHub.Models.Enums.HarvestQuality.Good ? "info" :
+                                                   Model.HarvestQuality == GardenHub.Models.Enums.HarvestQuality.Fair ? "warning" : "danger";
+                            }
+                            <span class="badge bg-@qualityBadge fs-6">@Model.HarvestQuality</span>
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- End of Life Details -->
+    @if (Model.PlantRemoved)
+    {
+        <div class="card mb-4 shadow border-danger">
+            <div class="card-header bg-dark text-white">
+                <h3 class="mb-0"><i class="bi bi-x-circle"></i> End of Life</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Plant Removed:</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-danger"><i class="bi bi-check-circle"></i> Yes</span>
+                    </dd>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.RemovalReason))
+                    {
+                        <dt class="col-sm-3">Removal Reason:</dt>
+                        <dd class="col-sm-9">@Model.RemovalReason</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    }
+
+    <!-- Notes -->
+    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="mb-0"><i class="bi bi-sticky"></i> Notes</h3>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">@Model.Notes</p>
+            </div>
+        </div>
+    }
+
+    <!-- Action Buttons -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a asp-action="Edit" asp-route-id="@Model.ActivityId" class="btn btn-warning btn-lg">
+                    <i class="bi bi-pencil"></i> Edit Activity
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.ActivityId" class="btn btn-danger btn-lg">
+                    <i class="bi bi-trash"></i> Delete Activity
+                </a>
+                @if (Model.PlantId > 0)
+                {
+                    <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-success btn-lg">
+                        <i class="bi bi-flower3"></i> View Plant
+                    </a>
+                    <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.PlantId" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left"></i> Back to Plant
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-list"></i> View All Activities
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

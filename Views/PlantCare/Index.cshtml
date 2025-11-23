@@ -1,0 +1,263 @@
+﻿@model IEnumerable<GardenHub.Models.PlantCareActivity>
+
+@{
+    ViewData["Title"] = "Plant Care Activities";
+    var plantId = ViewData["PlantId"] as int?;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4"><i class="bi bi-clipboard-check"></i> Plant Care Activities</h1>
+        <div class="d-flex gap-2">
+            @if (plantId.HasValue)
+            {
+                <a asp-action="Create" asp-route-plantId="@plantId" class="btn btn-success btn-lg">
+                    <i class="bi bi-plus-circle"></i> Record Care Activity
+                </a>
+                <a asp-controller="Plants" asp-action="Details" asp-route-id="@plantId" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left"></i> Back to Plant
+                </a>
+            }
+            else
+            {
+                <a asp-action="Create" class="btn btn-success btn-lg">
+                    <i class="bi bi-plus-circle"></i> Record Care Activity
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <!-- Statistics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col">
+                <div class="card bg-success text-white shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-clipboard-check fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count()</h4>
+                        <small>Total Activities</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card bg-primary text-white shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-droplet-fill fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count(a => a.WateringPerformed)</h4>
+                        <small>Watering Sessions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card bg-info text-white shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-moisture fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count(a => a.FertilizerApplied)</h4>
+                        <small>Fertilizer Applications</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card bg-warning text-dark shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-scissors fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count(a => a.PruningPerformed)</h4>
+                        <small>Pruning Sessions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card bg-danger text-white shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-bug fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count(a => a.PestControlPerformed)</h4>
+                        <small>Pest Control</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card bg-dark text-white shadow h-100">
+                    <div class="card-body text-center py-3">
+                        <i class="bi bi-arrow-down-circle fs-2"></i>
+                        <h4 class="mt-2 mb-0">@Model.Count(a => a.HarvestPerformed)</h4>
+                        <small>Harvest Sessions</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DataTable Card -->
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-table"></i> Care Activity Log</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="careActivitiesTable" class="table table-striped table-hover table-bordered" style="width:100%">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Date</th>
+                                <th>Plant</th>
+                                <th>Activity Type</th>
+                                <th>Health Status</th>
+                                <th>Height</th>
+                                <th>Activities Performed</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td data-order="@item.ActivityDate.ToString("yyyy-MM-dd HH:mm")">
+                                        @item.ActivityDate.ToString("MMM dd, yyyy")
+                                        <br><small class="text-muted">@item.ActivityDate.ToString("h:mm tt")</small>
+                                    </td>
+                                    <td>
+                                        <strong>@item.Plant?.PlantName</strong>
+                                        <br><small class="text-muted">@item.Plant?.PlantType</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">@item.ActivityType</span>
+                                    </td>
+                                    <td>
+                                        @if (item.PlantHealthStatus.HasValue)
+                                        {
+                                            var statusBadge = item.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Excellent ? "success" :
+                                            item.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Good ? "info" :
+                                            item.PlantHealthStatus == GardenHub.Models.Enums.PlantHealthStatus.Fair ? "warning" : "danger";
+                                            <span class="badge bg-@statusBadge">@item.PlantHealthStatus</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.PlantHeight.HasValue)
+                                        {
+                                            <text>@item.PlantHeight.Value.ToString("F1")"</text>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @if (item.WateringPerformed)
+                                            {
+                                                <span class="badge bg-info" title="Watering"><i class="bi bi-droplet-fill"></i></span>
+                                            }
+                                            @if (item.FertilizerApplied)
+                                            {
+                                                <span class="badge bg-success" title="Fertilizer"><i class="bi bi-moisture"></i></span>
+                                            }
+                                            @if (item.PruningPerformed)
+                                            {
+                                                <span class="badge bg-secondary" title="Pruning"><i class="bi bi-scissors"></i></span>
+                                            }
+                                            @if (item.PestControlPerformed)
+                                            {
+                                                <span class="badge bg-danger" title="Pest Control"><i class="bi bi-bug"></i></span>
+                                            }
+                                            @if (item.SupportAdded)
+                                            {
+                                                <span class="badge bg-warning" title="Support Added"><i class="bi bi-ladder"></i></span>
+                                            }
+                                            @if (item.HarvestPerformed)
+                                            {
+                                                <span class="badge bg-primary" title="Harvest"><i class="bi bi-basket"></i></span>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (item.ActivityDuration.HasValue)
+                                        {
+                                            <text>@item.ActivityDuration min</text>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.ActivityId" class="btn btn-primary" title="Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.ActivityId" class="btn btn-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.ActivityId" class="btn btn-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
+                <h3>No Plant Care Activities Recorded Yet</h3>
+                <p class="text-muted">Start tracking your plant care activities to monitor your plant's health and growth.</p>
+                @if (plantId.HasValue)
+                {
+                    <a asp-action="Create" asp-route-plantId="@plantId" class="btn btn-success btn-lg mt-3">
+                        <i class="bi bi-plus-circle"></i> Record First Activity
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Create" class="btn btn-success btn-lg mt-3">
+                        <i class="bi bi-plus-circle"></i> Record First Activity
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#careActivitiesTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                order: [[0, 'desc']],
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search activities...",
+                    lengthMenu: "Show _MENU_ activities",
+                    info: "Showing _START_ to _END_ of _TOTAL_ activities",
+                    infoEmpty: "No activities available",
+                    infoFiltered: "(filtered from _MAX_ total activities)",
+                    paginate: {
+                        first: '<i class="bi bi-chevron-double-left"></i>',
+                        previous: '<i class="bi bi-chevron-left"></i>',
+                        next: '<i class="bi bi-chevron-right"></i>',
+                        last: '<i class="bi bi-chevron-double-right"></i>'
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: [7] },
+                    { className: 'text-center', targets: [3, 4, 5, 6, 7] }
+                ]
+            });
+        });
+    </script>
+}

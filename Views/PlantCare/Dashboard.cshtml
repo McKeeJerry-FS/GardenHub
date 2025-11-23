@@ -1,0 +1,480 @@
+@model GardenHub.Models.ViewModels.PlantCareDashboardViewModel
+@using GardenHub.Models.Enums
+
+@{
+    ViewData["Title"] = "Plant Care Dashboard";
+}
+
+<div class="garden-dashboard-fixed-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 mb-0">
+            <i class="bi bi-clipboard-heart"></i> Plant Care Dashboard
+        </h1>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" asp-route-plantId="@Model.Plant.PlantId" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Record Activity
+            </a>
+            <a asp-controller="Plants" asp-action="Details" asp-route-id="@Model.Plant.PlantId" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Plant
+            </a>
+        </div>
+    </div>
+
+    <!-- Plant Overview -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="bi bi-flower3"></i> @Model.Plant.PlantName</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @if (ViewData["PlantImage"] != null)
+                {
+                    <div class="col-md-3">
+                        <img src="@ViewData["PlantImage"]" alt="@Model.Plant.PlantName" 
+                             class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover; width: 100%;" />
+                    </div>
+                }
+                <div class="col-md-@(ViewData["PlantImage"] != null ? "9" : "12")">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Type:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-primary">@Model.Plant.PlantType</span></dd>
+
+                        <dt class="col-sm-3">Condition:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Plant.PlantCondition.HasValue)
+                            {
+                                var conditionBadge = Model.Plant.PlantCondition == PlantCondition.Healthy ? "success" :
+                                                     Model.Plant.PlantCondition == PlantCondition.Wilting ? "warning" : "danger";
+                                <span class="badge bg-@conditionBadge">@Model.Plant.PlantCondition</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Unknown</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Date Planted:</dt>
+                        <dd class="col-sm-9">
+                            @Model.Plant.DatePlanted.ToString("MMMM dd, yyyy") 
+                            <small class="text-muted">(@((DateTime.Now - Model.Plant.DatePlanted).Days) days ago)</small>
+                        </dd>
+
+                        <dt class="col-sm-3">Period:</dt>
+                        <dd class="col-sm-9">
+                            @Model.AvailableMonths.FirstOrDefault(m => m.Month == Model.SelectedMonth && m.Year == Model.SelectedYear)?.DisplayText
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month Selector -->
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            <form asp-action="Dashboard" asp-route-id="@Model.Plant.PlantId" method="get" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="monthSelect" class="form-label">Select Period:</label>
+                    <select name="month" id="monthSelect" class="form-select" onchange="updateYear(this)">
+                        @foreach (var option in Model.AvailableMonths)
+                        {
+                            <option value="@option.Month" 
+                                    data-year="@option.Year"
+                                    selected="@(option.Month == Model.SelectedMonth && option.Year == Model.SelectedYear)">
+                                @option.DisplayText
+                            </option>
+                        }
+                    </select>
+                    <input type="hidden" name="year" value="@Model.SelectedYear" id="yearInput" />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-clipboard-check fs-1"></i>
+                    <h2 class="display-5 mb-2 mt-2">@Model.TotalActivitiesCount</h2>
+                    <p class="card-text mb-0">Total Activities</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-primary shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-droplet-fill fs-1"></i>
+                    <h2 class="display-5 mb-2 mt-2">@Model.WateringCount</h2>
+                    <p class="card-text mb-0">Watering Sessions</p>
+                    <small>@Model.TotalWaterAmount.ToString("F1") ml total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-clipboard2-pulse fs-1"></i>
+                    <h2 class="display-5 mb-2 mt-2">@Model.FertilizingCount</h2>
+                    <p class="card-text mb-0">Fertilizing Sessions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-scissors fs-1"></i>
+                    <h2 class="display-5 mb-2 mt-2">@Model.PruningCount</h2>
+                    <p class="card-text mb-0">Pruning Sessions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Statistics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-bug text-danger fs-2"></i>
+                    <h4 class="mt-2">@Model.PestControlCount</h4>
+                    <small class="text-muted">Pest Control Sessions</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-clock text-info fs-2"></i>
+                    <h4 class="mt-2">@Model.AverageActivityDuration.ToString("F0") min</h4>
+                    <small class="text-muted">Avg Duration</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light shadow h-100">
+                <div class="card-body text-center p-3">
+                    <i class="bi bi-calendar-check text-success fs-2"></i>
+                    <h4 class="mt-2">@((DateTime.Now - Model.Plant.DatePlanted).Days)</h4>
+                    <small class="text-muted">Days Old</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Recent Activity -->
+    @if (Model.MostRecentActivity != null)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="bi bi-clock-history"></i> Most Recent Activity</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Date:</dt>
+                            <dd class="col-sm-8">
+                                <i class="bi bi-calendar"></i> @Model.MostRecentActivity.ActivityDate.ToLocalTime().ToString("MMM dd, yyyy h:mm tt")
+                            </dd>
+
+                            <dt class="col-sm-4">Type:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-primary">@Model.MostRecentActivity.ActivityType</span>
+                            </dd>
+
+                            @if (Model.MostRecentActivity.ActivityDuration.HasValue)
+                            {
+                                <dt class="col-sm-4">Duration:</dt>
+                                <dd class="col-sm-8">@Model.MostRecentActivity.ActivityDuration min</dd>
+                            }
+
+                            @if (Model.MostRecentActivity.PlantHealthStatus.HasValue)
+                            {
+                                <dt class="col-sm-4">Health Status:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-info">@Model.MostRecentActivity.PlantHealthStatus</span>
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Activities Performed:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (Model.MostRecentActivity.WateringPerformed)
+                            {
+                                <span class="badge bg-info"><i class="bi bi-droplet-fill"></i> Watering</span>
+                            }
+                            @if (Model.MostRecentActivity.FertilizerApplied)
+                            {
+                                <span class="badge bg-success"><i class="bi bi-clipboard2-pulse"></i> Fertilizing</span>
+                            }
+                            @if (Model.MostRecentActivity.PruningPerformed)
+                            {
+                                <span class="badge bg-warning"><i class="bi bi-scissors"></i> Pruning</span>
+                            }
+                            @if (Model.MostRecentActivity.PestControlPerformed)
+                            {
+                                <span class="badge bg-danger"><i class="bi bi-bug"></i> Pest Control</span>
+                            }
+                            @if (Model.MostRecentActivity.SupportAdded)
+                            {
+                                <span class="badge bg-secondary"><i class="bi bi-signpost"></i> Support Added</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Model.MostRecentActivity.Notes))
+                        {
+                            <div class="mt-2">
+                                <small class="text-muted"><strong>Notes:</strong> @Model.MostRecentActivity.Notes</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-action="Details" asp-route-id="@Model.MostRecentActivity.ActivityId" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-eye"></i> View Full Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Charts -->
+    @if (Model.TotalActivitiesCount > 0)
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-graph-up"></i> Care Analytics</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Activity Types Distribution -->
+                    <div class="col-md-6 mb-4">
+                        <h5 class="text-center mb-3">Activity Types Distribution</h5>
+                        <canvas id="activityTypesChart"></canvas>
+                    </div>
+
+                    <!-- Health Status Over Time -->
+                    @if (Model.HealthStatusData.Any())
+                    {
+                        <div class="col-md-6 mb-4">
+                            <h5 class="text-center mb-3">Plant Health Over Time</h5>
+                            <canvas id="healthStatusChart"></canvas>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Activity Timeline -->
+    @if (Model.ActivitiesByDate.Any())
+    {
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-calendar-week"></i> Activity Timeline</h3>
+            </div>
+            <div class="card-body">
+                @foreach (var dateGroup in Model.ActivitiesByDate.Take(7))
+                {
+                    <div class="timeline-date-group mb-4">
+                        <h5 class="border-bottom pb-2">
+                            <i class="bi bi-calendar3"></i> @dateGroup.Key.ToString("dddd, MMMM dd, yyyy")
+                            <span class="badge bg-secondary ms-2">@dateGroup.Value.Count activity(ies)</span>
+                        </h5>
+                        <div class="row g-3">
+                            @foreach (var activity in dateGroup.Value)
+                            {
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <span class="badge bg-primary">@activity.ActivityType</span>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-clock"></i> @activity.ActivityDate.ToLocalTime().ToString("h:mm tt")
+                                                </small>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                                @if (activity.WateringPerformed)
+                                                {
+                                                    <span class="badge bg-info" title="Watering"><i class="bi bi-droplet-fill"></i></span>
+                                                }
+                                                @if (activity.FertilizerApplied)
+                                                {
+                                                    <span class="badge bg-success" title="Fertilizing"><i class="bi bi-clipboard2-pulse"></i></span>
+                                                }
+                                                @if (activity.PruningPerformed)
+                                                {
+                                                    <span class="badge bg-warning" title="Pruning"><i class="bi bi-scissors"></i></span>
+                                                }
+                                                @if (activity.PestControlPerformed)
+                                                {
+                                                    <span class="badge bg-danger" title="Pest Control"><i class="bi bi-bug"></i></span>
+                                                }
+                                                @if (activity.SupportAdded)
+                                                {
+                                                    <span class="badge bg-secondary" title="Support"><i class="bi bi-signpost"></i></span>
+                                                }
+                                            </div>
+                                            @if (activity.PlantHealthStatus.HasValue)
+                                            {
+                                                <small class="text-muted">Health: <span class="badge bg-info">@activity.PlantHealthStatus</span></small>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(activity.Notes))
+                                            {
+                                                <p class="small mb-2 mt-2">@(activity.Notes.Length > 100 ? activity.Notes.Substring(0, 100) + "..." : activity.Notes)</p>
+                                            }
+                                            <a asp-action="Details" asp-route-id="@activity.ActivityId" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i> Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                @if (Model.ActivitiesByDate.Count > 7)
+                {
+                    <div class="text-center mt-3">
+                        <a asp-action="Index" asp-route-plantId="@Model.Plant.PlantId" class="btn btn-primary">
+                            <i class="bi bi-list"></i> View All Activities
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-clipboard-x display-1 text-muted mb-3"></i>
+                <h3>No Care Activities Recorded for This Period</h3>
+                <p class="text-muted">Start tracking care activities for @Model.Plant.PlantName in @(new DateTime(Model.SelectedYear, Model.SelectedMonth, 1).ToString("MMMM yyyy")).</p>
+                <a asp-action="Create" asp-route-plantId="@Model.Plant.PlantId" class="btn btn-success btn-lg mt-3">
+                    <i class="bi bi-plus-circle"></i> Record First Activity
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <script>
+        // Update year when month is selected
+        function updateYear(select) {
+            var selectedOption = select.options[select.selectedIndex];
+            var year = selectedOption.getAttribute('data-year');
+            document.getElementById('yearInput').value = year;
+        }
+
+        // Chart data from server
+        var activityTypeLabels = @Html.Raw(Json.Serialize(Model.ActivityTypeLabels));
+        var activityCountByType = @Html.Raw(Json.Serialize(Model.ActivityCountByType));
+        var healthChartLabels = @Html.Raw(Json.Serialize(Model.ChartLabels));
+        var healthStatusData = @Html.Raw(Json.Serialize(Model.HealthStatusData));
+
+        // Activity Types Pie Chart
+        if (activityTypeLabels.length > 0) {
+            var activityCtx = document.getElementById('activityTypesChart').getContext('2d');
+            new Chart(activityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: activityTypeLabels,
+                    datasets: [{
+                        data: activityCountByType,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)',
+                            'rgba(199, 199, 199, 0.8)',
+                            'rgba(83, 102, 255, 0.8)',
+                            'rgba(255, 99, 255, 0.8)',
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' activities';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Health Status Line Chart
+        if (healthChartLabels.length > 0) {
+            var healthCtx = document.getElementById('healthStatusChart').getContext('2d');
+            new Chart(healthCtx, {
+                type: 'line',
+                data: {
+                    labels: healthChartLabels,
+                    datasets: [{
+                        label: 'Health Status',
+                        data: healthStatusData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+                                    return labels[value] || value;
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Health Status'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+}

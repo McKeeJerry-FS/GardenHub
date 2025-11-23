@@ -8,6 +8,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-4 mb-0"><i class="bi bi-clipboard-data"></i> Daily Record</h1>
         <div class="d-flex gap-2">
+            <button onclick="printRecordSummary()" class="btn btn-primary no-print">
+                <i class="bi bi-printer"></i> Print Summary
+            </button>
             <a asp-action="Edit" asp-route-id="@Model?.RecordId" class="btn btn-warning">
                 <i class="bi bi-pencil"></i> Edit Record
             </a>
@@ -17,8 +20,100 @@
         </div>
     </div>
 
+    <!-- Print-Only Summary View -->
+    <div id="printSummary" class="print-only">
+        <div class="print-header">
+            <h1>Daily Record</h1>
+            <p class="print-date">Record Date: @Model.CreatedDate.ToString("MMMM dd, yyyy h:mm tt")</p>
+            <p class="print-date">Printed on: @DateTime.Now.ToString("MMMM dd, yyyy")</p>
+        </div>
+
+        @if (Model.Garden != null)
+        {
+            <div class="print-section">
+                <h2>Garden Information</h2>
+                <table class="print-table">
+                    <tr>
+                        <th>Garden:</th>
+                        <td>@Model.Garden.GardenDescription</td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+        <div class="print-section">
+            <h2>Environmental Conditions</h2>
+            <table class="print-table">
+                <tr>
+                    <th colspan="2" style="background-color: #e9ecef;">Inside Conditions</th>
+                </tr>
+                <tr>
+                    <th>Temperature:</th>
+                    <td>@Model.InsideTemperature°F</td>
+                </tr>
+                <tr>
+                    <th>Humidity:</th>
+                    <td>@Model.InsideHumidity%</td>
+                </tr>
+                <tr>
+                    <th>VPD:</th>
+                    <td>@Model.InsideVPD kPa</td>
+                </tr>
+                <tr>
+                    <th colspan="2" style="background-color: #e9ecef;">Outside Conditions</th>
+                </tr>
+                <tr>
+                    <th>Temperature:</th>
+                    <td>@Model.OutsideTemperature°F</td>
+                </tr>
+                <tr>
+                    <th>Humidity:</th>
+                    <td>@Model.OutsideHumidity%</td>
+                </tr>
+                <tr>
+                    <th>VPD:</th>
+                    <td>@Model.OutsideVPD kPa</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-section">
+            <h2>Lighting & Care</h2>
+            <table class="print-table">
+                <tr>
+                    <th>Lights On:</th>
+                    <td>@Model.LightingOn</td>
+                </tr>
+                <tr>
+                    <th>Lights Off:</th>
+                    <td>@Model.LightingOff</td>
+                </tr>
+                <tr>
+                    <th>Intensity:</th>
+                    <td>@Model.LightingIntensity%</td>
+                </tr>
+                <tr>
+                    <th>Water Amount:</th>
+                    <td>@Model.WaterAmount</td>
+                </tr>
+                <tr>
+                    <th>Nutrient Amount:</th>
+                    <td>@Model.NutrientAmount</td>
+                </tr>
+            </table>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <div class="print-section">
+                <h2>Notes</h2>
+                <div style="padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">@Model.Notes</div>
+            </div>
+        }
+    </div>
+
     <!-- Record Header Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-info text-white">
             <h3 class="mb-0"><i class="bi bi-info-circle"></i> Record Information</h3>
         </div>
@@ -46,7 +141,7 @@
     </div>
 
     <!-- Environmental Conditions Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-primary text-white">
             <h3 class="mb-0"><i class="bi bi-thermometer-half"></i> Environmental Conditions</h3>
         </div>
@@ -124,7 +219,7 @@
     </div>
 
     <!-- Lighting Information Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-warning text-dark">
             <h3 class="mb-0"><i class="bi bi-brightness-high"></i> Lighting Information</h3>
         </div>
@@ -164,7 +259,7 @@
     </div>
 
     <!-- Care Information Card -->
-    <div class="card mb-4 shadow">
+    <div class="card mb-4 shadow no-print">
         <div class="card-header bg-success text-white">
             <h3 class="mb-0"><i class="bi bi-droplet-fill"></i> Water & Nutrients</h3>
         </div>
@@ -196,7 +291,7 @@
     <!-- Notes Card -->
     @if (!string.IsNullOrWhiteSpace(Model.Notes))
     {
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow no-print">
             <div class="card-header bg-secondary text-white">
                 <h3 class="mb-0"><i class="bi bi-sticky"></i> Notes</h3>
             </div>
@@ -207,7 +302,7 @@
     }
 
     <!-- Quick Actions Card -->
-    <div class="card shadow">
+    <div class="card shadow no-print">
         <div class="card-header bg-dark text-white">
             <h3 class="mb-0"><i class="bi bi-lightning-charge"></i> Quick Actions</h3>
         </div>
@@ -235,3 +330,97 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function printRecordSummary() {
+            window.print();
+        }
+    </script>
+}
+
+<style>
+    @@media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .print-only {
+            display: block !important;
+        }
+
+        body {
+            background: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+            .print-header h1 {
+                font-size: 32px;
+                margin: 0 0 10px 0;
+                color: #333;
+            }
+
+        .print-date {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .print-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+            .print-section h2 {
+                font-size: 20px;
+                color: #333;
+                border-bottom: 2px solid #666;
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+            .print-table th {
+                text-align: left;
+                padding: 10px;
+                background-color: #f5f5f5;
+                border: 1px solid #ddd;
+                width: 35%;
+                font-weight: 600;
+            }
+
+            .print-table td {
+                padding: 10px;
+                border: 1px solid #ddd;
+            }
+
+        .card,
+        .shadow,
+        .shadow-sm {
+            box-shadow: none !important;
+        }
+    }
+
+    @@media screen {
+        .print-only {
+            display: none;
+        }
+
+        .no-print {
+            display: block;
+        }
+    }
+</style>

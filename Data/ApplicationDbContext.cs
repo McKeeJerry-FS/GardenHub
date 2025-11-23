@@ -18,5 +18,6 @@ namespace GardenHub.Data
         public DbSet<Plant> Plants { get; set; }
         public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
         public DbSet<GardenCareActivity> GardenCareActivities { get; set; }
+        public DbSet<PlantCareActivity> PlantCareActivities { get; set; }
     }
 }

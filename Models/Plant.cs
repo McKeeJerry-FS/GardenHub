@@ -49,5 +49,8 @@ namespace GardenHub.Models
         [ForeignKey("User")]
         public string UserId { get; set; } = string.Empty;
         public virtual AppUser? User { get; set; }
+
+        // navigation property for plant care activities
+        public virtual ICollection<PlantCareActivity> CareActivities { get; set; } = new List<PlantCareActivity>();
     }
 }

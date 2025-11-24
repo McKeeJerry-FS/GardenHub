@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using GardenHub.Models;
 using GardenHub.Models.Enums;
 using GardenHub.Models.ViewModels;
@@ -19,6 +19,7 @@ namespace GardenHub.Controllers
         private readonly IEquipmentService _equipmentService;
         private readonly IImageService _imageService;
         private readonly IEmailSender _emailSender;
+        private readonly IReminderService _reminderService;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -28,7 +29,8 @@ namespace GardenHub.Controllers
             IJournalEntriesService journalEntriesService,
             IEquipmentService equipmentService,
             IImageService imageService,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IReminderService reminderService)
         {
             _logger = logger;
             _gardenService = gardenService;
@@ -38,6 +40,7 @@ namespace GardenHub.Controllers
             _equipmentService = equipmentService;
             _imageService = imageService;
             _emailSender = emailSender;
+            _reminderService = reminderService;
         }
 
         public IActionResult Index()
@@ -82,33 +85,33 @@ namespace GardenHub.Controllers
                         <body>
                             <div class='container'>
                                 <div class='header'>
-                                    <h2>?? GardenHub Contact Form Submission</h2>
+                                    <h2>🌱 GardenHub Contact Form Submission</h2>
                                 </div>
                                 <div class='content'>
                                     <div class='field'>
-                                        <div class='label'>?? From:</div>
+                                        <div class='label'>📧 From:</div>
                                         <div class='value'>{model.Name} ({model.Email})</div>
                                     </div>
                                     <div class='field'>
-                                        <div class='label'>?? Category:</div>
+                                        <div class='label'>📂 Category:</div>
                                         <div class='value'>{model.Category.ToString()}</div>
                                     </div>
                                     <div class='field'>
-                                        <div class='label'>?? Subject:</div>
+                                        <div class='label'>📝 Subject:</div>
                                         <div class='value'>{model.Subject}</div>
                                     </div>
                                     <div class='field'>
-                                        <div class='label'>?? Message:</div>
+                                        <div class='label'>💬 Message:</div>
                                         <div class='value'>{model.Message.Replace("\n", "<br>")}</div>
                                     </div>
                                     <div class='field'>
-                                        <div class='label'>?? Submitted:</div>
+                                        <div class='label'>🕐 Submitted:</div>
                                         <div class='value'>{DateTime.Now.ToString("MMMM dd, yyyy h:mm tt")}</div>
                                     </div>
                                 </div>
                                 <div class='footer'>
                                     <p>This message was sent from the GardenHub Contact Form</p>
-                                    <p>GardenHub v1.0.0 | � 2025 GardenHub</p>
+                                    <p>GardenHub v1.0.0 | © 2025 GardenHub</p>
                                 </div>
                             </div>
                         </body>
@@ -137,7 +140,7 @@ namespace GardenHub.Controllers
                         <body>
                             <div class='container'>
                                 <div class='header'>
-                                    <h2>Thank You for Contacting GardenHub! ??</h2>
+                                    <h2>Thank You for Contacting GardenHub! 🌱</h2>
                                 </div>
                                 <div class='content'>
                                     <p>Hi {model.Name},</p>
@@ -153,7 +156,7 @@ namespace GardenHub.Controllers
                                 </div>
                                 <div class='footer'>
                                     <p>GardenHub - Your Modern Garden Management Solution</p>
-                                    <p>� 2025 GardenHub | v1.0.0</p>
+                                    <p>© 2025 GardenHub | v1.0.0</p>
                                 </div>
                             </div>
                         </body>
@@ -192,6 +195,9 @@ namespace GardenHub.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var viewModel = new DashboardViewModel();
+
+            // Get current user ID
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
             // Get all data
             var allGardens = await _gardenService.GetAllGardens();
@@ -266,6 +272,13 @@ namespace GardenHub.Controllers
             viewModel.EquipmentUnderMaintenance = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.UnderMaintenance);
             viewModel.EquipmentMaintenanceRequested = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.MaintenanceRequested);
             viewModel.OperationalEquipmentCount = allEquipment.Count(e => e.MaintenanceStatus == MaintenanceStatus.Operational);
+
+            // Reminder Status - Load reminder data
+            var allActiveReminders = await _reminderService.GetActiveRemindersAsync(userId);
+            viewModel.TotalActiveReminders = allActiveReminders.Count;
+            viewModel.OverdueReminders = allActiveReminders.Where(r => r.IsOverdue).OrderBy(r => r.ReminderDateTime).ToList();
+            viewModel.TodayReminders = allActiveReminders.Where(r => r.IsDueToday).OrderBy(r => r.ReminderDateTime).ToList();
+            viewModel.UpcomingReminders = allActiveReminders.Where(r => r.IsDueSoon && !r.IsDueToday).OrderBy(r => r.ReminderDateTime).Take(5).ToList();
 
             // Convert images for display
             foreach (var garden in viewModel.RecentGardens.Concat(viewModel.AllGardens).Distinct())

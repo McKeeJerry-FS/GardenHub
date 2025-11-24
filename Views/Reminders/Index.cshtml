@@ -1,0 +1,351 @@
+﻿@model IEnumerable<GardenHub.Models.Reminder>
+
+@{
+    ViewData["Title"] = "Reminders";
+    var currentFilter = ViewData["CurrentFilter"]?.ToString() ?? "active";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-white py-4">
+                    <h1 class="display-4 fw-bold mb-2">
+                        <i class="bi bi-alarm"></i> Reminders
+                    </h1>
+                    <p class="lead mb-0">Stay on top of your garden care tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link @(currentFilter == "active" ? "active" : "")" asp-action="Index" asp-route-filter="active">
+                                    <i class="bi bi-list-check"></i> Active (@Model.Count(r => !r.IsCompleted))
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentFilter == "overdue" ? "active" : "")" asp-action="Index" asp-route-filter="overdue">
+                                    <i class="bi bi-exclamation-triangle"></i> Overdue (@Model.Count(r => r.IsOverdue))
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentFilter == "upcoming" ? "active" : "")" asp-action="Index" asp-route-filter="upcoming">
+                                    <i class="bi bi-calendar-event"></i> Upcoming (7 days)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentFilter == "completed" ? "active" : "")" asp-action="Index" asp-route-filter="completed">
+                                    <i class="bi bi-check-circle"></i> Completed (@Model.Count(r => r.IsCompleted))
+                                </a>
+                            </li>
+                        </ul>
+                        <a asp-action="Create" class="btn btn-success btn-lg">
+                            <i class="bi bi-plus-circle"></i> New Reminder
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-alarm fs-1"></i>
+                    <h3 class="mt-2 mb-0">@Model.Count(r => !r.IsCompleted)</h3>
+                    <p class="mb-0">Active Reminders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle fs-1"></i>
+                    <h3 class="mt-2 mb-0">@Model.Count(r => r.IsOverdue)</h3>
+                    <p class="mb-0">Overdue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-calendar-event fs-1"></i>
+                    <h3 class="mt-2 mb-0">@Model.Count(r => r.IsDueToday)</h3>
+                    <p class="mb-0">Due Today</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white shadow h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle fs-1"></i>
+                    <h3 class="mt-2 mb-0">@Model.Count(r => r.IsCompleted)</h3>
+                    <p class="mb-0">Completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminders List -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-list-ul"></i> 
+                        @switch (currentFilter)
+                        {
+                            case "completed":
+                                @:Completed Reminders
+                                break;
+                            case "overdue":
+                                @:Overdue Reminders
+                                break;
+                            case "upcoming":
+                                @:Upcoming Reminders
+                                break;
+                            default:
+                                @:Active Reminders
+                                break;
+                        }
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox display-1 text-muted"></i>
+                            <h4 class="mt-3 text-muted">No reminders found</h4>
+                            <p class="text-muted">Create your first reminder to get started!</p>
+                            <a asp-action="Create" class="btn btn-primary btn-lg mt-3">
+                                <i class="bi bi-plus-circle"></i> Create Reminder
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var item in Model)
+                            {
+                                var priorityClass = item.Priority switch
+                                {
+                                    GardenHub.Models.Enums.ReminderPriority.Urgent => "border-danger border-3",
+                                    GardenHub.Models.Enums.ReminderPriority.High => "border-warning border-2",
+                                    GardenHub.Models.Enums.ReminderPriority.Low => "border-secondary",
+                                    _ => "border-primary"
+                                };
+
+                                var statusBadge = item.IsCompleted ? "bg-success" :
+                                                 item.IsOverdue ? "bg-danger" :
+                                                 item.IsDueToday ? "bg-warning text-dark" :
+                                                 item.IsDueSoon ? "bg-info" : "bg-secondary";
+
+                                <div class="list-group-item @priorityClass" style="border-left-width: 5px !important;">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-start">
+                                                @if (!item.IsCompleted)
+                                                {
+                                                    <form asp-action="Complete" asp-route-id="@item.ReminderId" method="post" class="me-3">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-outline-success btn-sm" title="Mark as Complete">
+                                                            <i class="bi bi-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-success btn-sm me-3" disabled>
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                    </button>
+                                                }
+                                                <div>
+                                                    <h5 class="mb-1 @(item.IsCompleted ? "text-decoration-line-through text-muted" : "")">
+                                                        @item.Title
+                                                    </h5>
+                                                    @if (!string.IsNullOrEmpty(item.Description))
+                                                    {
+                                                        <p class="mb-2 text-muted small">@item.Description</p>
+                                                    }
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <span class="badge @statusBadge">
+                                                            @if (item.IsCompleted)
+                                                            {
+                                                                <i class="bi bi-check-circle"></i>
+                                                                @:Completed
+                                                            }
+                                                            else if (item.IsOverdue)
+                                                            {
+                                                                <i class="bi bi-exclamation-triangle"></i>
+                                                                @:Overdue
+                                                            }
+                                                            else if (item.IsDueToday)
+                                                            {
+                                                                <i class="bi bi-calendar-event"></i>
+                                                                @:Due Today
+                                                            }
+                                                            else if (item.IsDueSoon)
+                                                            {
+                                                                <i class="bi bi-clock"></i>
+                                                                @:Due Soon
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="bi bi-alarm"></i>
+                                                                @:Scheduled
+                                                            }
+                                                        </span>
+                                                        <span class="badge bg-info">
+                                                            <i class="bi bi-tag"></i> @item.ReminderType
+                                                        </span>
+                                                        <span class="badge bg-secondary">
+                                                            <i class="bi bi-flag"></i> @item.Priority
+                                                        </span>
+                                                        @if (item.IsRecurring)
+                                                        {
+                                                            <span class="badge bg-purple">
+                                                                <i class="bi bi-arrow-repeat"></i> @item.RecurrencePattern
+                                                            </span>
+                                                        }
+                                                        @if (item.Garden != null)
+                                                        {
+                                                            <span class="badge bg-success">
+                                                                <i class="bi bi-house-door"></i> @item.Garden.GardenName
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-muted">
+                                                <i class="bi bi-calendar3"></i>
+                                                <strong>Due:</strong> @item.ReminderDateTime.ToLocalTime().ToString("MMM dd, yyyy")
+                                                <br />
+                                                <i class="bi bi-clock"></i>
+                                                <strong>Time:</strong> @item.ReminderDateTime.ToLocalTime().ToString("h:mm tt")
+                                                @if (item.IsCompleted && item.CompletedDate.HasValue)
+                                                {
+                                                    <br />
+                                                    <i class="bi bi-check-circle text-success"></i>
+                                                    <strong>Completed:</strong> @item.CompletedDate.Value.ToLocalTime().ToString("MMM dd, yyyy")
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <div class="btn-group" role="group">
+                                                <a asp-action="Details" asp-route-id="@item.ReminderId" class="btn btn-sm btn-info" title="Details">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                @if (!item.IsCompleted)
+                                                {
+                                                    <a asp-action="Edit" asp-route-id="@item.ReminderId" class="btn btn-sm btn-warning" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#snoozeModal@(item.ReminderId)" title="Snooze">
+                                                        <i class="bi bi-clock-history"></i>
+                                                    </button>
+                                                }
+                                                <a asp-action="Delete" asp-route-id="@item.ReminderId" class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Snooze Modal -->
+                                <div class="modal fade" id="snoozeModal@(item.ReminderId)" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Snooze Reminder</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>How long would you like to snooze this reminder?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form asp-action="Snooze" asp-route-id="@item.ReminderId" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="hours" value="1" />
+                                                    <button type="submit" class="btn btn-secondary">1 Hour</button>
+                                                </form>
+                                                <form asp-action="Snooze" asp-route-id="@item.ReminderId" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="hours" value="3" />
+                                                    <button type="submit" class="btn btn-secondary">3 Hours</button>
+                                                </form>
+                                                <form asp-action="Snooze" asp-route-id="@item.ReminderId" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="hours" value="24" />
+                                                    <button type="submit" class="btn btn-secondary">1 Day</button>
+                                                </form>
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .bg-purple {
+            background-color: #6f42c1 !important;
+            color: white;
+        }
+        
+        .list-group-item {
+            transition: all 0.3s ease;
+        }
+        
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #667eea;
+        }
+    </style>
+}

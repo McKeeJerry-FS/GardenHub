@@ -36,6 +36,7 @@ builder.Services.AddScoped<IPlantService, PlantService>();
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IGardenCareService, GardenCareService>();
 builder.Services.AddScoped<IPlantCareService, PlantCareService>();
+builder.Services.AddScoped<IReminderService, ReminderService>();
 
 builder.Services.AddTransient<IEmailSender, EmailService>();
 

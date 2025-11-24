@@ -34,5 +34,11 @@ namespace GardenHub.Models.ViewModels
         public List<Equipment> EquipmentUnderMaintenance { get; set; } = new List<Equipment>();
         public List<Equipment> EquipmentMaintenanceRequested { get; set; } = new List<Equipment>();
         public int OperationalEquipmentCount { get; set; }
+
+        // Reminder Notifications
+        public List<Reminder> OverdueReminders { get; set; } = new List<Reminder>();
+        public List<Reminder> TodayReminders { get; set; } = new List<Reminder>();
+        public List<Reminder> UpcomingReminders { get; set; } = new List<Reminder>();
+        public int TotalActiveReminders { get; set; }
     }
 }

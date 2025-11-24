@@ -68,4 +68,10 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
+// Apply database migrations and seed data (all environments)
+using (var scope = app.Services.CreateScope())
+{
+    await DataUtility.ManageDataAsync(scope.ServiceProvider);
+}
+
 app.Run();

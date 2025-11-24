@@ -3,12 +3,22 @@ using GardenHub.Models;
 using GardenHub.Services;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = DataUtility.GetConnectionString(builder.Configuration);
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Log environment variables for debugging
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+    var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE");
+
+    throw new InvalidOperationException($"Database connection string is required. DATABASE_URL: {databaseUrl}, PGHOST: {pgHost}, PGDATABASE: {pgDatabase}");
+}
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -26,6 +36,8 @@ builder.Services.AddScoped<IPlantService, PlantService>();
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IGardenCareService, GardenCareService>();
 builder.Services.AddScoped<IPlantCareService, PlantCareService>();
+
+builder.Services.AddTransient<IEmailSender, EmailService>();
 
 var app = builder.Build();
 

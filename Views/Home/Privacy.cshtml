@@ -1,6 +1,591 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <div class="card-body text-center text-white py-5">
+                    <img src="~/img/GrowHubLogo.png" width="550" />
+                    <h1 class="display-2 text-info fw-bold mt-3 mb-3">
+                        <i class="bi bi-shield-lock"></i> Privacy Policy
+                    </h1>
+                    <p class="lead text-light fs-4">Your Privacy is Our Priority</p>
+                    <div class="mt-4">
+                        <span class="badge bg-white text-success fs-5">
+                            <i class="bi bi-check-circle"></i> Secure & Transparent
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Summary -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0"><i class="bi bi-file-earmark-text"></i> Privacy Policy Summary</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info border-start border-info border-5" role="alert">
+                        <h5 class="alert-heading"><i class="bi bi-info-circle-fill me-2"></i>Quick Overview</h5>
+                        <p class="mb-0">
+                            At GardenHub, we respect your privacy and are committed to protecting your personal information. 
+                            This policy explains what data we collect, how we use it, and your rights regarding your information.
+                        </p>
+                    </div>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3 mb-2">Your Data is Secure</h6>
+                                <p class="text-muted small mb-0">We use industry-standard encryption and security measures</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <i class="bi bi-x-circle text-danger" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3 mb-2">We Don't Sell Data</h6>
+                                <p class="text-muted small mb-0">Your information is never sold to third parties</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 bg-light rounded">
+                                <i class="bi bi-person-check text-primary" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3 mb-2">You're in Control</h6>
+                                <p class="text-muted small mb-0">Access, modify, or delete your data anytime</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light border-start border-primary border-5">
+                        <p class="mb-2"><strong>Last Updated:</strong> November 24, 2025</p>
+                        <p class="mb-0"><strong>Effective Date:</strong> November 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information We Collect -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="bi bi-database"></i> Information We Collect</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="accordion" id="collectionAccordion">
+                        <!-- Account Information -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collect1">
+                                    <i class="bi bi-person-circle text-primary me-2"></i>
+                                    Account Information
+                                </button>
+                            </h3>
+                            <div id="collect1" class="accordion-collapse collapse show" data-bs-parent="#collectionAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>When you create a GardenHub account, we collect:</strong></p>
+                                    <ul>
+                                        <li><strong>Name:</strong> First and last name for personalization</li>
+                                        <li><strong>Email Address:</strong> For account authentication and communication</li>
+                                        <li><strong>Password:</strong> Stored securely using industry-standard hashing (we never store plain text passwords)</li>
+                                        <li><strong>Phone Number:</strong> Optional, for account recovery</li>
+                                    </ul>
+                                    <div class="alert alert-success mt-3 mb-0">
+                                        <i class="bi bi-shield-lock-fill me-2"></i>
+                                        <strong>Security Note:</strong> All passwords are encrypted using ASP.NET Core Identity with SHA-256 hashing.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Garden Data -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collect2">
+                                    <i class="bi bi-house-door text-success me-2"></i>
+                                    Garden and Plant Data
+                                </button>
+                            </h3>
+                            <div id="collect2" class="accordion-collapse collapse" data-bs-parent="#collectionAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Information you provide about your gardens and plants:</strong></p>
+                                    <ul>
+                                        <li>Garden names, descriptions, locations, and types</li>
+                                        <li>Plant information (names, types, planting dates, conditions)</li>
+                                        <li>Daily environmental records (temperature, humidity, VPD)</li>
+                                        <li>Journal entries and observations</li>
+                                        <li>Equipment inventory and maintenance records</li>
+                                        <li>Plant care activities and schedules</li>
+                                        <li>Images and photos you upload</li>
+                                    </ul>
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="bi bi-lock-fill me-2"></i>
+                                        <strong>Privacy:</strong> All garden data is private to your account. We do not share your gardening information with other users or third parties.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Technical Data -->
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collect3">
+                                    <i class="bi bi-gear text-secondary me-2"></i>
+                                    Technical and Usage Data
+                                </button>
+                            </h3>
+                            <div id="collect3" class="accordion-collapse collapse" data-bs-parent="#collectionAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Automatically collected information:</strong></p>
+                                    <ul>
+                                        <li><strong>Browser Information:</strong> Browser type, version, and language preferences</li>
+                                        <li><strong>Device Information:</strong> Device type, operating system</li>
+                                        <li><strong>IP Address:</strong> For security and analytics purposes</li>
+                                        <li><strong>Usage Data:</strong> Pages visited, features used, time spent</li>
+                                        <li><strong>Log Data:</strong> Error logs and system diagnostics</li>
+                                    </ul>
+                                    <p class="mb-0"><strong>Purpose:</strong> This data helps us improve performance, fix bugs, and enhance user experience.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How We Use Your Information -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0"><i class="bi bi-lightning-charge"></i> How We Use Your Information</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="fs-5 mb-4">We use your information solely to provide and improve the GardenHub service:</p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Service Delivery</h5>
+                                    <p class="text-muted mb-0">To create and maintain your account, provide access to features, and store your garden data securely.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Communication</h5>
+                                    <p class="text-muted mb-0">To send important updates, respond to support requests, and provide account-related notifications.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Authentication & Security</h5>
+                                    <p class="text-muted mb-0">To verify your identity, prevent fraud, and protect your account from unauthorized access.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Platform Improvement</h5>
+                                    <p class="text-muted mb-0">To analyze usage patterns, fix bugs, and develop new features based on user needs.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Analytics & Performance</h5>
+                                    <p class="text-muted mb-0">To monitor system performance, optimize loading times, and ensure reliability.</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-start">
+                                <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h5>Legal Compliance</h5>
+                                    <p class="text-muted mb-0">To comply with applicable laws, regulations, and legal processes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mt-4 mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>What We Don't Do:</strong> We do NOT sell, rent, or share your personal information with third parties for marketing purposes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Security -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white">
+                    <h2 class="mb-0"><i class="bi bi-shield-check"></i> How We Protect Your Data</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="fs-5 mb-4">We implement multiple layers of security to protect your information:</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card h-100 bg-light border-primary">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-lock-fill text-primary" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3 mb-3">Encryption</h5>
+                                    <ul class="text-start small">
+                                        <li>SSL/TLS for data in transit</li>
+                                        <li>Encrypted database storage</li>
+                                        <li>Secure password hashing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card h-100 bg-light border-success">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-key-fill text-success" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3 mb-3">Access Control</h5>
+                                    <ul class="text-start small">
+                                        <li>ASP.NET Core Identity</li>
+                                        <li>Role-based permissions</li>
+                                        <li>Session management</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card h-100 bg-light border-info">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-server text-info" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3 mb-3">Infrastructure</h5>
+                                    <ul class="text-start small">
+                                        <li>Secure hosting environment</li>
+                                        <li>Regular security updates</li>
+                                        <li>Backup and recovery systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-light rounded border-start border-warning border-5">
+                        <h6><i class="bi bi-exclamation-triangle text-warning me-2"></i>Security Responsibility</h6>
+                        <p class="mb-0">While we take extensive measures to protect your data, please help us by using a strong, unique password and keeping your login credentials confidential.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Rights -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="mb-0"><i class="bi bi-person-check"></i> Your Rights and Choices</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="fs-5 mb-4">You have the following rights regarding your personal information:</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card border-primary h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-eye text-primary me-2"></i>Access Your Data
+                                    </h5>
+                                    <p class="card-text">View all personal information we have about you through your account dashboard and profile settings.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-success h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-pencil text-success me-2"></i>Update Information
+                                    </h5>
+                                    <p class="card-text">Modify your account details, garden data, and preferences at any time through the application interface.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-danger h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-trash text-danger me-2"></i>Delete Your Data
+                                    </h5>
+                                    <p class="card-text">Request deletion of your account and associated data by contacting us through the <a asp-action="Contact">Contact page</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border-info h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-download text-info me-2"></i>Export Your Data
+                                    </h5>
+                                    <p class="card-text">Request a copy of your garden data in a portable format (feature coming in future versions).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4 mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Need Help?</strong> To exercise any of these rights, please <a asp-action="Contact" class="alert-link">contact us</a> and we'll respond within 48 hours.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookies and Tracking -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0"><i class="bi bi-cookie"></i> Cookies and Tracking</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="fs-5 mb-4">GardenHub uses cookies and similar technologies to improve your experience:</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 25%;">Cookie Type</th>
+                                    <th style="width: 45%;">Purpose</th>
+                                    <th style="width: 30%;">Control</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Essential Cookies</strong></td>
+                                    <td>Required for authentication, security, and basic functionality</td>
+                                    <td><span class="badge bg-secondary">Always Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Session Cookies</strong></td>
+                                    <td>Maintain your login state and preferences during your session</td>
+                                    <td><span class="badge bg-secondary">Always Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Performance Cookies</strong></td>
+                                    <td>Help us understand how you use the application to improve performance</td>
+                                    <td><span class="badge bg-success">Optional</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-success mb-0">
+                        <i class="bi bi-gear-fill me-2"></i>
+                        <strong>Cookie Control:</strong> You can manage cookie preferences through your browser settings. Note that disabling essential cookies may affect functionality.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Retention -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="mb-0"><i class="bi bi-clock-history"></i> Data Retention</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="fs-5 mb-4">How long we keep your information:</p>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Active Accounts:</strong> We retain your data as long as your account is active or as needed to provide services.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Deleted Accounts:</strong> When you delete your account, we remove personal data within 30 days, except where required by law.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Backups:</strong> Data in backups may persist for up to 90 days before complete removal.
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Legal Requirements:</strong> Some data may be retained longer to comply with legal obligations.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Children's Privacy -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Children's Privacy</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-danger border-danger border-start border-5">
+                        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Age Restriction</h5>
+                        <p class="mb-0">
+                            GardenHub is not intended for users under the age of 13. We do not knowingly collect personal 
+                            information from children. If you believe we have inadvertently collected information from a child 
+                            under 13, please <a asp-action="Contact" class="alert-link">contact us</a> immediately and we will 
+                            delete it.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Changes to Policy -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="bi bi-arrow-repeat"></i> Changes to This Policy</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-3">
+                        We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. 
+                        When we make changes:
+                    </p>
+
+                    <ul>
+                        <li>We will update the "Last Updated" date at the top of this policy</li>
+                        <li>Significant changes will be communicated via email to registered users</li>
+                        <li>Continued use of GardenHub after changes constitutes acceptance of the updated policy</li>
+                    </ul>
+
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-bell-fill me-2"></i>
+                        <strong>Stay Informed:</strong> We recommend reviewing this policy periodically to stay informed about how we protect your information.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-info py-5">
+                    <h2 class="display-5 mb-3">
+                        <i class="bi bi-envelope-heart"></i> Questions About Privacy?
+                    </h2>
+                    <p class="lead mb-4">
+                        If you have questions or concerns about this Privacy Policy or our data practices, we're here to help.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a asp-action="Contact" class="btn btn-light btn-lg">
+                            <i class="bi bi-envelope"></i> Contact Us
+                        </a>
+                        <a asp-action="FAQs" class="btn btn-outline-info btn-lg">
+                            <i class="bi bi-question-circle"></i> FAQs
+                        </a>
+                        <a asp-action="About" class="btn btn-success btn-lg">
+                            <i class="bi bi-info-circle"></i> About GardenHub
+                        </a>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="mb-1"><strong>Email:</strong> support@gardenhub.com</p>
+                        <p class="mb-0"><strong>GitHub:</strong> github.com/McKeeJerry-FS/GardenHub</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .accordion-button {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        .accordion-item {
+            border: 1px solid rgba(0,0,0,.125);
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem !important;
+            overflow: hidden;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+        }
+
+        .bg-gradient {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bg-gradient:hover::before {
+            opacity: 1;
+        }
+
+        .table {
+            font-size: 0.95rem;
+        }
+
+        .list-group-item {
+            padding: 1rem 1.25rem;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+}

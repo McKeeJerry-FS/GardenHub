@@ -1,0 +1,270 @@
+﻿@model GardenHub.Models.ViewModels.ContactViewModel
+
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-white py-5">
+                    <img src="~/img/GrowHubLogo.png" width="550" />
+                    <h1 class="display-2 text-info fw-bold mt-3 mb-3">
+                        <i class="bi bi-envelope-heart"></i> Contact Us
+                    </h1>
+                    <p class="lead fs-4">We'd love to hear from you!</p>
+                    <div class="mt-4">
+                        <span class="badge bg-white text-primary fs-5">
+                            <i class="bi bi-chat-dots"></i> Get in Touch
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="bi bi-envelope-paper"></i> Send Us a Message</h2>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-4">Have questions, feedback, or found a bug? Fill out the form below and we'll get back to you as soon as possible!</p>
+
+                    <form asp-action="Contact" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Name Field -->
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                <input asp-for="Name" class="form-control" id="name" placeholder="Your Name" />
+                                <label asp-for="Name" for="name">
+                                    <i class="bi bi-person"></i> Your Name
+                                </label>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                <input asp-for="Email" class="form-control" id="email" placeholder="email@example.com" />
+                                <label asp-for="Email" for="email">
+                                    <i class="bi bi-envelope"></i> Email Address
+                                </label>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Category Field -->
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                <select asp-for="Category" asp-items="Html.GetEnumSelectList<GardenHub.Models.ViewModels.ContactCategory>()" class="form-select" id="category">
+                                    <option value="">-- Select Category --</option>
+                                </select>
+                                <label asp-for="Category" for="category">
+                                    <i class="bi bi-tag"></i> Category
+                                </label>
+                                <span asp-validation-for="Category" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Subject Field -->
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                <input asp-for="Subject" class="form-control" id="subject" placeholder="Subject" />
+                                <label asp-for="Subject" for="subject">
+                                    <i class="bi bi-card-heading"></i> Subject
+                                </label>
+                                <span asp-validation-for="Subject" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Message Field -->
+                        <div class="mb-4">
+                            <div class="form-floating">
+                                <textarea asp-for="Message" class="form-control" id="message" placeholder="Your Message" style="height: 200px"></textarea>
+                                <label asp-for="Message" for="message">
+                                    <i class="bi bi-chat-left-text"></i> Your Message
+                                </label>
+                                <span asp-validation-for="Message" class="text-danger small"></span>
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Please provide as much detail as possible (minimum 10 characters, maximum 2000 characters)
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send"></i> Send Message
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i> Reset Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Sidebar -->
+        <div class="col-lg-4">
+            <!-- Contact Info Card -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="bi bi-info-circle"></i> Contact Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5><i class="bi bi-envelope-fill text-primary"></i> Email</h5>
+                        <p class="text-muted mb-0">support@gardenhub.com</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="bi bi-github text-dark"></i> GitHub</h5>
+                        <p class="text-muted mb-0">
+                            <a href="https://github.com/McKeeJerry-FS/GardenHub" target="_blank" class="text-decoration-none">
+                                github.com/McKeeJerry-FS/GardenHub
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="bi bi-clock-fill text-info"></i> Response Time</h5>
+                        <p class="text-muted mb-0">We typically respond within 24-48 hours during business days.</p>
+                    </div>
+
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-lightbulb-fill me-2"></i>
+                        <strong>Tip:</strong> Check our <a asp-action="FAQs" class="alert-link">FAQ page</a> for quick answers to common questions!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links Card -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="bi bi-link-45deg"></i> Quick Links</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-action="FAQs" class="btn btn-outline-primary">
+                            <i class="bi bi-question-circle"></i> FAQs
+                        </a>
+                        <a asp-action="Features" class="btn btn-outline-success">
+                            <i class="bi bi-stars"></i> Features
+                        </a>
+                        <a asp-action="About" class="btn btn-outline-info">
+                            <i class="bi bi-info-circle"></i> About Us
+                        </a>
+                        <a asp-action="Privacy" class="btn btn-outline-secondary">
+                            <i class="bi bi-shield-check"></i> Privacy Policy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why Contact Us Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="mb-0"><i class="bi bi-chat-square-heart"></i> Why Contact Us?</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-bug text-danger" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5>Report Bugs</h5>
+                                <p class="text-muted">Found an issue? Let us know so we can fix it and improve GardenHub for everyone.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-lightbulb text-warning" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5>Request Features</h5>
+                                <p class="text-muted">Have an idea for a new feature? We'd love to hear your suggestions!</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <i class="bi bi-chat-left-quote text-primary" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5>Share Feedback</h5>
+                                <p class="text-muted">Tell us about your experience and help us make GardenHub even better.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Character counter for message textarea
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageField = document.getElementById('message');
+            if (messageField) {
+                const maxLength = 2000;
+                const counterDiv = document.createElement('div');
+                counterDiv.className = 'form-text text-end';
+                counterDiv.id = 'charCounter';
+                messageField.parentElement.appendChild(counterDiv);
+                
+                function updateCounter() {
+                    const remaining = maxLength - messageField.value.length;
+                    counterDiv.textContent = `${messageField.value.length} / ${maxLength} characters`;
+                    
+                    if (remaining < 100) {
+                        counterDiv.classList.add('text-warning');
+                        counterDiv.classList.remove('text-muted');
+                    } else {
+                        counterDiv.classList.add('text-muted');
+                        counterDiv.classList.remove('text-warning');
+                    }
+                }
+                
+                messageField.addEventListener('input', updateCounter);
+                updateCounter();
+            }
+        });
+    </script>
+
+    <style>
+        .form-floating > label {
+            padding-left: 1rem;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+        }
+    </style>
+}

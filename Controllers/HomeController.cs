@@ -4,6 +4,7 @@ using GardenHub.Models.Enums;
 using GardenHub.Models.ViewModels;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GardenHub.Controllers
@@ -17,6 +18,7 @@ namespace GardenHub.Controllers
         private readonly IJournalEntriesService _journalEntriesService;
         private readonly IEquipmentService _equipmentService;
         private readonly IImageService _imageService;
+        private readonly IEmailSender _emailSender;
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -25,7 +27,8 @@ namespace GardenHub.Controllers
             IDailyRecordService dailyRecordService,
             IJournalEntriesService journalEntriesService,
             IEquipmentService equipmentService,
-            IImageService imageService)
+            IImageService imageService,
+            IEmailSender emailSender)
         {
             _logger = logger;
             _gardenService = gardenService;
@@ -34,9 +37,153 @@ namespace GardenHub.Controllers
             _journalEntriesService = journalEntriesService;
             _equipmentService = equipmentService;
             _imageService = imageService;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contact(ContactViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Build email content
+                    var emailSubject = $"GardenHub Contact Form: {model.Subject}";
+                    var emailBody = $@"
+                        <html>
+                        <head>
+                            <style>
+                                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                                .header {{ background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; }}
+                                .content {{ background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }}
+                                .field {{ margin-bottom: 15px; }}
+                                .label {{ font-weight: bold; color: #56ab2f; }}
+                                .value {{ margin-top: 5px; padding: 10px; background: white; border-left: 3px solid #56ab2f; }}
+                                .footer {{ text-align: center; padding: 15px; color: #666; font-size: 12px; }}
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <div class='header'>
+                                    <h2>?? GardenHub Contact Form Submission</h2>
+                                </div>
+                                <div class='content'>
+                                    <div class='field'>
+                                        <div class='label'>?? From:</div>
+                                        <div class='value'>{model.Name} ({model.Email})</div>
+                                    </div>
+                                    <div class='field'>
+                                        <div class='label'>?? Category:</div>
+                                        <div class='value'>{model.Category.ToString()}</div>
+                                    </div>
+                                    <div class='field'>
+                                        <div class='label'>?? Subject:</div>
+                                        <div class='value'>{model.Subject}</div>
+                                    </div>
+                                    <div class='field'>
+                                        <div class='label'>?? Message:</div>
+                                        <div class='value'>{model.Message.Replace("\n", "<br>")}</div>
+                                    </div>
+                                    <div class='field'>
+                                        <div class='label'>?? Submitted:</div>
+                                        <div class='value'>{DateTime.Now.ToString("MMMM dd, yyyy h:mm tt")}</div>
+                                    </div>
+                                </div>
+                                <div class='footer'>
+                                    <p>This message was sent from the GardenHub Contact Form</p>
+                                    <p>GardenHub v1.0.0 | © 2025 GardenHub</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+
+                    // Send email to your address
+                    await _emailSender.SendEmailAsync(
+                        "your-email@example.com", // Replace with your email
+                        emailSubject,
+                        emailBody
+                    );
+
+                    // Send confirmation email to user
+                    var confirmationBody = $@"
+                        <html>
+                        <head>
+                            <style>
+                                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                                .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; text-align: center; }}
+                                .content {{ background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }}
+                                .footer {{ text-align: center; padding: 15px; color: #666; font-size: 12px; }}
+                                .message-box {{ background: white; padding: 15px; border-left: 4px solid #667eea; margin: 15px 0; }}
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <div class='header'>
+                                    <h2>Thank You for Contacting GardenHub! ??</h2>
+                                </div>
+                                <div class='content'>
+                                    <p>Hi {model.Name},</p>
+                                    <p>Thank you for reaching out to us! We've received your message and will get back to you as soon as possible.</p>
+                                    <div class='message-box'>
+                                        <p><strong>Your Message Summary:</strong></p>
+                                        <p><strong>Category:</strong> {model.Category.ToString()}</p>
+                                        <p><strong>Subject:</strong> {model.Subject}</p>
+                                    </div>
+                                    <p>We typically respond within 24-48 hours during business days.</p>
+                                    <p>In the meantime, you might find answers to common questions in our <a href='https://yourdomain.com/Home/FAQs' style='color: #667eea;'>FAQ section</a>.</p>
+                                    <p>Best regards,<br>The GardenHub Team</p>
+                                </div>
+                                <div class='footer'>
+                                    <p>GardenHub - Your Modern Garden Management Solution</p>
+                                    <p>© 2025 GardenHub | v1.0.0</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>";
+
+                    await _emailSender.SendEmailAsync(
+                        model.Email,
+                        "Thank you for contacting GardenHub",
+                        confirmationBody
+                    );
+
+                    TempData["SuccessMessage"] = "Thank you for contacting us! We've received your message and will respond soon.";
+                    return RedirectToAction(nameof(Contact));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error sending contact form email");
+                    TempData["ErrorMessage"] = "There was an error sending your message. Please try again later or contact us directly.";
+                }
+            }
+
+            return View(model);
+        }
+
+        public IActionResult Features()
+        {
+            return View();
+        }
+
+        public IActionResult FAQs()
         {
             return View();
         }

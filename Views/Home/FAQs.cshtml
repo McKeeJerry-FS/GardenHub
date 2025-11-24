@@ -1,0 +1,848 @@
+﻿@{
+    ViewData["Title"] = "FAQs";
+}
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-center text-white py-5">
+                    <img src="~/img/GrowHubLogo.png" width="550" />
+                    <h1 class="display-2 text-info fw-bold mt-3 mb-3">
+                        <i class="bi bi-question-circle"></i> Frequently Asked Questions
+                    </h1>
+                    <p class="lead fs-4">Find answers to common questions about GardenHub</p>
+                    <div class="mt-4">
+                        <span class="badge bg-white text-danger fs-5">
+                            <i class="bi bi-info-circle"></i> Quick Help & Guidance
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Box -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-primary text-white">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="faqSearch" class="form-control" placeholder="Search for a question or topic...">
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="bi bi-lightbulb"></i> Try searching: "garden", "plant", "dashboard", "data", etc.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="mb-3"><i class="bi bi-bookmarks"></i> Jump to Category:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="#getting-started" class="btn btn-outline-primary">
+                            <i class="bi bi-play-circle"></i> Getting Started
+                        </a>
+                        <a href="#garden-management" class="btn btn-outline-success">
+                            <i class="bi bi-house-door"></i> Garden Management
+                        </a>
+                        <a href="#plant-tracking" class="btn btn-outline-info">
+                            <i class="bi bi-flower3"></i> Plant Tracking
+                        </a>
+                        <a href="#data-records" class="btn btn-outline-warning">
+                            <i class="bi bi-clipboard-data"></i> Data & Records
+                        </a>
+                        <a href="#features" class="btn btn-outline-danger">
+                            <i class="bi bi-stars"></i> Features
+                        </a>
+                        <a href="#technical" class="btn btn-outline-secondary">
+                            <i class="bi bi-gear"></i> Technical
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Getting Started FAQs -->
+    <div class="row mb-4" id="getting-started">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="bi bi-play-circle"></i> Getting Started</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="gettingStartedAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#gs1">
+                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
+                                    What is GardenHub and how does it work?
+                                </button>
+                            </h3>
+                            <div id="gs1" class="accordion-collapse collapse show" data-bs-parent="#gettingStartedAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub</strong> is a comprehensive web-based garden management platform that helps you organize, track, and optimize your gardening activities. It works by allowing you to:</p>
+                                    <ul>
+                                        <li>Create and manage multiple gardens (indoor, outdoor, greenhouse)</li>
+                                        <li>Track plants, environmental conditions, and care activities</li>
+                                        <li>Record daily observations and journal entries</li>
+                                        <li>Visualize your data with interactive charts and dashboards</li>
+                                        <li>Manage equipment and maintenance schedules</li>
+                                    </ul>
+                                    <p class="mb-0">Simply register for an account, create your first garden, and start tracking your growing journey!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gs2">
+                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
+                                    Do I need any special equipment to use GardenHub?
+                                </button>
+                            </h3>
+                            <div id="gs2" class="accordion-collapse collapse" data-bs-parent="#gettingStartedAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>No special equipment required!</strong> GardenHub works on any device with a web browser and internet connection:</p>
+                                    <ul>
+                                        <li><i class="bi bi-laptop text-primary"></i> Desktop computers</li>
+                                        <li><i class="bi bi-tablet text-success"></i> Tablets</li>
+                                        <li><i class="bi bi-phone text-info"></i> Smartphones</li>
+                                    </ul>
+                                    <p>However, if you want to track environmental data like temperature and humidity, you may want to invest in basic monitoring equipment like thermometers and hygrometers.</p>
+                                    <div class="alert alert-info mb-0">
+                                        <i class="bi bi-lightbulb-fill me-2"></i>
+                                        <strong>Tip:</strong> Many gardeners use affordable digital thermometer/hygrometer combos available at garden centers or online.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gs3">
+                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
+                                    Is GardenHub suitable for beginners?
+                                </button>
+                            </h3>
+                            <div id="gs3" class="accordion-collapse collapse" data-bs-parent="#gettingStartedAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Absolutely!</strong> GardenHub is designed for gardeners of all experience levels:</p>
+                                    <ul>
+                                        <li><strong>Beginners:</strong> Start simple by tracking basic information and gradually add more detail as you learn</li>
+                                        <li><strong>Intermediate:</strong> Use dashboards and analytics to improve your techniques</li>
+                                        <li><strong>Advanced:</strong> Leverage comprehensive data tracking for professional-grade optimization</li>
+                                    </ul>
+                                    <p class="mb-0">The interface is intuitive, and you only need to use the features that make sense for your gardening style. Start with just a garden and a few plants, then expand as you grow more comfortable!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gs4">
+                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
+                                    How do I create my first garden?
+                                </button>
+                            </h3>
+                            <div id="gs4" class="accordion-collapse collapse" data-bs-parent="#gettingStartedAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Creating your first garden is easy!</strong> Follow these steps:</p>
+                                    <ol>
+                                        <li>Log in to your GardenHub account</li>
+                                        <li>Navigate to <strong>Dashboard</strong> from the main menu</li>
+                                        <li>Click the <span class="badge bg-success"><i class="bi bi-plus-circle"></i> Create Your First Garden</span> button</li>
+                                        <li>
+                                            Fill in the garden details:
+                                            <ul>
+                                                <li>Garden name and description</li>
+                                                <li>Location (Indoor/Outdoor/Greenhouse)</li>
+                                                <li>Garden type and grow method</li>
+                                                <li>Start and end dates</li>
+                                                <li>Optional: Upload a garden photo</li>
+                                            </ul>
+                                        </li>
+                                        <li>Click <strong>Create Garden</strong></li>
+                                    </ol>
+                                    <p class="mb-0">Once created, you can start adding plants, recording daily observations, and tracking your garden's progress!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Garden Management FAQs -->
+    <div class="row mb-4" id="garden-management">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0"><i class="bi bi-house-door"></i> Garden Management</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="gardenAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gm1">
+                                    <i class="bi bi-question-circle-fill text-success me-2"></i>
+                                    Can I manage multiple gardens at once?
+                                </button>
+                            </h3>
+                            <div id="gm1" class="accordion-collapse collapse" data-bs-parent="#gardenAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Yes, absolutely!</strong> GardenHub supports unlimited gardens per account. This is perfect for:</p>
+                                    <ul>
+                                        <li><i class="bi bi-house text-info"></i> Managing separate indoor and outdoor gardens</li>
+                                        <li><i class="bi bi-building text-success"></i> Tracking multiple greenhouse or growing spaces</li>
+                                        <li><i class="bi bi-calendar text-warning"></i> Running seasonal gardens with different timelines</li>
+                                        <li><i class="bi bi-droplet text-primary"></i> Comparing different growing methods (soil, hydroponic, aeroponic)</li>
+                                    </ul>
+                                    <p class="mb-0">Each garden maintains its own independent records, plants, and analytics while being accessible from your main dashboard.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gm2">
+                                    <i class="bi bi-question-circle-fill text-success me-2"></i>
+                                    What are the different garden types and grow methods?
+                                </button>
+                            </h3>
+                            <div id="gm2" class="accordion-collapse collapse" data-bs-parent="#gardenAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub supports various garden configurations:</strong></p>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <h6><i class="bi bi-geo-alt text-primary"></i> Garden Locations:</h6>
+                                            <ul>
+                                                <li><strong>Indoor:</strong> Houseplants, grow rooms, indoor herb gardens</li>
+                                                <li><strong>Outdoor:</strong> Backyard gardens, raised beds, traditional plots</li>
+                                                <li><strong>Greenhouse:</strong> Controlled environment structures</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6><i class="bi bi-droplet text-success"></i> Grow Methods:</h6>
+                                            <ul>
+                                                <li><strong>Soil:</strong> Traditional dirt-based growing</li>
+                                                <li><strong>Hydroponic:</strong> Water-based nutrient systems</li>
+                                                <li><strong>Aeroponic:</strong> Mist-based root systems</li>
+                                                <li><strong>Aquaponic:</strong> Fish and plant symbiotic systems</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 mt-3">Choose the options that best describe your setup to get tailored tracking features!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#gm3">
+                                    <i class="bi bi-question-circle-fill text-success me-2"></i>
+                                    Can I edit or delete a garden after creating it?
+                                </button>
+                            </h3>
+                            <div id="gm3" class="accordion-collapse collapse" data-bs-parent="#gardenAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Yes!</strong> You have full control over your gardens:</p>
+                                    <ul>
+                                        <li><strong>Edit:</strong> Update garden name, description, dates, images, and settings anytime</li>
+                                        <li><strong>Delete:</strong> Remove gardens you no longer need (note: this also removes associated plants, records, and data)</li>
+                                    </ul>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <strong>Warning:</strong> Deleting a garden is permanent and cannot be undone. All plants, records, journal entries, and equipment associated with that garden will also be deleted.
+                                    </div>
+                                    <p class="mb-0">To edit or delete a garden, go to your Gardens list, select the garden, and use the Edit or Delete buttons.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Tracking FAQs -->
+    <div class="row mb-4" id="plant-tracking">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0"><i class="bi bi-flower3"></i> Plant Tracking</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="plantAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pt1">
+                                    <i class="bi bi-question-circle-fill text-info me-2"></i>
+                                    How do I add plants to my garden?
+                                </button>
+                            </h3>
+                            <div id="pt1" class="accordion-collapse collapse" data-bs-parent="#plantAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Adding plants is simple:</strong></p>
+                                    <ol>
+                                        <li>Navigate to your garden's dashboard</li>
+                                        <li>Click <span class="badge bg-success"><i class="bi bi-flower3"></i> Add Plant</span></li>
+                                        <li>
+                                            Enter plant details:
+                                            <ul>
+                                                <li>Plant name and description</li>
+                                                <li>Plant type (Vegetable, Fruit, Herb, Flower, etc.)</li>
+                                                <li>Date planted</li>
+                                                <li>Lighting requirements</li>
+                                                <li>Grow method</li>
+                                                <li>Current condition</li>
+                                                <li>Optional: Upload a plant photo</li>
+                                            </ul>
+                                        </li>
+                                        <li>Click <strong>Create Plant</strong></li>
+                                    </ol>
+                                    <p class="mb-0">Your plant will appear in the garden's plant list and you can start tracking care activities immediately!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pt2">
+                                    <i class="bi bi-question-circle-fill text-info me-2"></i>
+                                    What plant care activities can I track?
+                                </button>
+                            </h3>
+                            <div id="pt2" class="accordion-collapse collapse" data-bs-parent="#plantAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub tracks comprehensive plant care activities:</strong></p>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li><i class="bi bi-droplet-fill text-primary"></i> <strong>Watering:</strong> Amount, frequency, and method</li>
+                                                <li><i class="bi bi-clipboard2-pulse text-success"></i> <strong>Fertilizing:</strong> Type, amount, and application date</li>
+                                                <li><i class="bi bi-scissors text-warning"></i> <strong>Pruning:</strong> Trimming and maintenance activities</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li><i class="bi bi-bug text-danger"></i> <strong>Pest Control:</strong> Issues and treatments</li>
+                                                <li><i class="bi bi-heart-pulse text-info"></i> <strong>Health Status:</strong> Overall plant condition</li>
+                                                <li><i class="bi bi-signpost text-secondary"></i> <strong>Support:</strong> Stakes, cages, trellises</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 mt-3">Each activity includes duration tracking, notes, and links to the Plant Care Dashboard for detailed analytics!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pt3">
+                                    <i class="bi bi-question-circle-fill text-info me-2"></i>
+                                    How does the Plant Care Dashboard work?
+                                </button>
+                            </h3>
+                            <div id="pt3" class="accordion-collapse collapse" data-bs-parent="#plantAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>The Plant Care Dashboard</strong> provides detailed insights into individual plant health and care history:</p>
+                                    <ul>
+                                        <li><strong>Activity Statistics:</strong> Total counts for each care type (watering, fertilizing, etc.)</li>
+                                        <li><strong>Visual Charts:</strong> Activity distribution and health status trends over time</li>
+                                        <li><strong>Timeline View:</strong> Chronological activity feed showing all care events</li>
+                                        <li><strong>Health Tracking:</strong> Monitor plant condition changes</li>
+                                        <li><strong>Month Filtering:</strong> View activities by specific time periods</li>
+                                    </ul>
+                                    <p class="mb-0">Access it by clicking on any plant and selecting "View Care Dashboard"!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data & Records FAQs -->
+    <div class="row mb-4" id="data-records">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="mb-0"><i class="bi bi-clipboard-data"></i> Data & Records</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="dataAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dr1">
+                                    <i class="bi bi-question-circle-fill text-warning me-2"></i>
+                                    What is a Daily Record and why should I use it?
+                                </button>
+                            </h3>
+                            <div id="dr1" class="accordion-collapse collapse" data-bs-parent="#dataAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Daily Records</strong> are environmental snapshots of your garden at specific points in time. They help you:</p>
+                                    <ul>
+                                        <li>Track temperature and humidity changes</li>
+                                        <li>Monitor VPD (Vapor Pressure Deficit) for optimal growing conditions</li>
+                                        <li>Record lighting schedules and intensity</li>
+                                        <li>Log water and nutrient amounts</li>
+                                        <li>Identify patterns and trends over time</li>
+                                    </ul>
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-lightbulb-fill me-2"></i>
+                                        <strong>Pro Tip:</strong> Regular daily records help you understand what conditions work best for your plants, allowing you to replicate success and troubleshoot problems!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dr2">
+                                    <i class="bi bi-question-circle-fill text-warning me-2"></i>
+                                    What is VPD and why does it matter?
+                                </button>
+                            </h3>
+                            <div id="dr2" class="accordion-collapse collapse" data-bs-parent="#dataAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>VPD (Vapor Pressure Deficit)</strong> is the difference between the moisture in the air and how much moisture the air can hold when saturated.</p>
+                                    <p><strong>Why it matters:</strong></p>
+                                    <ul>
+                                        <li>Influences plant transpiration rates</li>
+                                        <li>Affects nutrient uptake efficiency</li>
+                                        <li>Impacts plant stress levels</li>
+                                        <li>Helps optimize growing conditions</li>
+                                    </ul>
+                                    <p><strong>Ideal VPD ranges:</strong></p>
+                                    <ul>
+                                        <li>Seedlings/Clones: 0.4-0.8 kPa</li>
+                                        <li>Vegetative: 0.8-1.2 kPa</li>
+                                        <li>Flowering: 1.0-1.5 kPa</li>
+                                    </ul>
+                                    <p class="mb-0">GardenHub automatically calculates VPD from your temperature and humidity readings!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dr3">
+                                    <i class="bi bi-question-circle-fill text-warning me-2"></i>
+                                    How do Journal Entries differ from Daily Records?
+                                </button>
+                            </h3>
+                            <div id="dr3" class="accordion-collapse collapse" data-bs-parent="#dataAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Great question!</strong> They serve different purposes:</p>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="card bg-light h-100">
+                                                <div class="card-body">
+                                                    <h6><i class="bi bi-clipboard-data text-primary"></i> Daily Records</h6>
+                                                    <ul class="small mb-0">
+                                                        <li><strong>Structured data:</strong> Temperature, humidity, VPD</li>
+                                                        <li><strong>Quantitative:</strong> Numbers and measurements</li>
+                                                        <li><strong>Analytics-focused:</strong> Used for charts and trends</li>
+                                                        <li><strong>Regular tracking:</strong> Daily or periodic snapshots</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card bg-light h-100">
+                                                <div class="card-body">
+                                                    <h6><i class="bi bi-journal-text text-success"></i> Journal Entries</h6>
+                                                    <ul class="small mb-0">
+                                                        <li><strong>Narrative format:</strong> Notes and observations</li>
+                                                        <li><strong>Qualitative:</strong> Descriptions and insights</li>
+                                                        <li><strong>Documentation-focused:</strong> Events and milestones</li>
+                                                        <li><strong>Event-based:</strong> When something notable happens</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 mt-3">Use both together for comprehensive garden documentation!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dr4">
+                                    <i class="bi bi-question-circle-fill text-warning me-2"></i>
+                                    Can I export or print my garden data?
+                                </button>
+                            </h3>
+                            <div id="dr4" class="accordion-collapse collapse" data-bs-parent="#dataAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Yes!</strong> GardenHub offers printing capabilities:</p>
+                                    <ul>
+                                        <li><strong>Garden Details:</strong> Print comprehensive garden summaries with the "Print Summary" button</li>
+                                        <li><strong>Browser Print:</strong> Use your browser's print function (Ctrl+P or Cmd+P) on any page</li>
+                                        <li><strong>Print-Optimized:</strong> Pages are formatted for clean, professional printouts</li>
+                                    </ul>
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle-fill me-2"></i>
+                                        <strong>Coming Soon:</strong> Data export features (CSV, PDF) are planned for future versions!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features FAQs -->
+    <div class="row mb-4" id="features">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0"><i class="bi bi-stars"></i> Features</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="featuresAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f1">
+                                    <i class="bi bi-question-circle-fill text-danger me-2"></i>
+                                    What dashboards are available in GardenHub?
+                                </button>
+                            </h3>
+                            <div id="f1" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub provides 4 specialized dashboards:</strong></p>
+                                    <ol>
+                                        <li><strong><i class="bi bi-speedometer2 text-primary"></i> Main Dashboard:</strong> Overview of all gardens, plants, equipment, and recent activity across your account</li>
+                                        <li><strong><i class="bi bi-house-door text-success"></i> Garden Dashboard:</strong> Detailed view of a specific garden with environmental charts and monthly data filtering</li>
+                                        <li><strong><i class="bi bi-graph-up text-info"></i> Records Dashboard:</strong> Analyze environmental data trends with advanced filtering and visualization</li>
+                                        <li><strong><i class="bi bi-clipboard-heart text-warning"></i> Plant Care Dashboard:</strong> Individual plant care analytics with activity tracking and health status charts</li>
+                                    </ol>
+                                    <p class="mb-0">Each dashboard is optimized for different aspects of garden management!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f2">
+                                    <i class="bi bi-question-circle-fill text-danger me-2"></i>
+                                    How does equipment tracking work?
+                                </button>
+                            </h3>
+                            <div id="f2" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Equipment Management</strong> helps you track your gardening tools and gear:</p>
+                                    <ul>
+                                        <li><strong>Inventory:</strong> Add all your garden equipment with details</li>
+                                        <li><strong>Maintenance Status:</strong> Track Operational, Maintenance Requested, or Under Maintenance status</li>
+                                        <li><strong>Purchase Tracking:</strong> Record purchase dates and warranty information</li>
+                                        <li><strong>Garden Association:</strong> Link equipment to specific gardens</li>
+                                        <li><strong>Photos:</strong> Upload images for visual identification</li>
+                                    </ul>
+                                    <p class="mb-0">Perfect for managing grow lights, fans, pumps, tools, and more!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#f3">
+                                    <i class="bi bi-question-circle-fill text-danger me-2"></i>
+                                    Are there any mobile apps available?
+                                </button>
+                            </h3>
+                            <div id="f3" class="accordion-collapse collapse" data-bs-parent="#featuresAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Currently, GardenHub is web-based</strong> and works great on mobile browsers with responsive design.</p>
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-phone-vibrate me-2"></i>
+                                        <strong>Good News:</strong> Native iOS and Android mobile apps are planned for version 2.0.0!
+                                        Check the <a asp-area="" asp-controller="Home" asp-action="Features" class="alert-link">Features page</a> for the full roadmap.
+                                    </div>
+                                    <p class="mb-0">In the meantime, you can add GardenHub to your phone's home screen for app-like access!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical FAQs -->
+    <div class="row mb-5" id="technical">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="mb-0"><i class="bi bi-gear"></i> Technical</h2>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="technicalAccordion">
+                        <!-- Question 1 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t1">
+                                    <i class="bi bi-question-circle-fill text-secondary me-2"></i>
+                                    Is my data secure and private?
+                                </button>
+                            </h3>
+                            <div id="t1" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>Yes! Your security and privacy are our top priorities:</strong></p>
+                                    <ul>
+                                        <li><strong>Authentication:</strong> Powered by ASP.NET Core Identity with secure password hashing</li>
+                                        <li><strong>Data Isolation:</strong> Your garden data is private to your account only</li>
+                                        <li><strong>Modern Technology:</strong> Built on .NET 9 with industry-standard security practices</li>
+                                        <li><strong>No Data Sharing:</strong> We don't sell or share your personal garden information</li>
+                                    </ul>
+                                    <p class="mb-0">For more details, see our <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t2">
+                                    <i class="bi bi-question-circle-fill text-secondary me-2"></i>
+                                    What browsers are supported?
+                                </button>
+                            </h3>
+                            <div id="t2" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub works on all modern browsers:</strong></p>
+                                    <ul>
+                                        <li><i class="bi bi-browser-chrome text-warning"></i> Google Chrome (Recommended)</li>
+                                        <li><i class="bi bi-browser-firefox text-danger"></i> Mozilla Firefox</li>
+                                        <li><i class="bi bi-browser-safari text-primary"></i> Safari (macOS/iOS)</li>
+                                        <li><i class="bi bi-browser-edge text-info"></i> Microsoft Edge</li>
+                                    </ul>
+                                    <p class="mb-0"><strong>Tip:</strong> For the best experience, keep your browser updated to the latest version!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t3">
+                                    <i class="bi bi-question-circle-fill text-secondary me-2"></i>
+                                    What technology is GardenHub built with?
+                                </button>
+                            </h3>
+                            <div id="t3" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>GardenHub is built with cutting-edge technology:</strong></p>
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <i class="bi bi-filetype-cs text-primary" style="font-size: 2rem;"></i>
+                                                <p class="mt-2 mb-0"><strong>C# 13.0</strong><br><small>.NET 9</small></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <i class="bi bi-bootstrap text-purple" style="font-size: 2rem;"></i>
+                                                <p class="mt-2 mb-0"><strong>Bootstrap 5</strong><br><small>Responsive UI</small></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <i class="bi bi-database text-success" style="font-size: 2rem;"></i>
+                                                <p class="mt-2 mb-0"><strong>EF Core</strong><br><small>Data Access</small></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center p-3 bg-light rounded">
+                                                <i class="bi bi-bar-chart text-warning" style="font-size: 2rem;"></i>
+                                                <p class="mt-2 mb-0"><strong>Chart.js</strong><br><small>Visualization</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 mt-3">Learn more on our <a asp-area="" asp-controller="Home" asp-action="About">About page</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#t4">
+                                    <i class="bi bi-question-circle-fill text-secondary me-2"></i>
+                                    How can I report bugs or request features?
+                                </button>
+                            </h3>
+                            <div id="t4" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                                <div class="accordion-body">
+                                    <p><strong>We love hearing from users!</strong> Here's how to reach us:</p>
+                                    <ul>
+                                        <li><i class="bi bi-envelope text-primary"></i> <strong>Email:</strong> Use our <a asp-area="" asp-controller="Home" asp-action="Contact">Contact page</a> to send feedback</li>
+                                        <li><i class="bi bi-github text-dark"></i> <strong>GitHub:</strong> Submit issues or feature requests on our repository</li>
+                                        <li><i class="bi bi-bug text-danger"></i> <strong>Bug Reports:</strong> Include as much detail as possible (steps to reproduce, browser, etc.)</li>
+                                    </ul>
+                                    <div class="alert alert-success mb-0">
+                                        <i class="bi bi-heart-fill me-2"></i>
+                                        <strong>Thank you!</strong> Your feedback helps make GardenHub better for everyone!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Still Have Questions? -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-info py-5">
+                    <h2 class="display-5 mb-3">
+                        <i class="bi bi-chat-dots"></i> Still Have Questions?
+                    </h2>
+                    <p class="lead mb-4">
+                        Can't find what you're looking for? We're here to help!
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a asp-area="" asp-controller="Home" asp-action="Contact" class="btn btn-light btn-lg">
+                            <i class="bi bi-envelope"></i> Contact Support
+                        </a>
+                        <a asp-area="" asp-controller="Home" asp-action="About" class="btn btn-outline-info btn-lg">
+                            <i class="bi bi-info-circle"></i> Learn More
+                        </a>
+                        <a asp-area="" asp-controller="Home" asp-action="Features" class="btn btn-success btn-lg">
+                            <i class="bi bi-stars"></i> View Features
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // FAQ Search Functionality
+        document.getElementById('faqSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const questionText = item.querySelector('.accordion-button').textContent.toLowerCase();
+                const answerText = item.querySelector('.accordion-body').textContent.toLowerCase();
+
+                if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
+                    item.style.display = '';
+
+                    // Auto-expand matching items when searching
+                    if (searchTerm.length > 2) {
+                        const collapse = item.querySelector('.accordion-collapse');
+                        const button = item.querySelector('.accordion-button');
+                        collapse.classList.add('show');
+                        button.classList.remove('collapsed');
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Show message if no results
+            const visibleItems = Array.from(faqItems).filter(item => item.style.display !== 'none');
+            if (visibleItems.length === 0 && searchTerm.length > 0) {
+                console.log('No FAQs match your search');
+            }
+        });
+
+        // Smooth scroll to sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .accordion-button {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+            .accordion-button:not(.collapsed) {
+                background-color: #f8f9fa;
+                color: #212529;
+            }
+
+        .accordion-item {
+            border: 1px solid rgba(0,0,0,.125);
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem !important;
+            overflow: hidden;
+        }
+
+        .accordion-body {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+
+            .faq-item:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+        .card {
+            transition: transform 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-2px);
+            }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+}

@@ -2,8 +2,552 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <img src="~/img/GrowHub_LandingLogo.png" alt="Garden Hub Logo" width="1000" />
-    @* <h1 class="display-4">Welcome to Garden Hub!</h1> *@
-    <p class="display-4">Your modern web solution for caring for your gardens and plants!</p>
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="hero-section text-center py-5">
+                <img src="~/img/GrowHub_LandingLogo.png" alt="GardenHub Logo" class="img-fluid mb-4" style="max-width: 800px;" />
+                <h1 class="display-3 fw-bold text-success mb-3">Welcome to GardenHub!</h1>
+                <p class="lead fs-4 text-muted mb-4">Your modern web solution for caring for your gardens and plants</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap mb-4">
+                    <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="btn btn-success btn-lg">
+                        <i class="bi bi-speedometer2"></i> Get Started
+                    </a>
+                    <a asp-area="" asp-controller="Home" asp-action="Features" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-stars"></i> Explore Features
+                    </a>
+                    <a asp-area="" asp-controller="Home" asp-action="About" class="btn btn-outline-info btn-lg">
+                        <i class="bi bi-info-circle"></i> Learn More
+                    </a>
+                </div>
+                <div class="badges-container d-flex gap-3 justify-content-center flex-wrap">
+                    <span class="badge bg-success fs-6">
+                        <i class="bi bi-check-circle"></i> Version 1.0.0
+                    </span>
+                    <span class="badge bg-primary fs-6">
+                        <i class="bi bi-shield-check"></i> Secure & Private
+                    </span>
+                    <span class="badge bg-info fs-6">
+                        <i class="bi bi-graph-up"></i> Data-Driven
+                    </span>
+                    <span class="badge bg-warning fs-6">
+                        <i class="bi bi-speedometer"></i> Fast & Responsive
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Summary -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 text-center">
+                    <h2 class="display-5 mb-4">Why Choose GardenHub?</h2>
+                    <p class="lead text-muted mb-5">
+                        Transform your gardening experience with comprehensive tracking, powerful analytics, 
+                        and intelligent insights—all in one beautifully designed platform.
+                    </p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="feature-highlight p-4 rounded bg-light h-100">
+                                <i class="bi bi-house-door-fill text-success" style="font-size: 3.5rem;"></i>
+                                <h4 class="mt-3 mb-2">Multi-Garden</h4>
+                                <p class="text-muted mb-0">Manage unlimited gardens with ease</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="feature-highlight p-4 rounded bg-light h-100">
+                                <i class="bi bi-flower3 text-primary" style="font-size: 3.5rem;"></i>
+                                <h4 class="mt-3 mb-2">Plant Tracking</h4>
+                                <p class="text-muted mb-0">Monitor every plant's journey</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="feature-highlight p-4 rounded bg-light h-100">
+                                <i class="bi bi-clipboard-data text-info" style="font-size: 3.5rem;"></i>
+                                <h4 class="mt-3 mb-2">Smart Analytics</h4>
+                                <p class="text-muted mb-0">Environmental data insights</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="feature-highlight p-4 rounded bg-light h-100">
+                                <i class="bi bi-journal-text text-warning" style="font-size: 3.5rem;"></i>
+                                <h4 class="mt-3 mb-2">Digital Journal</h4>
+                                <p class="text-muted mb-0">Document your growing story</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Preview Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h2 class="mb-0"><i class="bi bi-speedometer2"></i> Comprehensive Dashboard Overview</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h3 class="mb-3">All Your Data in One Place</h3>
+                            <p class="lead text-muted mb-4">
+                                Get a complete overview of your gardening operation with our powerful dashboard that brings 
+                                together all your gardens, plants, equipment, and records.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Real-time Statistics:</strong> View total gardens, plants, equipment, and records at a glance
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Recent Activity:</strong> Track the latest changes and updates across all your gardens
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Environmental Metrics:</strong> Monitor average temperature, humidity, and VPD levels
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Quick Access:</strong> Jump to any garden, plant, or record with a single click
+                                </li>
+                            </ul>
+                            <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="btn btn-primary btn-lg">
+                                <i class="bi bi-arrow-right-circle"></i> View Dashboard
+                            </a>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="screenshot-container">
+                                <img src="~/img/Dashboard.jpg" alt="Dashboard Preview" class="img-fluid rounded shadow-lg border border-3 border-primary hover-zoom" width="475" onerror="this.src='https://via.placeholder.com/600x400/667eea/ffffff?text=Dashboard+Preview'" />
+                                <div class="screenshot-badge mt-2">
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-graph-up"></i> Live Dashboard
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Garden Creation Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white py-3">
+                    <h2 class="mb-0"><i class="bi bi-plus-circle"></i> Easy Garden Creation</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                            <h3 class="mb-3">Start Growing in Minutes</h3>
+                            <p class="lead text-muted mb-4">
+                                Create your first garden with our intuitive form that guides you through every step. 
+                                From indoor herbs to outdoor vegetables, we've got you covered.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Simple Setup:</strong> Add garden details with an easy-to-use form
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Multiple Types:</strong> Choose from indoor, outdoor, or greenhouse locations
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Grow Methods:</strong> Select soil, hydroponic, aeroponic, or aquaponic systems
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Visual Documentation:</strong> Upload photos to track your garden's progress
+                                </li>
+                            </ul>
+                            <a asp-area="" asp-controller="Gardens" asp-action="Create" class="btn btn-success btn-lg">
+                                <i class="bi bi-plus-circle"></i> Create Garden
+                            </a>
+                        </div>
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="screenshot-container">
+                                <img src="~/img/GardenCreation.jpg" alt="Garden Creation Form" class="img-fluid rounded shadow-lg border border-3 border-success hover-zoom" width="475" onerror="this.src='https://via.placeholder.com/600x400/56ab2f/ffffff?text=Garden+Creation+Form'" />
+                                <div class="screenshot-badge">
+                                    <span class="badge bg-primary fs-6">
+                                        <i class="bi bi-house-door"></i> Create Gardens
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Management Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-info text-white py-3">
+                    <h2 class="mb-0"><i class="bi bi-flower3"></i> Complete Plant Management</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h3 class="mb-3">Track Every Plant's Journey</h3>
+                            <p class="lead text-muted mb-4">
+                                From seedling to harvest, monitor every aspect of your plants' growth with detailed 
+                                tracking and care activity logging.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Plant Profiles:</strong> Create detailed records for each plant
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Care Activities:</strong> Log watering, fertilizing, pruning, and more
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Health Monitoring:</strong> Track plant conditions and growth stages
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Analytics Dashboard:</strong> View care history and health trends
+                                </li>
+                            </ul>
+                            <a asp-area="" asp-controller="Plants" asp-action="Create" class="btn btn-info btn-lg">
+                                <i class="bi bi-plus-circle"></i> Add Plant
+                            </a>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="screenshot-container">
+                                <img src="~/img/PlantDashboard.jpg" alt="Plant Creation Form" class="img-fluid rounded shadow-lg border border-3 border-info hover-zoom" width="475" onerror="this.src='https://via.placeholder.com/600x400/17a2b8/ffffff?text=Plant+Management'" />
+                                <div class="screenshot-badge">
+                                    <span class="badge bg-warning fs-6">
+                                        <i class="bi bi-clipboard-heart"></i> Plant Care
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Environmental Tracking Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark py-3">
+                    <h2 class="mb-0"><i class="bi bi-clipboard-data"></i> Environmental Data Tracking</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+                            <h3 class="text-dark mb-3">Monitor Growing Conditions</h3>
+                            <p class="lead text-muted mb-4">
+                                Record and analyze environmental data to optimize your growing conditions. Track temperature, 
+                                humidity, VPD, lighting, and more with interactive charts.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Daily Records:</strong> Log environmental conditions regularly
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>VPD Calculation:</strong> Automatic vapor pressure deficit computation
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Trend Analysis:</strong> Visualize data with interactive charts
+                                </li>
+                                <li class="mb-3">
+                                    <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+                                    <strong>Historical Data:</strong> Review past conditions to optimize future grows
+                                </li>
+                            </ul>
+                            <a asp-area="" asp-controller="DailyRecords" asp-action="Create" class="btn btn-warning btn-lg">
+                                <i class="bi bi-plus-circle"></i> Add Record
+                            </a>
+                        </div>
+                        <div class="col-lg-6 order-lg-1">
+                            <div class="screenshot-container">
+                                <img src="~/img/DailyRecordsDashboard.jpg" alt="Daily Records Form" class="img-fluid rounded shadow-lg border border-3 border-warning hover-zoom" onerror="this.src='https://via.placeholder.com/600x400/ffc107/000000?text=Environmental+Tracking'" />
+                                <div class="screenshot-badge">
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="bi bi-thermometer-half"></i> Track Data
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Features Grid -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <h2 class="mb-0"><i class="bi bi-stars"></i> Powerful Features</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-graph-up-arrow text-primary" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">4 Specialized Dashboards</h5>
+                                <p class="text-muted mb-0">Main, Garden, Records, and Plant Care dashboards with real-time data</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-tools text-success" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">Equipment Management</h5>
+                                <p class="text-muted mb-0">Track inventory, maintenance schedules, and equipment status</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-journal-text text-info" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">Digital Garden Journal</h5>
+                                <p class="text-muted mb-0">Document observations, milestones, and lessons learned</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-bar-chart-line text-warning" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">Interactive Charts</h5>
+                                <p class="text-muted mb-0">Visualize trends with Chart.js powered analytics</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-phone text-danger" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">Responsive Design</h5>
+                                <p class="text-muted mb-0">Works seamlessly on desktop, tablet, and mobile devices</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card p-4 bg-light rounded h-100 text-center">
+                                <i class="bi bi-shield-lock text-secondary" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3 mb-2">Secure & Private</h5>
+                                <p class="text-muted mb-0">ASP.NET Core Identity with encrypted data storage</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonial / Stats Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-info py-5">
+                    <h2 class="display-5 mb-4">Built for Modern Gardeners</h2>
+                    <p class="lead mb-5">Join gardeners who are taking control of their growing operations with data-driven insights</p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h2 class="display-4 mb-2">∞</h2>
+                                <p class="mb-0">Unlimited Gardens</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h2 class="display-4 mb-2">∞</h2>
+                                <p class="mb-0">Unlimited Plants</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h2 class="display-4 mb-2">6</h2>
+                                <p class="mb-0">Core Modules</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h2 class="display-4 mb-2">1.0</h2>
+                                <p class="mb-0">Version</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <a asp-area="" asp-controller="Home" asp-action="Features" class="btn btn-light btn-lg me-3">
+                            <i class="bi bi-stars"></i> View All Features
+                        </a>
+                        <a asp-area="" asp-controller="Home" asp-action="About" class="btn btn-outline-info btn-lg">
+                            <i class="bi bi-info-circle"></i> Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center py-5">
+                    <h2 class="display-4 text-info mt-3 mb-4">Ready to Transform Your Gardening?</h2>
+                    <p class="lead text-info mb-4">
+                        Start managing your gardens like a pro with GardenHub's comprehensive tracking and analytics tools.
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="btn btn-success btn-lg px-5">
+                            <i class="bi bi-rocket-takeoff"></i> Get Started Now
+                        </a>
+                        <a asp-area="" asp-controller="Home" asp-action="FAQs" class="btn btn-outline-secondary btn-lg px-5">
+                            <i class="bi bi-question-circle"></i> Have Questions?
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, rgba(86, 171, 47, 0.05) 0%, rgba(168, 224, 99, 0.05) 100%);
+            border-radius: 1rem;
+            padding: 3rem 1.5rem;
+        }
+
+        .feature-highlight {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-highlight:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .screenshot-container {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-container:hover {
+            transform: scale(1.02);
+        }
+
+        .hover-zoom {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hover-zoom:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .screenshot-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+        }
+
+        .bg-gradient {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bg-gradient:hover::before {
+            opacity: 1;
+        }
+
+        .badges-container .badge {
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .badges-container .badge:nth-child(1) { animation-delay: 0.1s; }
+        .badges-container .badge:nth-child(2) { animation-delay: 0.2s; }
+        .badges-container .badge:nth-child(3) { animation-delay: 0.3s; }
+        .badges-container .badge:nth-child(4) { animation-delay: 0.4s; }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .hero-section img {
+                max-width: 100% !important;
+            }
+            
+            .display-3 {
+                font-size: 2.5rem;
+            }
+            
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .display-5 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+}

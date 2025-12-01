@@ -1,0 +1,238 @@
+﻿@model GardenHub.Models.Reminder
+
+@{
+    ViewData["Title"] = "Edit Reminder";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-center text-white py-4">
+                    <h1 class="display-5 fw-bold mb-2">
+                        <i class="bi bi-pencil-square"></i> Edit Reminder
+                    </h1>
+                    <p class="lead mb-0">Update your reminder details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="bi bi-pencil"></i> Edit Reminder Details</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="ReminderId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">
+                                <i class="bi bi-pencil"></i> Reminder Title
+                            </label>
+                            <input asp-for="Title" class="form-control form-control-lg" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="bi bi-card-text"></i> Description (Optional)
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <!-- Date and Time -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ReminderDateTime" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event"></i> Reminder Date & Time
+                                </label>
+                                <input asp-for="ReminderDateTime" type="datetime-local" class="form-control" />
+                                <span asp-validation-for="ReminderDateTime" class="text-danger"></span>
+                            </div>
+
+                            <!-- Type -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ReminderType" class="form-label fw-bold">
+                                    <i class="bi bi-tag"></i> Reminder Type
+                                </label>
+                                <select asp-for="ReminderType" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.ReminderType>()"></select>
+                                <span asp-validation-for="ReminderType" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Priority -->
+                        <div class="mb-3">
+                            <label asp-for="Priority" class="form-label fw-bold">
+                                <i class="bi bi-flag"></i> Priority Level
+                            </label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="Priority" id="priorityLow" value="0" @(Model.Priority == GardenHub.Models.Enums.ReminderPriority.Low ? "checked" : "")>
+                                <label class="btn btn-outline-secondary" for="priorityLow">
+                                    <i class="bi bi-flag"></i> Low
+                                </label>
+
+                                <input type="radio" class="btn-check" name="Priority" id="priorityNormal" value="1" @(Model.Priority == GardenHub.Models.Enums.ReminderPriority.Normal ? "checked" : "")>
+                                <label class="btn btn-outline-primary" for="priorityNormal">
+                                    <i class="bi bi-flag-fill"></i> Normal
+                                </label>
+
+                                <input type="radio" class="btn-check" name="Priority" id="priorityHigh" value="2" @(Model.Priority == GardenHub.Models.Enums.ReminderPriority.High ? "checked" : "")>
+                                <label class="btn btn-outline-warning" for="priorityHigh">
+                                    <i class="bi bi-flag-fill"></i> High
+                                </label>
+
+                                <input type="radio" class="btn-check" name="Priority" id="priorityUrgent" value="3" @(Model.Priority == GardenHub.Models.Enums.ReminderPriority.Urgent ? "checked" : "")>
+                                <label class="btn btn-outline-danger" for="priorityUrgent">
+                                    <i class="bi bi-flag-fill"></i> Urgent
+                                </label>
+                            </div>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+
+                        <!-- Recurring Section -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-arrow-repeat"></i> Recurring Reminder
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input asp-for="IsRecurring" class="form-check-input" type="checkbox" id="isRecurringToggle" />
+                                    <label class="form-check-label fw-bold" for="isRecurringToggle">
+                                        Make this a recurring reminder
+                                    </label>
+                                </div>
+
+                                <div id="recurringOptions" style="display: @(Model.IsRecurring ? "block" : "none");">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="RecurrencePattern" class="form-label">
+                                                <i class="bi bi-calendar-range"></i> Recurrence Pattern
+                                            </label>
+                                            <select asp-for="RecurrencePattern" class="form-select" asp-items="Html.GetEnumSelectList<GardenHub.Models.Enums.RecurrencePattern>()">
+                                                <option value="">-- Select Pattern --</option>
+                                            </select>
+                                            <span asp-validation-for="RecurrencePattern" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label asp-for="RecurrenceInterval" class="form-label">
+                                                <i class="bi bi-123"></i> Interval
+                                            </label>
+                                            <input asp-for="RecurrenceInterval" type="number" class="form-control" min="1" />
+                                            <small class="form-text text-muted">Repeat every X days/weeks/months</small>
+                                            <span asp-validation-for="RecurrenceInterval" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Association Section -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-link-45deg"></i> Link to Garden Items (Optional)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label asp-for="GardenId" class="form-label">
+                                        <i class="bi bi-house-door"></i> Garden
+                                    </label>
+                                    <select asp-for="GardenId" class="form-select" asp-items="ViewBag.GardenId">
+                                        <option value="">-- No Garden Selected --</option>
+                                    </select>
+                                    <span asp-validation-for="GardenId" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DailyRecordId" class="form-label">
+                                        <i class="bi bi-clipboard-data"></i> Daily Record
+                                    </label>
+                                    <select asp-for="DailyRecordId" class="form-select" asp-items="ViewBag.DailyRecordId">
+                                        <option value="">-- No Record Selected --</option>
+                                    </select>
+                                    <span asp-validation-for="DailyRecordId" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="GardenCareActivityId" class="form-label">
+                                        <i class="bi bi-clipboard-heart"></i> Garden Care Activity
+                                    </label>
+                                    <select asp-for="GardenCareActivityId" class="form-select" asp-items="ViewBag.GardenCareActivityId">
+                                        <option value="">-- No Activity Selected --</option>
+                                    </select>
+                                    <span asp-validation-for="GardenCareActivityId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isRecurringToggle = document.getElementById('isRecurringToggle');
+            const recurringOptions = document.getElementById('recurringOptions');
+
+            isRecurringToggle.addEventListener('change', function() {
+                recurringOptions.style.display = this.checked ? 'block' : 'none';
+            });
+        });
+    </script>
+
+    <style>
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #f5576c;
+            box-shadow: 0 0 0 0.25rem rgba(245, 87, 108, 0.25);
+        }
+
+        .btn-check:checked + .btn-outline-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-check:checked + .btn-outline-primary {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .btn-check:checked + .btn-outline-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-check:checked + .btn-outline-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+}

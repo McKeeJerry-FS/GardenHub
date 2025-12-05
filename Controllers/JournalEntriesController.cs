@@ -69,7 +69,7 @@ namespace GardenHub.Controllers
         // GET: JournalEntries/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription");
+            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenName");
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id");
             return View();
         }
@@ -116,7 +116,7 @@ namespace GardenHub.Controllers
                     TempData["ErrorMessage"] = $"An error occurred while creating the journal entry: {ex.Message}";
                 }
             }
-            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
+            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenName", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
             return View(journalEntry);
         }
@@ -141,7 +141,7 @@ namespace GardenHub.Controllers
                 journalEntry.ImageType, 
                 DefaultImage.GardenImage);
             
-            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
+            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenName", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
             return View(journalEntry);
         }
@@ -210,7 +210,7 @@ namespace GardenHub.Controllers
                     TempData["ErrorMessage"] = $"An error occurred while updating the journal entry: {ex.Message}";
                 }
             }
-            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenDescription", journalEntry.GardenId);
+            ViewData["GardenId"] = new SelectList(await _journalEntriesService.GetAllGardensAsync(), "GardenId", "GardenName", journalEntry.GardenId);
             ViewData["UserId"] = new SelectList(await _journalEntriesService.GetAllUsersAsync(), "Id", "Id", journalEntry.UserId);
             return View(journalEntry);
         }
@@ -290,7 +290,7 @@ namespace GardenHub.Controllers
 
             // Get gardens for filter dropdown
             var gardens = await _journalEntriesService.GetAllGardensAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", gardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", gardenId);
             ViewData["Days"] = days;
             
             return View(entries);

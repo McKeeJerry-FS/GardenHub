@@ -51,7 +51,7 @@ namespace GardenHub.Controllers
             var gardens = await _plantService.GetAllGardensAsync();
             var users = await _plantService.GetAllUsersAsync();
             
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription");
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName");
             ViewData["UserId"] = new SelectList(users, "Id", "Id");
             return View();
         }
@@ -97,7 +97,7 @@ namespace GardenHub.Controllers
             var gardens = await _plantService.GetAllGardensAsync();
             var users = await _plantService.GetAllUsersAsync();
             
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", plant.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", plant.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", plant.UserId);
             return View(plant);
         }
@@ -119,7 +119,7 @@ namespace GardenHub.Controllers
             var gardens = await _plantService.GetAllGardensAsync();
             var users = await _plantService.GetAllUsersAsync();
             
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", plant.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", plant.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", plant.UserId);
             return View(plant);
         }
@@ -187,7 +187,7 @@ namespace GardenHub.Controllers
             var gardens = await _plantService.GetAllGardensAsync();
             var users = await _plantService.GetAllUsersAsync();
             
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", plant.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", plant.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", plant.UserId);
             return View(plant);
         }

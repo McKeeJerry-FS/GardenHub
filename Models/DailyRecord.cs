@@ -31,9 +31,12 @@ namespace GardenHub.Models
         [Display(Name = "Outside VPD")]
         public double OutsideVPD { get; set; }
 
-        [Display(Name = "Lighting On")]
+        [Display(Name = "Hours Light On")]
+        [Range(0, 24, ErrorMessage = "Hours must be between 0 and 24")]
         public double LightingOn { get; set; }
-        [Display(Name = "Lighting Off")]
+        
+        [Display(Name = "Hours Light Off")]
+        [Range(0, 24, ErrorMessage = "Hours must be between 0 and 24")]
         public double LightingOff { get; set; }
         
         [Display(Name = "Lighting Intensity")]

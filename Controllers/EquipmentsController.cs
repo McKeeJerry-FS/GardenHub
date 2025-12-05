@@ -143,7 +143,7 @@ namespace GardenHub.Controllers
         {
             var gardens = await _equipmentService.GetAllGardensAsync();
             var users = await _equipmentService.GetAllUsersAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription");
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName");
             ViewData["UserId"] = new SelectList(users, "Id", "Id");
             return View();
         }
@@ -209,7 +209,7 @@ namespace GardenHub.Controllers
                 }
             }
             
-            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenDescription", equipment.GardenId);
+            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenName", equipment.GardenId);
             ViewData["UserId"] = new SelectList(await _equipmentService.GetAllUsersAsync(), "Id", "Id", equipment.UserId);
             return View(equipment);
         }
@@ -227,7 +227,7 @@ namespace GardenHub.Controllers
             {
                 return NotFound();
             }
-            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenDescription", equipment.GardenId);
+            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenName", equipment.GardenId);
             ViewData["UserId"] = new SelectList(await _equipmentService.GetAllUsersAsync(), "Id", "Id", equipment.UserId);
             return View(equipment);
         }
@@ -294,7 +294,7 @@ namespace GardenHub.Controllers
                 }
             }
             
-            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenDescription", equipment.GardenId);
+            ViewData["GardenId"] = new SelectList(await _equipmentService.GetAllGardensAsync(), "GardenId", "GardenName", equipment.GardenId);
             ViewData["UserId"] = new SelectList(await _equipmentService.GetAllUsersAsync(), "Id", "Id", equipment.UserId);
             return View(equipment);
         }

@@ -68,7 +68,7 @@ namespace GardenHub.Controllers
         {
             var gardens = await _dailyRecordService.GetAllGardensAsync();
             var users = await _dailyRecordService.GetAllUsersAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription");
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName");
             ViewData["UserId"] = new SelectList(users, "Id", "Id");
             return View();
         }
@@ -107,9 +107,10 @@ namespace GardenHub.Controllers
                 }
             }
 
+
             var gardens = await _dailyRecordService.GetAllGardensAsync();
             var users = await _dailyRecordService.GetAllUsersAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", dailyRecord.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
@@ -128,9 +129,10 @@ namespace GardenHub.Controllers
                 return NotFound();
             }
 
+
             var gardens = await _dailyRecordService.GetAllGardensAsync();
             var users = await _dailyRecordService.GetAllUsersAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", dailyRecord.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
@@ -177,9 +179,10 @@ namespace GardenHub.Controllers
                 }
             }
 
+
             var gardens = await _dailyRecordService.GetAllGardensAsync();
             var users = await _dailyRecordService.GetAllUsersAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", dailyRecord.GardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", dailyRecord.GardenId);
             ViewData["UserId"] = new SelectList(users, "Id", "Id", dailyRecord.UserId);
             return View(dailyRecord);
         }
@@ -248,7 +251,7 @@ namespace GardenHub.Controllers
 
             // Get gardens for filter dropdown
             var gardens = await _dailyRecordService.GetAllGardensAsync();
-            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenDescription", gardenId);
+            ViewData["GardenId"] = new SelectList(gardens, "GardenId", "GardenName", gardenId);
             ViewData["Days"] = days;
             
             return View(records);

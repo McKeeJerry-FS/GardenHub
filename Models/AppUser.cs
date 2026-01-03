@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using GardenHub.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace GardenHub.Models
@@ -15,5 +16,12 @@ namespace GardenHub.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = string.Empty;
         public string FullName => $"{FirstName} {LastName}";
+
+
+        //Properties for User Tiering
+        public UserTier Tier { get; set; } = UserTier.Hobby;
+        public DateTime? ProTierStartDate { get; set; }
+        public DateTime? ProTierEndDate { get; set; }
+        public bool IsProTierActive => Tier == UserTier.Pro && ProTierEndDate.HasValue && ProTierEndDate.Value > DateTime.UtcNow;
     }
 }

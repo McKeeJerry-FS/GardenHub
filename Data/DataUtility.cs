@@ -3,6 +3,7 @@ using GardenHub.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using GardenHub.Models.Enums;
 
 namespace GardenHub.Data
 {
@@ -88,6 +89,14 @@ namespace GardenHub.Data
             var configurationSvc = serviceProvider.GetRequiredService<IConfiguration>();
 
             await dbContextSvc.Database.MigrateAsync();
+
+            // When creating users, set default tier
+            var user = new AppUser
+            {
+                UserName = "user@example.com",
+                Email = "user@example.com",
+                Tier = UserTier.Hobby // Default to free tier
+            };
         }
     }
 }

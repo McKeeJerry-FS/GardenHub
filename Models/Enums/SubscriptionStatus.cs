@@ -2,12 +2,12 @@
 {
     public enum SubscriptionStatus
     {
-        None = 0,
-        Active = 1,
-        Cancelled = 2,
-        Expired = 3,
-        PastDue = 4,
-        Suspended = 5,
-        Trialing = 6
+        None = 0,           // Never subscribed (Hobby tier)
+        Trialing = 1,       // On free trial period
+        Active = 2,         // Currently paying and active
+        Cancelled = 3,      // Cancelled but in 14-day grace period
+        Expired = 4,        // Grace period ended, reverted to Hobby
+        PastDue = 5,        // Payment failed, needs attention
+        Suspended = 6       // Manually suspended by admin
     }
 }

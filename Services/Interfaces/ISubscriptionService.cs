@@ -4,6 +4,7 @@ namespace GardenHub.Services.Interfaces
 {
     public interface ISubscriptionService
     {
+        Task<bool> StartTrialAsync(AppUser user);
         Task<bool> UpgradeToProAsync(AppUser user, string paymentMethodId);
         Task<bool> CancelSubscriptionAsync(AppUser user);
         Task<bool> ReactivateSubscriptionAsync(AppUser user);

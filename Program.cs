@@ -41,6 +41,8 @@ builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddTransient<IEmailSender, EmailService>();
 
 // Subscription Service
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddHostedService<SubscriptionBackgroundService>();
 

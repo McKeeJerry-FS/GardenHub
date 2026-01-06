@@ -12,38 +12,104 @@ namespace GardenHub.Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<SubscriptionService> _logger;
-        // TODO: Add Stripe service when payment integration is ready
-        // private readonly IStripeService _stripeService;
+        private readonly IStripeService _stripeService;
+        private readonly IPaymentService _paymentService;
+        private readonly IConfiguration _configuration;
 
         public SubscriptionService(
             ApplicationDbContext context,
             UserManager<AppUser> userManager,
-            ILogger<SubscriptionService> logger)
+            ILogger<SubscriptionService> logger,
+            IStripeService stripeService,
+            IPaymentService paymentService,
+            IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
             _logger = logger;
+            _stripeService = stripeService;
+            _paymentService = paymentService;
+            _configuration = configuration;
+        }
+
+        public async Task<bool> StartTrialAsync(AppUser user)
+        {
+            try
+            {
+                user.Tier = UserTier.Pro;
+                user.SubscriptionStatus = SubscriptionStatus.Trialing;
+                user.TrialStartDate = DateTime.UtcNow;
+                user.TrialEndDate = DateTime.UtcNow.AddDays(14); // 14-day trial
+                user.ProTierStartDate = DateTime.UtcNow;
+                user.ProTierEndDate = user.TrialEndDate;
+
+                var result = await _userManager.UpdateAsync(user);
+                
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User {UserId} started trial period", user.Id);
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error starting trial for user {UserId}", user.Id);
+                return false;
+            }
         }
 
         public async Task<bool> UpgradeToProAsync(AppUser user, string paymentMethodId)
         {
             try
             {
-                // TODO: Process payment with Stripe
-                // var subscription = await _stripeService.CreateSubscriptionAsync(user.Email, paymentMethodId);
+                // Create Stripe customer if doesn't exist
+                if (string.IsNullOrEmpty(user.StripeCustomerId))
+                {
+                    var customer = await _stripeService.CreateCustomerAsync(user);
+                    user.StripeCustomerId = customer.Id;
+                }
 
+                // Update payment method
+                await _stripeService.UpdatePaymentMethodAsync(user.StripeCustomerId, paymentMethodId);
+
+                // Get Pro tier price ID from configuration
+                var priceId = _configuration["Stripe:ProPriceId"];
+                if (string.IsNullOrEmpty(priceId))
+                {
+                    throw new InvalidOperationException("Stripe Pro Price ID not configured");
+                }
+
+                // Create subscription
+                var subscription = await _stripeService.CreateSubscriptionAsync(user.StripeCustomerId, priceId);
+
+                // Update user subscription info
                 user.Tier = UserTier.Pro;
                 user.SubscriptionStatus = SubscriptionStatus.Active;
+                user.StripeSubscriptionId = subscription.Id;
                 user.ProTierStartDate = DateTime.UtcNow;
-                user.ProTierEndDate = DateTime.UtcNow.AddMonths(1); // Monthly billing
+                user.ProTierEndDate = DateTime.UtcNow.AddMonths(1);
                 user.LastPaymentDate = DateTime.UtcNow;
                 user.NextBillingDate = DateTime.UtcNow.AddMonths(1);
                 user.CancellationRequestedDate = null;
                 user.GracePeriodEndDate = null;
 
-                // TODO: Store Stripe customer and subscription IDs
-                // user.StripeCustomerId = subscription.CustomerId;
-                // user.StripeSubscriptionId = subscription.Id;
+                // Clear trial dates if converting from trial
+                if (user.IsOnTrial)
+                {
+                    user.TrialStartDate = null;
+                    user.TrialEndDate = null;
+                }
+
+                // Create payment record
+                await _paymentService.CreatePaymentRecordAsync(
+                    user.Id,
+                    subscription.LatestInvoice?.Id ?? $"sub_{subscription.Id}",
+                    9.99m, // Pro tier price
+                    UserTier.Pro,
+                    "Pro Tier Subscription - Monthly"
+                );
 
                 var result = await _userManager.UpdateAsync(user);
                 
@@ -67,13 +133,18 @@ namespace GardenHub.Services
         {
             try
             {
-                if (user.Tier != UserTier.Pro || user.SubscriptionStatus != SubscriptionStatus.Active)
+                if (user.Tier != UserTier.Pro || 
+                    (user.SubscriptionStatus != SubscriptionStatus.Active && 
+                     user.SubscriptionStatus != SubscriptionStatus.Trialing))
                 {
                     return false;
                 }
 
-                // TODO: Cancel Stripe subscription at period end
-                // await _stripeService.CancelSubscriptionAsync(user.StripeSubscriptionId);
+                // Cancel Stripe subscription at period end if not on trial
+                if (!user.IsOnTrial && !string.IsNullOrEmpty(user.StripeSubscriptionId))
+                {
+                    await _stripeService.CancelSubscriptionAsync(user.StripeSubscriptionId, cancelImmediately: false);
+                }
 
                 user.SubscriptionStatus = SubscriptionStatus.Cancelled;
                 user.CancellationRequestedDate = DateTime.UtcNow;
@@ -83,7 +154,7 @@ namespace GardenHub.Services
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User {UserId} cancelled Pro subscription. Grace period ends {GraceEnd}", 
+                    _logger.LogInformation("User {UserId} cancelled subscription. Grace period ends {GraceEnd}", 
                         user.Id, user.GracePeriodEndDate);
                     return true;
                 }
@@ -106,8 +177,11 @@ namespace GardenHub.Services
                     return false;
                 }
 
-                // TODO: Reactivate Stripe subscription
-                // await _stripeService.ReactivateSubscriptionAsync(user.StripeSubscriptionId);
+                // Reactivate Stripe subscription if it exists
+                if (!string.IsNullOrEmpty(user.StripeSubscriptionId))
+                {
+                    await _stripeService.ReactivateSubscriptionAsync(user.StripeSubscriptionId);
+                }
 
                 user.SubscriptionStatus = SubscriptionStatus.Active;
                 user.CancellationRequestedDate = null;
@@ -118,7 +192,7 @@ namespace GardenHub.Services
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User {UserId} reactivated Pro subscription", user.Id);
+                    _logger.LogInformation("User {UserId} reactivated subscription", user.Id);
                     return true;
                 }
 
@@ -140,24 +214,14 @@ namespace GardenHub.Services
                     return false;
                 }
 
-                // TODO: Process payment with Stripe
-                // var paymentResult = await _stripeService.ProcessPaymentAsync(user.StripeSubscriptionId);
-
-                // if (paymentResult.Success)
-                // {
+                // In production, this would be triggered by Stripe webhooks
+                // This is a placeholder for manual testing
                 user.LastPaymentDate = DateTime.UtcNow;
                 user.NextBillingDate = DateTime.UtcNow.AddMonths(1);
                 user.ProTierEndDate = DateTime.UtcNow.AddMonths(1);
 
                 var result = await _userManager.UpdateAsync(user);
                 return result.Succeeded;
-                // }
-                // else
-                // {
-                //     user.SubscriptionStatus = SubscriptionStatus.PastDue;
-                //     await _userManager.UpdateAsync(user);
-                //     return false;
-                // }
             }
             catch (Exception ex)
             {
@@ -170,13 +234,30 @@ namespace GardenHub.Services
 
         public async Task CheckAndUpdateExpiredSubscriptionsAsync()
         {
-            var expiredUsers = await _context.Users
+            // Check expired trials
+            var expiredTrials = await _context.Users
+                .Where(u => u.SubscriptionStatus == SubscriptionStatus.Trialing &&
+                           u.TrialEndDate.HasValue &&
+                           u.TrialEndDate.Value <= DateTime.UtcNow)
+                .ToListAsync();
+
+            foreach (var user in expiredTrials)
+            {
+                user.Tier = UserTier.Hobby;
+                user.SubscriptionStatus = SubscriptionStatus.Expired;
+                user.ProTierEndDate = DateTime.UtcNow;
+                
+                _logger.LogInformation("User {UserId} trial period expired, reverted to Hobby tier", user.Id);
+            }
+
+            // Check expired grace periods
+            var expiredGracePeriods = await _context.Users
                 .Where(u => u.SubscriptionStatus == SubscriptionStatus.Cancelled &&
                            u.GracePeriodEndDate.HasValue &&
                            u.GracePeriodEndDate.Value <= DateTime.UtcNow)
                 .ToListAsync();
 
-            foreach (var user in expiredUsers)
+            foreach (var user in expiredGracePeriods)
             {
                 user.Tier = UserTier.Hobby;
                 user.SubscriptionStatus = SubscriptionStatus.Expired;
@@ -185,7 +266,7 @@ namespace GardenHub.Services
                 _logger.LogInformation("User {UserId} grace period expired, reverted to Hobby tier", user.Id);
             }
 
-            if (expiredUsers.Any())
+            if (expiredTrials.Any() || expiredGracePeriods.Any())
             {
                 await _context.SaveChangesAsync();
             }

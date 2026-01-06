@@ -40,6 +40,10 @@ builder.Services.AddScoped<IReminderService, ReminderService>();
 
 builder.Services.AddTransient<IEmailSender, EmailService>();
 
+// Subscription Service
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddHostedService<SubscriptionBackgroundService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

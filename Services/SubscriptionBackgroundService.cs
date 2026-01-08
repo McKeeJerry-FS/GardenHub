@@ -1,5 +1,8 @@
+using GardenHub.Data;
+using GardenHub.Models.Enums;
 using GardenHub.Services;
 using GardenHub.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GardenHub.Services
 {
@@ -31,6 +34,8 @@ namespace GardenHub.Services
                     await subscriptionService.CheckAndUpdateExpiredSubscriptionsAsync();
                     
                     _logger.LogInformation("Subscription check completed at {Time}", DateTime.UtcNow);
+
+                    await SendEmailRemindersAsync(scope); // Send email reminders
                 }
                 catch (Exception ex)
                 {
@@ -38,6 +43,48 @@ namespace GardenHub.Services
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);
+            }
+        }
+
+        private async Task SendEmailRemindersAsync(IServiceScope scope)
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var emailService = scope.ServiceProvider.GetRequiredService<ISubscriptionEmailService>();
+            
+            // Send trial ending reminders (3 days before)
+            var trialEndingSoon = await context.Users
+                .Where(u => u.SubscriptionStatus == SubscriptionStatus.Trialing &&
+                           u.TrialEndDate.HasValue &&
+                           u.TrialEndDate.Value.Date == DateTime.UtcNow.Date.AddDays(3))
+                .ToListAsync();
+
+            foreach (var user in trialEndingSoon)
+            {
+                await emailService.SendTrialEndingReminderEmailAsync(user, 3);
+            }
+
+            // Send grace period ending reminders (2 days before)
+            var gracePeriodEnding = await context.Users
+                .Where(u => u.SubscriptionStatus == SubscriptionStatus.PastDue &&
+                           u.GracePeriodEndDate.HasValue &&
+                           u.GracePeriodEndDate.Value.Date == DateTime.UtcNow.Date.AddDays(2))
+                .ToListAsync();
+
+            foreach (var user in gracePeriodEnding)
+            {
+                await emailService.SendGracePeriodEndingEmailAsync(user, 2);
+            }
+
+            // Send upcoming payment reminders (3 days before)
+            var upcomingPayments = await context.Users
+                .Where(u => u.SubscriptionStatus == SubscriptionStatus.Active &&
+                           u.NextBillingDate.HasValue &&
+                           u.NextBillingDate.Value.Date == DateTime.UtcNow.Date.AddDays(3))
+                .ToListAsync();
+
+            foreach (var user in upcomingPayments)
+            {
+                await emailService.SendUpcomingPaymentReminderEmailAsync(user, user.NextBillingDate.Value, 9.99m);
             }
         }
     }

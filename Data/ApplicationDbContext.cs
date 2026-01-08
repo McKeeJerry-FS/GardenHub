@@ -43,7 +43,7 @@ namespace GardenHub.Data
 
             // Configure AppUser relationships
             modelBuilder.Entity<AppUser>()
-                .HasMany<Payment>()
+                .HasMany(u => u.Payments)  // Changed from .HasMany<Payment>()
                 .WithOne(p => p.AppUser)
                 .HasForeignKey(p => p.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);

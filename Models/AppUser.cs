@@ -32,12 +32,17 @@ namespace GardenHub.Models
         public DateTime? TrialStartDate { get; set; }
         public DateTime? TrialEndDate { get; set; }
 
-
         // Payment tracking
         public string? StripeCustomerId { get; set; }
         public string? StripeSubscriptionId { get; set; }
         public DateTime? LastPaymentDate { get; set; }
         public DateTime? NextBillingDate { get; set; }
+
+        // Navigation property for Payments
+        public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+        // Developer mode
+        public bool IsDeveloperMode => Tier == UserTier.Developer;
 
         // Computed properties
         public bool IsProTierActive => Tier == UserTier.Pro && 
@@ -54,6 +59,6 @@ namespace GardenHub.Models
                                  TrialEndDate.Value > DateTime.UtcNow;
                                 
 
-        public bool CanAccessProFeatures => IsProTierActive || IsInGracePeriod;
+        public bool CanAccessProFeatures => IsDeveloperMode || IsProTierActive || IsInGracePeriod;
     }
 }

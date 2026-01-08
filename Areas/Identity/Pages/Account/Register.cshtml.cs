@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using GardenHub.Models.Enums;
+using GardenHub.Services;
+using GardenHub.Services.Interfaces;
 
 namespace GardenHub.Areas.Identity.Pages.Account
 {
@@ -30,13 +33,15 @@ namespace GardenHub.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ISubscriptionService _subscriptionService;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ISubscriptionService subscriptionService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +49,7 @@ namespace GardenHub.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _subscriptionService = subscriptionService;
         }
 
         /// <summary>
@@ -109,6 +115,9 @@ namespace GardenHub.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Display(Name = "Start with Pro Tier")]
+            public bool StartWithProTier { get; set; } = false;
         }
 
 
@@ -137,6 +146,14 @@ namespace GardenHub.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    // Handle Pro tier upgrade if selected
+                    if (Input.StartWithProTier)
+                    {
+                        // Store intent to upgrade in TempData for payment page
+                        TempData["UpgradeToProOnComplete"] = true;
+                        TempData["UserId"] = user.Id;
+                    }
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -156,6 +173,13 @@ namespace GardenHub.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+                        
+                        // Redirect to payment page if Pro tier selected
+                        if (Input.StartWithProTier)
+                        {
+                            return RedirectToPage("/Account/Manage/Subscription");
+                        }
+                        
                         return LocalRedirect(returnUrl);
                     }
                 }

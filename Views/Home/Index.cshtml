@@ -3,6 +3,28 @@
 }
 
 <div class="container-fluid">
+    <!-- Pro Tier Coming Soon Banner -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-gradient border-0 shadow-lg" role="alert" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-stars fs-1 text-warning me-3"></i>
+                        <div class="text-white">
+                            <h4 class="mb-1 fw-bold">
+                                <i class="bi bi-rocket-takeoff"></i> Introducing GardenHub Pro - Coming Soon!
+                            </h4>
+                            <p class="mb-0">Unlock premium features including advanced analytics, automated reminders, priority support, and more!</p>
+                        </div>
+                    </div>
+                    <a asp-area="Identity" asp-page="/Account/Manage/Subscription" class="btn btn-warning btn-lg">
+                        <i class="bi bi-crown-fill"></i> Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <div class="row mb-5">
         <div class="col-12">
@@ -33,6 +55,9 @@
                     </span>
                     <span class="badge bg-warning fs-6">
                         <i class="bi bi-speedometer"></i> Fast & Responsive
+                    </span>
+                    <span class="badge bg-purple fs-6">
+                        <i class="bi bi-crown-fill"></i> Pro Tier Coming Soon
                     </span>
                 </div>
             </div>
@@ -354,11 +379,59 @@
         </div>
     </div>
 
+    <!-- Pro Tier Preview Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);">
+                <div class="card-body text-center text-white py-5">
+                    <i class="bi bi-crown-fill display-1 text-warning mb-3"></i>
+                    <h2 class="display-4 mb-4">GardenHub Pro - Coming Soon!</h2>
+                    <p class="lead mb-4">Unlock premium features to take your gardening to the next level</p>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <i class="bi bi-alarm-fill fs-1 text-warning"></i>
+                                <h5 class="mt-2">Smart Reminders</h5>
+                                <p class="small mb-0">Automated care notifications</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <i class="bi bi-graph-up-arrow fs-1 text-warning"></i>
+                                <h5 class="mt-2">Advanced Analytics</h5>
+                                <p class="small mb-0">Predictive insights & trends</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <i class="bi bi-headset fs-1 text-warning"></i>
+                                <h5 class="mt-2">Priority Support</h5>
+                                <p class="small mb-0">Get help when you need it</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3">
+                                <i class="bi bi-download fs-1 text-warning"></i>
+                                <h5 class="mt-2">Data Export</h5>
+                                <p class="small mb-0">Download all your garden data</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a asp-area="Identity" asp-page="/Account/Manage/Subscription" class="btn btn-warning btn-lg px-5">
+                        <i class="bi bi-crown-fill"></i> Learn About Pro Features
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Testimonial / Stats Section -->
     <div class="row mb-5">
         <div class="col-12">
             <div class="card shadow-lg border-0 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-center text-info py-5">
+                <div class="card-body text-center text-white py-5">
                     <h2 class="display-5 mb-4">Built for Modern Gardeners</h2>
                     <p class="lead mb-5">Join gardeners who are taking control of their growing operations with data-driven insights</p>
                     
@@ -393,7 +466,7 @@
                         <a asp-area="" asp-controller="Home" asp-action="Features" class="btn btn-light btn-lg me-3">
                             <i class="bi bi-stars"></i> View All Features
                         </a>
-                        <a asp-area="" asp-controller="Home" asp-action="About" class="btn btn-outline-info btn-lg">
+                        <a asp-area="" asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg">
                             <i class="bi bi-info-circle"></i> Learn More
                         </a>
                     </div>
@@ -407,8 +480,8 @@
         <div class="col-12">
             <div class="card shadow-lg border-0">
                 <div class="card-body text-center py-5">
-                    <h2 class="display-4 text-info mt-3 mb-4">Ready to Transform Your Gardening?</h2>
-                    <p class="lead text-info mb-4">
+                    <h2 class="display-4 text-primary mt-3 mb-4">Ready to Transform Your Gardening?</h2>
+                    <p class="lead text-muted mb-4">
                         Start managing your gardens like a pro with GardenHub's comprehensive tracking and analytics tools.
                     </p>
                     <div class="d-flex gap-3 justify-content-center flex-wrap">
@@ -427,6 +500,11 @@
 
 @section Scripts {
     <style>
+        .bg-purple {
+            background-color: #764ba2 !important;
+            color: white;
+        }
+
         .hero-section {
             background: linear-gradient(135deg, rgba(86, 171, 47, 0.05) 0%, rgba(168, 224, 99, 0.05) 100%);
             border-radius: 1rem;
@@ -520,11 +598,27 @@
         .badges-container .badge:nth-child(2) { animation-delay: 0.2s; }
         .badges-container .badge:nth-child(3) { animation-delay: 0.3s; }
         .badges-container .badge:nth-child(4) { animation-delay: 0.4s; }
+        .badges-container .badge:nth-child(5) { animation-delay: 0.5s; }
+
+        .alert-gradient {
+            animation: slideInDown 0.8s ease-out;
+        }
 
         @@keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;

@@ -1,7 +1,9 @@
 using GardenHub.Data;
 using GardenHub.Models;
 using GardenHub.Services;
+using GardenHub.Services.Authorization;
 using GardenHub.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +22,35 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException($"Database connection string is required. DATABASE_URL: {databaseUrl}, PGHOST: {pgHost}, PGDATABASE: {pgDatabase}");
 }
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString)
+           .ConfigureWarnings(warnings => 
+               warnings.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Authorization Policies
+builder.Services.AddAuthorization(options =>
+{
+    // Pro Tier Policy
+    options.AddPolicy("RequireProTier", policy =>
+        policy.Requirements.Add(new ProTierRequirement()));
+
+    // Hobby Tier Policy
+    options.AddPolicy("Tier:Hobby", policy =>
+        policy.Requirements.Add(new TierRequirement("Hobby")));
+
+    // Pro Tier Policy (alternative syntax)
+    options.AddPolicy("Tier:Pro", policy =>
+        policy.Requirements.Add(new TierRequirement("Pro")));
+});
+
+// Register Authorization Handlers
+builder.Services.AddScoped<IAuthorizationHandler, ProTierAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, TierAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, TierAuthorizationPolicyProvider>();
+
 builder.Services.AddControllersWithViews();
 
 //  DI Container registrations
@@ -39,6 +65,16 @@ builder.Services.AddScoped<IPlantCareService, PlantCareService>();
 builder.Services.AddScoped<IReminderService, ReminderService>();
 
 builder.Services.AddTransient<IEmailSender, EmailService>();
+
+// Payment and Subscription Services
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddHostedService<SubscriptionBackgroundService>();
+builder.Services.AddScoped<ISubscriptionEmailService, SubscriptionEmailService>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<Microsoft.AspNetCore.Identity.UserManager<AppUser>>();
 
 var app = builder.Build();
 

@@ -3,6 +3,7 @@ using GardenHub.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using GardenHub.Models.Enums;
 
 namespace GardenHub.Data
 {
@@ -88,6 +89,43 @@ namespace GardenHub.Data
             var configurationSvc = serviceProvider.GetRequiredService<IConfiguration>();
 
             await dbContextSvc.Database.MigrateAsync();
+
+            // When creating users, set default tier
+            var user = new AppUser
+            {
+                UserName = "user@example.com",
+                Email = "user@example.com",
+                Tier = UserTier.Hobby // Default to free tier
+            };
+
+            // Enable developer mode for configured users
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var developerEmails = configuration.GetSection("DeveloperMode:DeveloperEmails").Get<string[]>();
+            var isDeveloperModeEnabled = configuration.GetValue<bool>("DeveloperMode:Enabled");
+            
+            if (isDeveloperModeEnabled && developerEmails != null)
+            {
+                foreach (var email in developerEmails)
+                {
+                    await EnableDeveloperMode(serviceProvider, email);
+                }
+            }
+        }
+
+        // Add this method to seed a developer account or enable developer mode for specific users
+        public static async Task EnableDeveloperMode(IServiceProvider serviceProvider, string userEmail)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+            
+            var user = await userManager.FindByEmailAsync(userEmail);
+            if (user != null)
+            {
+                user.Tier = UserTier.Developer;
+                user.SubscriptionStatus = SubscriptionStatus.None; // Developer doesn't need subscription
+                await userManager.UpdateAsync(user);
+                
+                Console.WriteLine($"Developer mode enabled for {userEmail}");
+            }
         }
     }
 }

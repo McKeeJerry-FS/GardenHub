@@ -37,6 +37,21 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="form-check">
+                        <input asp-for="Input.StartWithProTier" class="form-check-input" type="checkbox" id="startWithProTier" />
+                        <label class="form-check-label" for="startWithProTier">
+                            <strong>Start with Pro Tier</strong>
+                        </label>
+                    </div>
+                    <small class="text-muted">
+                        Unlock advanced features with Pro ($9.99/month). Cancel anytime with a 14-day courtesy period.
+                    </small>
+                </div>
+            </div>
+
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>

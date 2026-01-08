@@ -1,45 +1,33 @@
-﻿using System.Diagnostics;
+﻿using GardenHub.Data;
 using GardenHub.Models;
-using GardenHub.Models.Enums;
 using GardenHub.Models.ViewModels;
+using GardenHub.Models.Enums;
 using GardenHub.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace GardenHub.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IGardenService _gardenService;
-        private readonly IPlantService _plantService;
-        private readonly IDailyRecordService _dailyRecordService;
-        private readonly IJournalEntriesService _journalEntriesService;
-        private readonly IEquipmentService _equipmentService;
-        private readonly IImageService _imageService;
-        private readonly IEmailSender _emailSender;
-        private readonly IReminderService _reminderService;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IReminderService? _reminderService;
 
         public HomeController(
-            ILogger<HomeController> logger,
-            IGardenService gardenService,
-            IPlantService plantService,
-            IDailyRecordService dailyRecordService,
-            IJournalEntriesService journalEntriesService,
-            IEquipmentService equipmentService,
-            IImageService imageService,
-            IEmailSender emailSender,
-            IReminderService reminderService)
+            ILogger<HomeController> logger, 
+            ApplicationDbContext context, 
+            UserManager<AppUser> userManager,
+            IReminderService? reminderService = null)
         {
             _logger = logger;
-            _gardenService = gardenService;
-            _plantService = plantService;
-            _dailyRecordService = dailyRecordService;
-            _journalEntriesService = journalEntriesService;
-            _equipmentService = equipmentService;
-            _imageService = imageService;
-            _emailSender = emailSender;
+            _context = context;
+            _userManager = userManager;
             _reminderService = reminderService;
         }
 
@@ -58,129 +46,6 @@ namespace GardenHub.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Contact(ContactViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Build email content
-                    var emailSubject = $"GardenHub Contact Form: {model.Subject}";
-                    var emailBody = $@"
-                        <html>
-                        <head>
-                            <style>
-                                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-                                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                                .header {{ background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; }}
-                                .content {{ background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }}
-                                .field {{ margin-bottom: 15px; }}
-                                .label {{ font-weight: bold; color: #56ab2f; }}
-                                .value {{ margin-top: 5px; padding: 10px; background: white; border-left: 3px solid #56ab2f; }}
-                                .footer {{ text-align: center; padding: 15px; color: #666; font-size: 12px; }}
-                            </style>
-                        </head>
-                        <body>
-                            <div class='container'>
-                                <div class='header'>
-                                    <h2>🌱 GardenHub Contact Form Submission</h2>
-                                </div>
-                                <div class='content'>
-                                    <div class='field'>
-                                        <div class='label'>📧 From:</div>
-                                        <div class='value'>{model.Name} ({model.Email})</div>
-                                    </div>
-                                    <div class='field'>
-                                        <div class='label'>📂 Category:</div>
-                                        <div class='value'>{model.Category.ToString()}</div>
-                                    </div>
-                                    <div class='field'>
-                                        <div class='label'>📝 Subject:</div>
-                                        <div class='value'>{model.Subject}</div>
-                                    </div>
-                                    <div class='field'>
-                                        <div class='label'>💬 Message:</div>
-                                        <div class='value'>{model.Message.Replace("\n", "<br>")}</div>
-                                    </div>
-                                    <div class='field'>
-                                        <div class='label'>🕐 Submitted:</div>
-                                        <div class='value'>{DateTime.Now.ToString("MMMM dd, yyyy h:mm tt")}</div>
-                                    </div>
-                                </div>
-                                <div class='footer'>
-                                    <p>This message was sent from the GardenHub Contact Form</p>
-                                    <p>GardenHub v1.0.0 | © 2025 GardenHub</p>
-                                </div>
-                            </div>
-                        </body>
-                        </html>";
-
-                    // Send email to your address
-                    await _emailSender.SendEmailAsync(
-                        "your-email@example.com", // Replace with your email
-                        emailSubject,
-                        emailBody
-                    );
-
-                    // Send confirmation email to user
-                    var confirmationBody = $@"
-                        <html>
-                        <head>
-                            <style>
-                                body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-                                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                                .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; text-align: center; }}
-                                .content {{ background: #f9f9f9; padding: 20px; border: 1px solid #ddd; }}
-                                .footer {{ text-align: center; padding: 15px; color: #666; font-size: 12px; }}
-                                .message-box {{ background: white; padding: 15px; border-left: 4px solid #667eea; margin: 15px 0; }}
-                            </style>
-                        </head>
-                        <body>
-                            <div class='container'>
-                                <div class='header'>
-                                    <h2>Thank You for Contacting GardenHub! 🌱</h2>
-                                </div>
-                                <div class='content'>
-                                    <p>Hi {model.Name},</p>
-                                    <p>Thank you for reaching out to us! We've received your message and will get back to you as soon as possible.</p>
-                                    <div class='message-box'>
-                                        <p><strong>Your Message Summary:</strong></p>
-                                        <p><strong>Category:</strong> {model.Category.ToString()}</p>
-                                        <p><strong>Subject:</strong> {model.Subject}</p>
-                                    </div>
-                                    <p>We typically respond within 24-48 hours during business days.</p>
-                                    <p>In the meantime, you might find answers to common questions in our <a href='https://yourdomain.com/Home/FAQs' style='color: #667eea;'>FAQ section</a>.</p>
-                                    <p>Best regards,<br>The GardenHub Team</p>
-                                </div>
-                                <div class='footer'>
-                                    <p>GardenHub - Your Modern Garden Management Solution</p>
-                                    <p>© 2025 GardenHub | v1.0.0</p>
-                                </div>
-                            </div>
-                        </body>
-                        </html>";
-
-                    await _emailSender.SendEmailAsync(
-                        model.Email,
-                        "Thank you for contacting GardenHub",
-                        confirmationBody
-                    );
-
-                    TempData["SuccessMessage"] = "Thank you for contacting us! We've received your message and will respond soon.";
-                    return RedirectToAction(nameof(Contact));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error sending contact form email");
-                    TempData["ErrorMessage"] = "There was an error sending your message. Please try again later or contact us directly.";
-                }
-            }
-
-            return View(model);
-        }
-
         public IActionResult Features()
         {
             return View();
@@ -195,131 +60,172 @@ namespace GardenHub.Controllers
         public async Task<IActionResult> Dashboard()
         {
             var viewModel = new DashboardViewModel();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
-            // Get current user ID
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index");
+            }
 
-            // Get all data
-            var allGardens = await _gardenService.GetAllGardens();
-            var allPlants = await _plantService.GetAllPlantsAsync();
-            var allDailyRecords = await _dailyRecordService.GetAllDailyRecordsAsync();
-            var allJournalEntries = await _journalEntriesService.GetAllJournalEntriesAsync();
-            var allEquipment = await _equipmentService.GetAllEquipmentsAsync();
+            // Get current user for Pro feature checks
+            var currentUser = await _userManager.FindByIdAsync(userId);
+            ViewBag.CurrentUser = currentUser;
 
             // Aggregate Statistics
-            viewModel.TotalGardens = allGardens.Count;
-            viewModel.TotalPlants = allPlants.Count;
-            viewModel.TotalEquipment = allEquipment.Count;
-            viewModel.TotalDailyRecords = allDailyRecords.Count;
-            viewModel.TotalJournalEntries = allJournalEntries.Count;
+            viewModel.TotalGardens = await _context.Gardens.CountAsync(g => g.UserId == userId);
+            viewModel.TotalPlants = await _context.Plants.CountAsync(p => p.UserId == userId);
+            viewModel.TotalEquipment = await _context.Equipments.CountAsync(e => e.UserId == userId);
+            viewModel.TotalDailyRecords = await _context.DailyRecords.CountAsync(d => d.UserId == userId);
+            viewModel.TotalJournalEntries = await _context.JournalEntries.CountAsync(j => j.UserId == userId);
 
-            // Recent Items (last 5)
-            viewModel.RecentGardens = allGardens
-                .OrderByDescending(g => g.StartDate)
+            // Recent Items (Last 5)
+            viewModel.RecentGardens = await _context.Gardens
+                .Where(g => g.UserId == userId)
+                .OrderByDescending(g => g.GardenId)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            viewModel.RecentPlants = allPlants
-                .OrderByDescending(p => p.DatePlanted)
+            viewModel.RecentPlants = await _context.Plants
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Garden)
+                .OrderByDescending(p => p.PlantId)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            viewModel.RecentDailyRecords = allDailyRecords
-                .OrderByDescending(r => r.CreatedDate)
+            viewModel.RecentDailyRecords = await _context.DailyRecords
+                .Where(d => d.UserId == userId)
+                .Include(d => d.Garden)
+                .OrderByDescending(d => d.CreatedDate)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            viewModel.RecentJournalEntries = allJournalEntries
+            viewModel.RecentJournalEntries = await _context.JournalEntries
+                .Where(j => j.UserId == userId)
+                .Include(j => j.Garden)
                 .OrderByDescending(j => j.EntryDate)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            viewModel.RecentEquipment = allEquipment
-                .OrderByDescending(e => e.PurchaseDate)
+            viewModel.RecentEquipment = await _context.Equipments
+                .Where(e => e.UserId == userId)
+                .Include(e => e.Garden)
+                .OrderByDescending(e => e.EquipmentId)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
             // All Gardens for Quick Access
-            viewModel.AllGardens = allGardens.OrderBy(g => g.GardenName).ToList();
+            viewModel.AllGardens = await _context.Gardens
+                .Where(g => g.UserId == userId)
+                .OrderBy(g => g.GardenName)
+                .ToListAsync();
 
-            // Group by Type Statistics
-            viewModel.PlantsByType = allPlants
-                .GroupBy(p => p.PlantType.ToString())
+            // Additional Statistics
+            var plants = await _context.Plants.Where(p => p.UserId == userId).ToListAsync();
+            viewModel.PlantsByType = plants.GroupBy(p => p.PlantType.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            viewModel.EquipmentByType = allEquipment
-                .GroupBy(e => e.EquipmentType.ToString())
+            var equipment = await _context.Equipments.Where(e => e.UserId == userId).ToListAsync();
+            viewModel.EquipmentByType = equipment.GroupBy(e => e.EquipmentType.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            viewModel.GardensByType = allGardens
-                .GroupBy(g => g.Type.ToString())
+            var gardens = await _context.Gardens.Where(g => g.UserId == userId).ToListAsync();
+            viewModel.GardensByType = gardens.GroupBy(g => g.Type.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            // Calculate Average Metrics from Last 30 Days of Records
-            var recentRecords = allDailyRecords
-                .Where(r => r.CreatedDate >= DateTime.UtcNow.AddDays(-30))
-                .ToList();
+            // Average Metrics from Recent Daily Records (last 30 days)
+            var recentRecords = await _context.DailyRecords
+                .Where(d => d.UserId == userId && d.CreatedDate >= DateTime.UtcNow.AddDays(-30))
+                .ToListAsync();
 
             if (recentRecords.Any())
             {
-                viewModel.AverageInsideTemperature = Math.Round(recentRecords.Average(r => r.InsideTemperature), 1);
-                viewModel.AverageOutsideTemperature = Math.Round(recentRecords.Average(r => r.OutsideTemperature), 1);
-                viewModel.AverageInsideHumidity = Math.Round(recentRecords.Average(r => r.InsideHumidity), 1);
-                viewModel.AverageOutsideHumidity = Math.Round(recentRecords.Average(r => r.OutsideHumidity), 1);
+                viewModel.AverageInsideTemperature = recentRecords.Average(r => r.InsideTemperature);
+                viewModel.AverageOutsideTemperature = recentRecords.Average(r => r.OutsideTemperature);
+                viewModel.AverageInsideHumidity = recentRecords.Average(r => r.InsideHumidity);
+                viewModel.AverageOutsideHumidity = recentRecords.Average(r => r.OutsideHumidity);
             }
 
-            // Equipment Maintenance Status
-            viewModel.EquipmentUnderMaintenance = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.UnderMaintenance);
-            viewModel.EquipmentMaintenanceRequested = await _equipmentService.GetEquipmentByStatusAsync(MaintenanceStatus.MaintenanceRequested);
-            viewModel.OperationalEquipmentCount = allEquipment.Count(e => e.MaintenanceStatus == MaintenanceStatus.Operational);
+            // Equipment Maintenance Notifications
+            viewModel.EquipmentUnderMaintenance = await _context.Equipments
+                .Where(e => e.UserId == userId && e.MaintenanceStatus == MaintenanceStatus.UnderMaintenance)
+                .Include(e => e.Garden)
+                .ToListAsync();
 
-            // Reminder Status - Load reminder data
-            var allActiveReminders = await _reminderService.GetActiveRemindersAsync(userId);
-            viewModel.TotalActiveReminders = allActiveReminders.Count;
-            viewModel.OverdueReminders = allActiveReminders.Where(r => r.IsOverdue).OrderBy(r => r.ReminderDateTime).ToList();
-            viewModel.TodayReminders = allActiveReminders.Where(r => r.IsDueToday).OrderBy(r => r.ReminderDateTime).ToList();
-            viewModel.UpcomingReminders = allActiveReminders.Where(r => r.IsDueSoon && !r.IsDueToday).OrderBy(r => r.ReminderDateTime).Take(5).ToList();
+            viewModel.EquipmentMaintenanceRequested = await _context.Equipments
+                .Where(e => e.UserId == userId && e.MaintenanceStatus == MaintenanceStatus.MaintenanceRequested)
+                .Include(e => e.Garden)
+                .ToListAsync();
 
-            // Convert images for display
-            foreach (var garden in viewModel.RecentGardens.Concat(viewModel.AllGardens).Distinct())
+            viewModel.OperationalEquipmentCount = await _context.Equipments
+                .CountAsync(e => e.UserId == userId && e.MaintenanceStatus == MaintenanceStatus.Operational);
+
+            // Load Reminders - FREE FEATURE available to all users
+            if (_reminderService != null)
             {
-                ViewData[$"GardenImage_{garden.GardenId}"] = _imageService.ConvertByteArrayToFile(
-                    garden.ImageData,
-                    garden.ImageType,
-                    Models.Enums.DefaultImage.GardenImage);
+                try
+                {
+                    // Get overdue reminders
+                    viewModel.OverdueReminders = await _reminderService.GetOverdueRemindersAsync(userId);
+                    
+                    // Get today's reminders
+                    var todayStart = DateTime.UtcNow.Date;
+                    var todayEnd = todayStart.AddDays(1);
+                    viewModel.TodayReminders = await _reminderService.GetRemindersByDateRangeAsync(userId, todayStart, todayEnd);
+                    viewModel.TodayReminders = viewModel.TodayReminders.Where(r => !r.IsCompleted).ToList();
+                    
+                    // Get upcoming reminders (next 7 days, excluding today)
+                    viewModel.UpcomingReminders = await _reminderService.GetUpcomingRemindersAsync(userId, 7);
+                    viewModel.UpcomingReminders = viewModel.UpcomingReminders
+                        .Where(r => r.ReminderDateTime >= todayEnd)
+                        .Take(5)
+                        .ToList();
+                    
+                    // Total active reminders
+                    viewModel.TotalActiveReminders = await _context.Reminders
+                        .CountAsync(r => r.UserId == userId && !r.IsCompleted);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error loading reminders for user {UserId}", userId);
+                    // Continue without reminders if there's an error
+                }
+            }
+
+            // Store images in ViewData for recent items
+            foreach (var garden in viewModel.RecentGardens)
+            {
+                if (garden.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(garden.ImageData);
+                    ViewData[$"GardenImage_{garden.GardenId}"] = $"data:{garden.ImageType};base64,{base64}";
+                }
             }
 
             foreach (var plant in viewModel.RecentPlants)
             {
-                ViewData[$"PlantImage_{plant.PlantId}"] = _imageService.ConvertByteArrayToFile(
-                    plant.ImageData,
-                    plant.ImageType,
-                    Models.Enums.DefaultImage.PlantImage);
+                if (plant.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(plant.ImageData);
+                    ViewData[$"PlantImage_{plant.PlantId}"] = $"data:{plant.ImageType};base64,{base64}";
+                }
             }
 
-            foreach (var equipment in viewModel.RecentEquipment)
+            foreach (var eq in viewModel.RecentEquipment)
             {
-                ViewData[$"EquipmentImage_{equipment.EquipmentId}"] = _imageService.ConvertByteArrayToFile(
-                    equipment.ImageData,
-                    equipment.ImageType,
-                    Models.Enums.DefaultImage.EquipmentImage);
+                if (eq.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(eq.ImageData);
+                    ViewData[$"EquipmentImage_{eq.EquipmentId}"] = $"data:{eq.ImageType};base64,{base64}";
+                }
             }
 
             foreach (var entry in viewModel.RecentJournalEntries)
             {
-                ViewData[$"JournalImage_{entry.EntryId}"] = _imageService.ConvertByteArrayToFile(
-                    entry.ImageData,
-                    entry.ImageType,
-                    Models.Enums.DefaultImage.GardenImage);
-            }
-
-            // Convert images for maintenance equipment
-            foreach (var equipment in viewModel.EquipmentUnderMaintenance.Concat(viewModel.EquipmentMaintenanceRequested))
-            {
-                ViewData[$"EquipmentImage_{equipment.EquipmentId}"] = _imageService.ConvertByteArrayToFile(
-                    equipment.ImageData,
-                    equipment.ImageType,
-                    Models.Enums.DefaultImage.EquipmentImage);
+                if (entry.ImageData != null)
+                {
+                    var base64 = Convert.ToBase64String(entry.ImageData);
+                    ViewData[$"JournalImage_{entry.EntryId}"] = $"data:{entry.ImageType};base64,{base64}";
+                }
             }
 
             return View(viewModel);

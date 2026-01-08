@@ -1,0 +1,137 @@
+@page
+@model SubscriptionModel
+@{
+    ViewData["Title"] = "Subscription Management";
+    ViewData["ActivePage"] = "Subscription";
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<div class="row">
+    <div class="col-md-8">
+        @if (Model.CurrentUser.Tier == GardenHub.Models.Enums.UserTier.Hobby)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Current Plan: Hobby (Free)</h4>
+                </div>
+                <div class="card-body">
+                    <p>You're currently on the free Hobby tier.</p>
+                    
+                    <h5 class="mt-4">Upgrade to Pro</h5>
+                    <p><strong>$9.99/month</strong></p>
+                    <ul>
+                        <li>Unlimited plants and gardens</li>
+                        <li>Advanced analytics and insights</li>
+                        <li>Priority support</li>
+                        <li>Export your data</li>
+                        <li>Custom reminders and notifications</li>
+                    </ul>
+
+                    <form method="post" asp-page-handler="Upgrade">
+                        <div class="mb-3">
+                            <label asp-for="Input.PaymentMethodId" class="form-label"></label>
+                            <input asp-for="Input.PaymentMethodId" class="form-control" placeholder="Payment details will be collected here" />
+                            <small class="text-muted">Stripe payment integration will be added here</small>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg">Upgrade to Pro</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (Model.CurrentUser.SubscriptionStatus == GardenHub.Models.Enums.SubscriptionStatus.Active)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Current Plan: Pro</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                    <p><strong>Started:</strong> @Model.CurrentUser.ProTierStartDate?.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Next Billing Date:</strong> @Model.CurrentUser.NextBillingDate?.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Last Payment:</strong> @Model.CurrentUser.LastPaymentDate?.ToString("MMMM dd, yyyy")</p>
+
+                    <hr />
+
+                    <h5>Cancel Subscription</h5>
+                    <p class="text-muted">
+                        If you cancel, you'll continue to have access to Pro features for 14 days as a courtesy period.
+                        This gives you time to export your data and adjust to Hobby tier limits.
+                    </p>
+                    
+                    <form method="post" asp-page-handler="Cancel" onsubmit="return confirm('Are you sure you want to cancel your Pro subscription? You will have 14 days of continued access.');">
+                        <button type="submit" class="btn btn-warning">Cancel Subscription</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (Model.CurrentUser.SubscriptionStatus == GardenHub.Models.Enums.SubscriptionStatus.Cancelled)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h4 class="mb-0">Current Plan: Pro (Cancellation Pending)</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> <span class="badge bg-warning text-dark">Cancelled - Grace Period</span></p>
+                    <p><strong>Cancellation Requested:</strong> @Model.CurrentUser.CancellationRequestedDate?.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Pro Access Until:</strong> @Model.CurrentUser.GracePeriodEndDate?.ToString("MMMM dd, yyyy")</p>
+                    
+                    <div class="alert alert-info mt-3">
+                        <strong>14-Day Courtesy Period Active</strong><br />
+                        You have full access to Pro features until @Model.CurrentUser.GracePeriodEndDate?.ToString("MMMM dd, yyyy").
+                        After this date, your account will revert to the Hobby tier.
+                    </div>
+
+                    <hr />
+
+                    <h5>Changed Your Mind?</h5>
+                    <p>You can reactivate your Pro subscription at any time during the grace period.</p>
+                    
+                    <form method="post" asp-page-handler="Reactivate">
+                        <button type="submit" class="btn btn-success">Reactivate Subscription</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (Model.CurrentUser.SubscriptionStatus == GardenHub.Models.Enums.SubscriptionStatus.Expired)
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Subscription Expired</h4>
+                </div>
+                <div class="card-body">
+                    <p>Your Pro subscription has expired and your account has been reverted to the Hobby tier.</p>
+                    <p><strong>Pro Period:</strong> @Model.CurrentUser.ProTierStartDate?.ToString("MMMM dd, yyyy") - @Model.CurrentUser.ProTierEndDate?.ToString("MMMM dd, yyyy")</p>
+                    
+                    <hr />
+
+                    <h5>Upgrade Again</h5>
+                    <form method="post" asp-page-handler="Upgrade">
+                        <div class="mb-3">
+                            <label asp-for="Input.PaymentMethodId" class="form-label"></label>
+                            <input asp-for="Input.PaymentMethodId" class="form-control" placeholder="Payment details" />
+                        </div>
+                        <button type="submit" class="btn btn-success">Resubscribe to Pro</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Need Help?</h5>
+            </div>
+            <div class="card-body">
+                <p>Questions about your subscription?</p>
+                <a href="mailto:support@gardenhub.com" class="btn btn-outline-primary btn-sm">Contact Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,92 @@
+﻿@inject Microsoft.AspNetCore.Identity.UserManager<GardenHub.Models.AppUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var featureName = ViewData["FeatureName"]?.ToString() ?? "This Feature";
+}
+
+<div class="card border-warning shadow-lg">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-crown-fill text-warning" style="font-size: 5rem;"></i>
+        </div>
+        <h2 class="display-5 mb-3">
+            <i class="bi bi-lock-fill text-warning"></i> Pro Feature
+        </h2>
+        <h4 class="mb-3">Upgrade to GardenHub Pro to unlock @featureName</h4>
+        <p class="lead text-muted mb-4">
+            Get access to premium features including smart reminders, advanced analytics,
+            priority support, data export, and much more!
+        </p>
+
+        @if (user != null)
+        {
+            if (user.IsOnTrial)
+            {
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <strong>You're currently on a trial!</strong> Your trial ends on @user.TrialEndDate?.ToString("MMMM dd, yyyy").
+                </div>
+            }
+            else if (user.IsInGracePeriod)
+            {
+                <div class="alert alert-warning mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Grace Period Active:</strong> Your Pro access ends on @user.GracePeriodEndDate?.ToString("MMMM dd, yyyy").
+                </div>
+            }
+        }
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <i class="bi bi-alarm-fill text-primary fs-2"></i>
+                    <p class="mt-2 mb-0"><strong>Smart Reminders</strong></p>
+                    <small class="text-muted">Never miss care tasks</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <i class="bi bi-graph-up-arrow text-success fs-2"></i>
+                    <p class="mt-2 mb-0"><strong>Advanced Analytics</strong></p>
+                    <small class="text-muted">Predictive insights</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <i class="bi bi-download text-info fs-2"></i>
+                    <p class="mt-2 mb-0"><strong>Data Export</strong></p>
+                    <small class="text-muted">Download your data</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <i class="bi bi-headset text-warning fs-2"></i>
+                    <p class="mt-2 mb-0"><strong>Priority Support</strong></p>
+                    <small class="text-muted">Get help faster</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a asp-area="Identity" asp-page="/Account/Manage/Subscription" class="btn btn-warning btn-lg px-5">
+                <i class="bi bi-crown-fill"></i> Upgrade to Pro
+            </a>
+            <a asp-controller="Home" asp-action="Features" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-info-circle"></i> Learn More
+            </a>
+        </div>
+
+        <div class="mt-4">
+            <p class="text-muted mb-0">
+                <i class="bi bi-shield-check"></i> 14-day money-back guarantee • Cancel anytime
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+</style>
